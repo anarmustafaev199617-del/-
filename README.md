@@ -10,6 +10,10 @@ templates/blog-index.template.html            список статей   /blog/
 templates/blog-post.template.html             статья блога    /blog/слаг/
 templates/spasibo.template.html               благодарность   /spasibo/
 templates/politika.template.html              политика        /politika/
+templates/404.template.html                   не найдено      /404.html
+templates/robots.txt                          robots          /robots.txt
+templates/sitemap.xml                         карта сайта     /sitemap.xml
+tools/build-sitemap.py                        генератор карты
 examples/home.html                            пример: главная
 examples/remont-holodilnikov-hub.html         пример: хаб холодильников
 examples/remont-holodilnikov-surgut.html      пример: холодильники × Сургут
@@ -19,7 +23,21 @@ examples/spasibo.html                         пример: /spasibo/
 examples/politika.html                        пример: /politika/
 ```
 
-Все семь типов страниц собраны.
+Все страницы и серверная обвязка собраны.
+
+## robots / sitemap / 404 — три частые ошибки
+
+1. **`Disallow: /spasibo/` в robots.txt.** robots управляет обходом, а не
+   индексацией. Закрытая от обхода страница всё равно попадёт в выдачу, только
+   без описания — и робот не прочитает её `noindex`. `/spasibo/` должна быть
+   открыта для обхода и закрыта мета-тегом.
+2. **`/spasibo/` в sitemap.xml.** Прямое противоречие с её `noindex`.
+   Карту проще не править руками: `python3 tools/build-sitemap.py --site
+   https://example.ru > sitemap.xml` (27 адресов, `/spasibo/` и 404 исключены).
+3. **404 отдаёт 200 OK.** Сам HTML статус не задаёт — нужен `ErrorDocument 404
+   /404.html` в Apache или `error_page 404 /404.html;` в nginx. Проверка:
+   `curl -I https://example.ru/нет-такой-страницы/`. Редирект 301 с 404 на
+   главную делает только хуже.
 
 ## Разделение уровней
 

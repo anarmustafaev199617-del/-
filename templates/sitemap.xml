@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+================================================================================
+  sitemap.xml для {{SITE_DOMAIN}}
+  Кладётся в корень: {{SITE_URL}}/sitemap.xml
+  Указан в robots.txt последней строкой.
+================================================================================
+
+  ЧТО ЗДЕСЬ ЕСТЬ (27 адресов):
+    1  главная
+    3  хаба услуг
+    12 городских страниц
+    1  список статей /blog/
+    9  статей блога
+    1  политика конфиденциальности
+
+  ЧЕГО ЗДЕСЬ НЕТ И БЫТЬ НЕ ДОЛЖНО:
+    /spasibo/  — закрыта через <meta name="robots" content="noindex">.
+                 Страница с noindex в sitemap — прямое противоречие:
+                 вы одновременно просите её проиндексировать и не индексировать.
+                 Яндекс.Вебмастер отдельно ругается на это в разделе
+                 «Страницы в поиске → Исключённые».
+    404        — по определению не индексируется.
+
+  ==========================================================================
+  ПРО lastmod, changefreq И priority
+
+    lastmod     — единственное поле, которое реально используется.
+                  Формат W3C Datetime: ГГГГ-ММ-ДД (можно с временем и зоной).
+                  ⚠️ Ставьте ЧЕСТНУЮ дату последнего изменения страницы.
+                  Массовая простановка «сегодня» на всех URL при каждой
+                  выгрузке — известный способ обесценить сигнал: поисковик
+                  перестаёт ему доверять и начинает игнорировать.
+
+    changefreq  — Google игнорирует полностью. Яндекс учитывает как слабую
+                  подсказку. Оставлены для полноты, вреда не несут.
+
+    priority    — Google игнорирует с 2023 года. Задаёт относительный вес
+                  внутри вашего же сайта, а не позицию в выдаче.
+                  1.0 у всех страниц = то же самое, что 0.5 у всех.
+
+  ==========================================================================
+  КОГДА ПОНАДОБИТСЯ ИНДЕКСНЫЙ SITEMAP
+
+  Один файл вмещает 50 000 URL и 50 МБ в несжатом виде — вам до этого далеко.
+  Разбивать на /sitemap-pages.xml + /sitemap-blog.xml имеет смысл раньше,
+  и только ради удобства: в Вебмастере видно, сколько страниц из каждой
+  группы попало в индекс. Тогда в robots.txt указывается индексный файл:
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+      <sitemap><loc>{{SITE_URL}}/sitemap-pages.xml</loc></sitemap>
+      <sitemap><loc>{{SITE_URL}}/sitemap-blog.xml</loc></sitemap>
+    </sitemapindex>
+
+  ==========================================================================
+  ЗАГЛУШКИ ПЕРЕД ПУБЛИКАЦИЕЙ:
+    1. Заменить {{SITE_URL}} на реальный адрес с https и без слеша на конце
+    2. Проставить реальные даты вместо {{LASTMOD_*}}
+    3. Выверить список статей — в примере 9 штук из шаблона /blog/
+    4. Добавить sitemap в Яндекс.Вебмастер и Google Search Console
+
+  ПОДДЕРЖИВАТЬ ВРУЧНУЮ НЕУДОБНО. Рядом лежит tools/build-sitemap.py —
+  генерирует этот файл из списка страниц одной командой.
+================================================================================
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- ============================== ГЛАВНАЯ ============================== -->
+  <url>
+    <loc>{{SITE_URL}}/</loc>
+    <lastmod>{{LASTMOD_SITE}}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- ============================ ХАБЫ УСЛУГ ============================ -->
+  <url>
+    <loc>{{SITE_URL}}/remont-stiralnyh-mashin/</loc>
+    <lastmod>{{LASTMOD_SITE}}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>{{SITE_URL}}/remont-holodilnikov/</loc>
+    <lastmod>{{LASTMOD_SITE}}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>{{SITE_URL}}/kompyuternaya-pomosch/</loc>
+    <lastmod>{{LASTMOD_SITE}}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- ========================= ГОРОДА: СТИРАЛЬНЫЕ ========================= -->
+  <!-- Нягань есть ТОЛЬКО у стиральных машин -->
+  <url>
+    <loc>{{SITE_URL}}/remont-stiralnyh-mashin/surgut/</loc>
+    <lastmod>{{LASTMOD_SITE}}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>{{SITE_URL}}/remont-stiralnyh-mashin/nizhnevartovsk/</loc>
+    <lastmod>{{LASTMOD_SITE}}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>{{SITE_URL}}/remont-stiralnyh-mashin/nefteyugansk/</loc>
+    <lastmod>{{LASTMOD_SITE}}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>{{SITE_URL}}/remont-stiralnyh-mashin/nyagan/</loc>
+    <lastmod>{{LASTMOD_SITE}}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- ======================== ГОРОДА: ХОЛОДИЛЬНИКИ ========================
+       Сургут — самая частотная страница кластера -->
+  <url>
+    <loc>{{SITE_URL}}/remont-holodilnikov/surgut/</loc>
+    <lastmod>{{LASTMOD_SITE}}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>{{SITE_URL}}/remont-holodilnikov/nizhnevartovsk/</loc>
+    <lastmod>{{LASTMOD_SITE}}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>{{SITE_URL}}/remont-holodilnikov/nefteyugansk/</loc>
+    <lastmod>{{LASTMOD_SITE}}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>{{SITE_URL}}/remont-holodilnikov/hanty-mansiysk/</loc>
+    <lastmod>{{LASTMOD_SITE}}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- ======================== ГОРОДА: КОМПЬЮТЕРЫ ======================== -->
+  <url>
+    <loc>{{SITE_URL}}/kompyuternaya-pomosch/surgut/</loc>
+    <lastmod>{{LASTMOD_SITE}}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>{{SITE_URL}}/kompyuternaya-pomosch/nizhnevartovsk/</loc>
+    <lastmod>{{LASTMOD_SITE}}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>{{SITE_URL}}/kompyuternaya-pomosch/nefteyugansk/</loc>
+    <lastmod>{{LASTMOD_SITE}}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>{{SITE_URL}}/kompyuternaya-pomosch/hanty-mansiysk/</loc>
+    <lastmod>{{LASTMOD_SITE}}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- =============================== БЛОГ =============================== -->
+  <url>
+    <loc>{{SITE_URL}}/blog/</loc>
+    <lastmod>{{LASTMOD_SITE}}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- ============================== СТАТЬИ ==============================
+       ЗАГЛУШКА: даты должны совпадать с article:modified_time в самих статьях.
+       Расхождение — не ошибка, но лишний повод для поисковика не доверять
+       вашему lastmod. -->
+  <url>
+    <loc>{{SITE_URL}}/blog/holodilnik-ne-morozit/</loc>
+    <lastmod>2026-09-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>{{SITE_URL}}/blog/holodilnik-shumit/</loc>
+    <lastmod>2026-04-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>{{SITE_URL}}/blog/naled-v-morozilke/</loc>
+    <lastmod>2026-04-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>{{SITE_URL}}/blog/sm-ne-slivaet-vodu/</loc>
+    <lastmod>2026-04-12</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>{{SITE_URL}}/blog/sm-ne-otzhimaet/</loc>
+    <lastmod>2026-03-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>{{SITE_URL}}/blog/sm-prygaet/</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>{{SITE_URL}}/blog/kompyuter-ne-vklyuchaetsya/</loc>
+    <lastmod>2026-03-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>{{SITE_URL}}/blog/noutbuk-ne-zaryazhaetsya/</loc>
+    <lastmod>2026-03-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>{{SITE_URL}}/blog/kompyuter-tormozit/</loc>
+    <lastmod>2026-02-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <!-- ============================== ПРАВОВОЕ ============================== -->
+  <url>
+    <loc>{{SITE_URL}}/politika/</loc>
+    <lastmod>{{POLICY_DATE_ISO}}</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.2</priority>
+  </url>
+
+</urlset>
