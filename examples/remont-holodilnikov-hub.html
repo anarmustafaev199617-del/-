@@ -1,0 +1,1735 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#1C2321">
+
+<!--
+================================================================================
+  ШАБЛОН ХАБ-СТРАНИЦЫ УСЛУГИ  (уровень 2: /услуга/)
+  Пример заполнения: Ремонт холодильников — хаб по ХМАО
+================================================================================
+
+  ЧЕМ ХАБ ОТЛИЧАЕТСЯ ОТ ГОРОДСКОЙ СТРАНИЦЫ — И ПОЧЕМУ ЭТО ВАЖНО
+
+  Хаб и 4 его города не должны конкурировать за одни и те же запросы,
+  иначе Яндекс выберет одну страницу сам, и не факт что ту, что вам нужна.
+  Разделение ответственности:
+
+    ХАБ (эта страница)              ГОРОД (/услуга/город/)
+    ─────────────────────────       ─────────────────────────
+    Запрос без гео:                 Запрос с гео:
+    «ремонт холодильников»          «ремонт холодильников сургут»
+    «сколько стоит заправить        «мастер по холодильникам
+     холодильник фреоном»            на дом сургут»
+    ─────────────────────────       ─────────────────────────
+    ЗАДАЧА: выбрать город           ЗАДАЧА: оставить заявку
+    и получить экспертизу           прямо здесь
+    ─────────────────────────       ─────────────────────────
+    ЕСТЬ:                           ЕСТЬ:
+    • крупный выбор города          • районы и посёлки выезда
+    • таблица симптом→причина→цена  • карта зоны выезда
+    • 6 поломок с деталями          • 3 поломки кратко
+    • что входит в гарантию         • местные отзывы
+    • ремонт или замена             • городские вопросы FAQ
+    • ориентировочный прайс         • точный прайс города
+    ─────────────────────────       ─────────────────────────
+    НЕТ:                            НЕТ:
+    • районов и карты               • выбора города
+    • «в день обращения» как         • энциклопедических блоков
+      главного оффера
+    • городских отзывов
+
+  ГЛАВНОЕ ПРАВИЛО: в <title>, <h1> и первом экране хаба НЕ должно быть
+  названия ни одного города. Иначе хаб начнёт перетягивать городской запрос.
+
+  --------------------------------------------------------------------------
+  ТОКЕНЫ. Общие с городским шаблоном значения не дублирую — см. легенду
+  в templates/service-city.template.html. Здесь только то, что отличается.
+
+  ХМАО     ХМАО                (аббревиатура не склоняется — удобно)
+  Ханты-Мансийский автономный округ — Югра      Ханты-Мансийский автономный округ — Югра
+  4     4
+  +7 (000) 000-00-00    +7 (000) 000-00-00  ЗАГЛУШКА
+  +70000000000       +70000000000        ЗАГЛУШКА
+
+  ТОКЕНОВ {{CITY_*}} ЗДЕСЬ НЕТ — это и есть главное отличие от городского шаблона.
+
+  --------------------------------------------------------------------------
+  СПИСОК ГОРОДОВ В ЭТОМ ФАЙЛЕ ВСТРЕЧАЕТСЯ В 5 МЕСТАХ:
+    1. переключатель в topbar        4. JSON-LD (areaServed + ItemList)
+    2. секция #cities (главный блок) 5. матрица ссылок в подвале
+    3. select в форме заявки
+  Списки РАЗНЫЕ по услугам:
+    Стиральные машины:   surgut, nizhnevartovsk, nefteyugansk, nyagan
+    Холодильники:        surgut, nizhnevartovsk, nefteyugansk, hanty-mansiysk
+    Компьютерная помощь: surgut, nizhnevartovsk, nefteyugansk, hanty-mansiysk
+
+  --------------------------------------------------------------------------
+  ВНИМАНИЕ: блок <style> ниже идентичен блоку в service-city.template.html
+  (плюс несколько хаб-специфичных классов в конце — они помечены).
+  При правке общих стилей меняйте ОБА файла. Когда страниц станет 13,
+  вынесите весь <style> в /assets/style.css и подключите <link> в обоих
+  шаблонах — сэкономите на кэше и на поддержке.
+================================================================================
+-->
+
+<title>Ремонт холодильников на дому — цены, сроки и вызов мастера в ХМАО</title>
+<meta name="description" content="Ремонт холодильников на дому в ХМАО: 4 города, выезд мастера, гарантия до 24 месяцев. Разбираем частые поломки, сроки и цены. Выберите свой город и вызовите мастера.">
+<link rel="canonical" href="https://example.ru/remont-holodilnikov/">
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:site_name" content="РемонтДом">
+<meta property="og:title" content="Ремонт холодильников на дому в ХМАО — цены и вызов мастера">
+<meta property="og:description" content="4 города, выезд мастера, гарантия до 24 месяцев.">
+<meta property="og:url" content="https://example.ru/remont-holodilnikov/">
+<!-- ЗАГЛУШКА: картинка 1200×630 -->
+<meta property="og:image" content="https://example.ru/img/og/remont-holodilnikov.jpg">
+
+<!-- ЗАГЛУШКА: фавиконки -->
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- ЗАГЛУШКА: заменить на самохостинг woff2, см. @font-face в CSS -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://example.ru/#organization",
+      "name": "РемонтДом",
+      "legalName": "ИП Иванов Иван Иванович",
+      "url": "https://example.ru/",
+      "logo": "https://example.ru/img/logo.png",
+      "telephone": "+70000000000",
+      "email": "info@example.ru",
+      "foundingDate": "2017",
+      "taxID": "860000000000"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://example.ru/remont-holodilnikov/#webpage",
+      "url": "https://example.ru/remont-holodilnikov/",
+      "name": "Ремонт холодильников на дому в ХМАО",
+      "inLanguage": "ru-RU",
+      "isPartOf": { "@id": "https://example.ru/#organization" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "https://example.ru/remont-holodilnikov/#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Главная", "item": "https://example.ru/" },
+        { "@type": "ListItem", "position": 2, "name": "Ремонт холодильников" }
+      ]
+    },
+    {
+      "@type": "Service",
+      "@id": "https://example.ru/remont-holodilnikov/#service",
+      "name": "Ремонт холодильников на дому",
+      "serviceType": "Ремонт холодильников",
+      "provider": { "@id": "https://example.ru/#organization" },
+      "areaServed": [
+        { "@type": "City", "name": "Сургут" },
+        { "@type": "City", "name": "Нижневартовск" },
+        { "@type": "City", "name": "Нефтеюганск" },
+        { "@type": "City", "name": "Ханты-Мансийск" }
+      ],
+      "availableChannel": {
+        "@type": "ServiceChannel",
+        "servicePhone": { "@type": "ContactPoint", "telephone": "+70000000000", "contactType": "customer service" },
+        "serviceUrl": "https://example.ru/remont-holodilnikov/"
+      },
+      "hoursAvailable": {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+        "opens": "09:00", "closes": "21:00"
+      },
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Ориентировочные цены на ремонта холодильников",
+        "itemListElement": [
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Заправка фреоном" }, "priceSpecification": { "@type": "PriceSpecification", "minPrice": "2500", "priceCurrency": "RUB" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Замена компрессора" }, "priceSpecification": { "@type": "PriceSpecification", "minPrice": "4000", "priceCurrency": "RUB" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Устранение течи" }, "priceSpecification": { "@type": "PriceSpecification", "minPrice": "1500", "priceCurrency": "RUB" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Ремонт системы No Frost" }, "priceSpecification": { "@type": "PriceSpecification", "minPrice": "1500", "priceCurrency": "RUB" } },
+          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Замена термостата" }, "priceSpecification": { "@type": "PriceSpecification", "minPrice": "1200", "priceCurrency": "RUB" } }
+        ]
+      }
+    },
+    {
+      "@type": "ItemList",
+      "@id": "https://example.ru/remont-holodilnikov/#cities",
+      "name": "Ремонт холодильников по городам",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Ремонт холодильников в Сургуте", "url": "https://example.ru/remont-holodilnikov/surgut/" },
+        { "@type": "ListItem", "position": 2, "name": "Ремонт холодильников в Нижневартовске", "url": "https://example.ru/remont-holodilnikov/nizhnevartovsk/" },
+        { "@type": "ListItem", "position": 3, "name": "Ремонт холодильников в Нефтеюганске", "url": "https://example.ru/remont-holodilnikov/nefteyugansk/" },
+        { "@type": "ListItem", "position": 4, "name": "Ремонт холодильников в Ханты-Мансийске", "url": "https://example.ru/remont-holodilnikov/hanty-mansiysk/" }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://example.ru/remont-holodilnikov/#faq",
+      "mainEntity": [
+        { "@type": "Question", "name": "Сколько стоит ремонт холодильника?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Работа мастера — от 600 ₽ за простую замену детали до 4 000 ₽ и выше за замену компрессора. Запчасти оплачиваются отдельно. Точную сумму мастер называет после диагностики, до начала работ. Цены по конкретному городу смотрите на странице этого города." } },
+        { "@type": "Question", "name": "В каких городах вы работаете?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Ремонт холодильников выполняем в 4 городах ХМАО: Сургут, Нижневартовск, Нефтеюганск, Ханты-Мансийск. Также выезжаем в прилегающие районы — уточняйте при оформлении заявки." } },
+        { "@type": "Question", "name": "Что входит в гарантию на ремонт?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Гарантия от 6 до 24 месяцев распространяется на выполненную работу и установленную нами запчасть. Если в течение срока та же неисправность повторилась — приезжаем и устраняем бесплатно. Срок фиксируется в квитанции." } },
+        { "@type": "Question", "name": "Когда ремонт дешевле замены техники?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Ориентир простой: если стоимость ремонта с запчастями превышает 40–50% цены аналогичной новой модели, выгоднее покупать новую. Мастер честно скажет, если чинить нет смысла — за такую консультацию вы платите только стоимость выезда." } },
+        { "@type": "Question", "name": "Нужно ли везти технику в сервис?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Нет. Более 90% неисправностей устраняются на дому — мастер приезжает с инструментом и ходовыми запчастями. В сервис технику забирают только при сложном ремонте платы управления, и это согласовывается отдельно." } },
+        { "@type": "Question", "name": "Работаете с юридическими лицами?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Да, обслуживаем кафе, магазины и офисы: работаем по договору и безналичному расчёту, выдаём закрывающие документы. ЗАГЛУШКА: укажите, есть ли обслуживание по абонементу." } }
+      ]
+    }
+  ]
+}
+</script>
+<!--
+  aggregateRating намеренно не размечен — см. пояснение в городском шаблоне.
+  Рейтинг показываем визуально, ссылаемся на независимую площадку.
+-->
+
+<style>
+  /* ===== ПЕРЕМЕННЫЕ ===== */
+  :root{
+    --ink:#1C2321;
+    --ink-soft:#4B534F;
+    --bg:#F7F7F4;
+    --panel:#FFFFFF;
+    --line:#E1DED4;
+    --accent:#B75B12;
+    --accent-dark:#8A430D;
+    --accent-text:#8A430D;
+    --trust:#1F4B43;
+    --trust-bg:#EAF1EE;
+    --star:#A76C12;
+    --radius:6px;
+    --header-h:74px;
+  }
+
+  /*
+    ЗАГЛУШКА — самохостинг шрифтов, раскомментировать после загрузки woff2 в /fonts/
+    @font-face{font-family:'Manrope';src:url('/fonts/manrope-500.woff2') format('woff2');font-weight:500;font-display:swap;}
+    @font-face{font-family:'Manrope';src:url('/fonts/manrope-700.woff2') format('woff2');font-weight:700;font-display:swap;}
+    @font-face{font-family:'Manrope';src:url('/fonts/manrope-800.woff2') format('woff2');font-weight:800;font-display:swap;}
+    @font-face{font-family:'IBM Plex Sans';src:url('/fonts/ibmplexsans-400.woff2') format('woff2');font-weight:400;font-display:swap;}
+    @font-face{font-family:'IBM Plex Sans';src:url('/fonts/ibmplexsans-500.woff2') format('woff2');font-weight:500;font-display:swap;}
+    @font-face{font-family:'IBM Plex Sans';src:url('/fonts/ibmplexsans-600.woff2') format('woff2');font-weight:600;font-display:swap;}
+  */
+
+  /* ===== БАЗА ===== */
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 20px);}
+  body{
+    font-family:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+    color:var(--ink);background:var(--bg);line-height:1.6;font-size:16px;-webkit-text-size-adjust:100%;
+  }
+  h1,h2,h3,h4{font-family:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-weight:800;line-height:1.2;color:var(--ink);}
+  a{color:inherit;}
+  img{max-width:100%;height:auto;display:block;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+  .visually-hidden{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+
+  a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{
+    outline:3px solid var(--accent-dark);outline-offset:2px;border-radius:4px;
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;}
+    *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}
+  }
+
+  /* ===== ВЕРХНЯЯ ПОЛОСА ===== */
+  .topbar{background:var(--ink);color:#fff;font-size:13.5px;}
+  .topbar .wrap{display:flex;justify-content:space-between;align-items:center;min-height:44px;gap:8px 16px;flex-wrap:wrap;padding-top:6px;padding-bottom:6px;}
+  .topbar a{text-decoration:none;color:#fff;}
+  .topbar .left,.topbar .right{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .topbar .hours{color:#C2C5BF;}
+  .messengers{display:flex;gap:8px;}
+  .messengers a{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;padding:0 8px;border-radius:999px;border:1px solid rgba(255,255,255,0.3);font-size:11.5px;font-weight:600;letter-spacing:0.3px;}
+  .messengers a:hover{background:rgba(255,255,255,0.14);}
+  .topbar .phone{font-weight:600;white-space:nowrap;}
+
+  .city-switch{position:relative;}
+  .city-switch summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px;border-bottom:1px dashed rgba(255,255,255,0.45);}
+  .city-switch summary::-webkit-details-marker{display:none;}
+  .city-switch summary::after{content:"▾";font-size:11px;}
+  .city-menu{position:absolute;top:calc(100% + 10px);left:0;z-index:60;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px;min-width:210px;box-shadow:0 6px 20px rgba(0,0,0,0.14);}
+  .city-menu a,.city-menu span{display:block;padding:8px 12px;color:var(--ink);font-size:14.5px;border-radius:6px;text-decoration:none;}
+  .city-menu a:hover{background:var(--bg);}
+  .city-menu .is-current{font-weight:700;background:var(--trust-bg);color:var(--trust);}
+
+  /* ===== ШАПКА ===== */
+  header.site{background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50;}
+  header.site .wrap{display:flex;justify-content:space-between;align-items:center;height:var(--header-h);gap:20px;}
+  .brand{font-family:'Manrope',sans-serif;font-weight:800;font-size:20px;text-decoration:none;color:var(--ink);white-space:nowrap;}
+
+  .main-nav{display:flex;align-items:center;gap:20px;font-size:15px;}
+  .main-nav > a,.main-nav > details > summary{text-decoration:none;color:var(--ink);white-space:nowrap;}
+  .main-nav > a:hover{color:var(--accent-text);}
+  .nav-drop{position:relative;}
+  .nav-drop summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px;}
+  .nav-drop summary::-webkit-details-marker{display:none;}
+  .nav-drop summary::after{content:"▾";font-size:11px;color:var(--ink-soft);}
+  .nav-drop summary:hover{color:var(--accent-text);}
+  .nav-menu{position:absolute;top:calc(100% + 16px);left:-12px;z-index:60;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px;min-width:260px;box-shadow:0 6px 20px rgba(0,0,0,0.14);}
+  .nav-menu a{display:block;padding:9px 12px;text-decoration:none;color:var(--ink);font-size:14.5px;border-radius:6px;}
+  .nav-menu a:hover{background:var(--bg);}
+  .nav-menu .is-current{background:var(--trust-bg);color:var(--trust);font-weight:700;}
+
+  .header-cta{display:flex;align-items:center;gap:14px;}
+  .header-phone-wrap{display:flex;flex-direction:column;align-items:flex-end;line-height:1.25;}
+  .header-phone{font-weight:600;font-size:17px;text-decoration:none;white-space:nowrap;}
+  .header-callback{background:none;border:none;padding:0;cursor:pointer;font-family:inherit;font-size:12.5px;color:var(--accent-text);border-bottom:1px dashed var(--accent-text);}
+  .burger{display:none;background:none;border:none;font-size:24px;cursor:pointer;color:var(--ink);line-height:1;padding:4px 8px;}
+
+  .mobile-nav{display:none;position:absolute;left:0;right:0;top:100%;z-index:55;background:var(--panel);border-bottom:1px solid var(--line);box-shadow:0 10px 24px rgba(0,0,0,0.10);max-height:calc(100dvh - var(--header-h));overflow-y:auto;}
+  .mobile-nav.open{display:block;}
+  .mobile-nav a{display:block;padding:14px 24px;text-decoration:none;border-bottom:1px solid var(--line);font-size:15.5px;}
+  .mobile-nav a:last-child{border-bottom:none;}
+  .mobile-nav .group-title{padding:14px 24px 6px;font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--ink-soft);}
+
+  /* ===== КНОПКИ ===== */
+  .btn{display:inline-block;background:var(--accent);color:#fff;font-weight:600;font-size:15px;padding:12px 24px;border-radius:var(--radius);border:1px solid var(--accent);cursor:pointer;text-decoration:none;white-space:nowrap;font-family:inherit;text-align:center;}
+  .btn:hover{background:var(--accent-dark);border-color:var(--accent-dark);}
+  .btn-lg{font-size:17px;padding:16px 32px;}
+  .btn-outline-accent{background:transparent;color:var(--accent-text);border:1px solid var(--accent);}
+  .btn-outline-accent:hover{background:var(--trust-bg);color:var(--accent-dark);}
+  .btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.45);}
+  .btn-ghost:hover{background:rgba(255,255,255,0.12);border-color:#fff;}
+  .btn-block{width:100%;}
+
+  /* ===== ХЛЕБНЫЕ КРОШКИ ===== */
+  .crumbs{padding:14px 0 0;font-size:13.5px;color:var(--ink-soft);}
+  .crumbs ol{list-style:none;display:flex;flex-wrap:wrap;gap:6px 8px;}
+  .crumbs li{display:flex;align-items:center;gap:8px;}
+  .crumbs li+li::before{content:"/";color:var(--line);}
+  .crumbs a{color:var(--ink-soft);text-decoration:underline;text-underline-offset:2px;}
+  .crumbs a:hover{color:var(--accent-text);}
+  .crumbs [aria-current]{color:var(--ink);font-weight:600;}
+
+  /* ===== СЕКЦИИ ===== */
+  .section{padding:48px 0;}
+  .section--pt0{padding-top:0;}
+  .section--pb0{padding-bottom:0;}
+  .section h2{font-size:27px;margin-bottom:8px;}
+  .section .section-lede{color:var(--ink-soft);font-size:16px;margin-bottom:28px;max-width:66ch;}
+
+  /* ===== ПЕРВЫЙ ЭКРАН ===== */
+  .hero{padding:32px 0 48px;}
+  .hero .grid{display:grid;grid-template-columns:1.1fr 0.9fr;gap:48px;align-items:start;}
+  .hero h1{font-size:clamp(27px,4.2vw,38px);margin-bottom:14px;}
+  .hero .lede{font-size:18px;color:var(--ink-soft);margin-bottom:24px;max-width:52ch;}
+  .trust-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:26px;}
+  .trust-badge{background:var(--trust-bg);color:var(--trust);font-size:14px;font-weight:600;padding:8px 14px;border-radius:999px;}
+  .hero-actions{display:flex;gap:14px;flex-wrap:wrap;align-items:center;}
+  .hero-note{font-size:13px;color:var(--ink-soft);margin-top:12px;}
+  .rating-line{display:flex;align-items:center;gap:8px;margin-bottom:16px;font-size:14.5px;color:var(--ink-soft);flex-wrap:wrap;}
+  .stars{color:var(--star);letter-spacing:1px;font-size:15px;}
+  .rating-line a{color:var(--accent-text);text-underline-offset:2px;}
+
+  /* ===== ФОРМЫ ===== */
+  .lead-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:28px;}
+  .lead-card h2{font-size:19px;margin-bottom:6px;}
+  .lead-card .sub{font-size:14px;color:var(--ink-soft);margin-bottom:20px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:13px;color:var(--ink-soft);margin-bottom:6px;}
+  .field input,.field select{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:var(--radius);font-size:16px;font-family:inherit;background:#fff;color:var(--ink);}
+  .field select{
+    appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:40px;
+    background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%234B534F' stroke-width='1.8'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 14px center;
+  }
+  .field input:focus,.field select:focus{outline:3px solid var(--accent-dark);outline-offset:1px;}
+  .hp{position:absolute!important;left:-9999px;width:1px;height:1px;overflow:hidden;}
+  .consent{display:flex;gap:9px;align-items:flex-start;font-size:12px;color:var(--ink-soft);margin:12px 0 14px;line-height:1.45;cursor:pointer;}
+  .consent input{flex:none;margin-top:2px;width:16px;height:16px;accent-color:var(--accent);}
+  .consent a{color:var(--accent-text);}
+
+  /* ===== ПОЛОМКИ ===== */
+  .fault{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:26px 28px;margin-bottom:18px;}
+  .fault h3{font-size:19px;margin-bottom:6px;}
+  .fault .fault-desc{color:var(--ink-soft);font-size:15px;margin-bottom:16px;max-width:70ch;}
+  .fault-cols{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:14px;}
+  .fault-cols h4{font-size:13.5px;font-weight:600;color:var(--ink-soft);margin-bottom:8px;font-family:inherit;}
+  .fault-cols ul{font-size:14.5px;padding-left:18px;}
+  .fault-cols li{padding:4px 0;}
+  .fault-cols li::marker{color:var(--accent);}
+  .fault-meta{display:flex;gap:12px 20px;flex-wrap:wrap;font-size:14px;color:var(--ink-soft);border-top:1px solid var(--line);padding-top:14px;}
+  .fault-meta strong{color:var(--ink);}
+
+  /* ===== CTA-ПОЛОСА ===== */
+  .cta-strip{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:26px 28px;display:flex;justify-content:space-between;align-items:center;gap:20px 24px;flex-wrap:wrap;}
+  .cta-strip h2{font-size:20px;margin-bottom:4px;}
+  .cta-strip p{font-size:14.5px;color:var(--ink-soft);max-width:52ch;}
+  .cta-strip form{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start;}
+  .cta-strip input[type="tel"],.cta-strip select{padding:13px 14px;border:1px solid var(--line);border-radius:var(--radius);font-size:16px;font-family:inherit;min-width:170px;flex:1 1 170px;background:#fff;color:var(--ink);}
+  .cta-strip input[type="tel"]:focus,.cta-strip select:focus{outline:3px solid var(--accent-dark);outline-offset:1px;}
+  .cta-strip .consent{flex-basis:100%;max-width:52ch;margin:0;}
+  .cta-actions{display:flex;gap:12px;flex-wrap:wrap;}
+
+  /* ===== ПРОМО ===== */
+  .promo{background:var(--trust);color:#fff;border-radius:12px;padding:30px 32px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;}
+  .promo h2{color:#fff;font-size:22px;margin-bottom:6px;}
+  .promo p{color:#D3E2DD;font-size:15px;max-width:56ch;}
+  .promo .promo-terms{font-size:12.5px;color:#A9C4BC;margin-top:8px;}
+  .promo .btn{background:#fff;color:var(--trust);border-color:#fff;}
+  .promo .btn:hover{background:#EAF1EE;color:var(--trust);border-color:#EAF1EE;}
+
+  /* ===== ПРОЦЕСС ===== */
+  .process{counter-reset:step;display:grid;grid-template-columns:repeat(4,1fr);gap:24px;}
+  .process-step{position:relative;padding-top:8px;}
+  .process-step::before{counter-increment:step;content:counter(step);font-family:'Manrope',sans-serif;font-weight:800;font-size:15px;color:var(--accent-text);display:block;margin-bottom:10px;}
+  .process-step h3{font-size:17px;margin-bottom:6px;}
+  .process-step p{font-size:14.5px;color:var(--ink-soft);}
+
+  /* ===== ПРЕИМУЩЕСТВА ===== */
+  .trust-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-content:start;}
+  .trust-point h3{font-size:16.5px;margin-bottom:6px;}
+  .trust-point p{font-size:14.5px;color:var(--ink-soft);}
+
+  /* ===== БРЕНДЫ ===== */
+  .brands-row{display:flex;flex-wrap:wrap;gap:10px 14px;font-size:15px;color:var(--ink-soft);}
+  .brands-row span{background:var(--panel);border:1px solid var(--line);padding:8px 16px;border-radius:999px;}
+  .toggle-btn{margin-top:16px;background:none;border:none;padding:0;cursor:pointer;font-family:inherit;font-size:14.5px;font-weight:600;color:var(--accent-text);border-bottom:1px dashed var(--accent-text);}
+
+  /* ===== ТАБЛИЦЫ ===== */
+  .table-wrap{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel);}
+  .table-scroll{overflow-x:auto;}
+  .price-table{width:100%;border-collapse:collapse;min-width:420px;}
+  .price-table th,.price-table td{text-align:left;padding:13px 20px;border-bottom:1px solid var(--line);font-size:15px;vertical-align:top;}
+  .price-table th{font-family:'Manrope',sans-serif;font-weight:700;background:var(--bg);}
+  .price-table tbody:last-of-type tr:last-child td{border-bottom:none;}
+  .price-more-wrap{border-top:1px solid var(--line);padding:14px 20px;}
+  .price-more-wrap .toggle-btn{margin-top:0;}
+  .price-note{font-size:13px;color:var(--ink-soft);margin-top:12px;max-width:80ch;}
+
+  /* ===== ОТЗЫВЫ ===== */
+  .review-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .review-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:22px;}
+  .review-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:10px;}
+  .review-name{font-weight:600;font-size:15px;}
+  .review-date{font-size:12.5px;color:var(--ink-soft);white-space:nowrap;}
+  .review-stars{color:var(--star);font-size:14px;margin-bottom:8px;}
+  .review-tag{display:inline-block;background:var(--trust-bg);color:var(--trust);font-size:12px;font-weight:600;padding:4px 10px;border-radius:999px;margin-bottom:10px;}
+  .review-text{font-size:14.5px;color:var(--ink-soft);}
+  .review-city{display:block;font-size:12.5px;color:var(--ink-soft);margin-top:10px;}
+  .review-city a{color:var(--accent-text);}
+  .reviews-source{margin-top:20px;font-size:14.5px;}
+  .reviews-source a{color:var(--accent-text);font-weight:600;}
+
+  /* ===== ПЕРЕЛИНКОВКА ===== */
+  .link-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .link-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 22px;text-decoration:none;display:block;}
+  .link-card:hover{border-color:var(--accent);}
+  .link-card strong{display:block;font-family:'Manrope',sans-serif;font-size:16.5px;margin-bottom:4px;}
+  .link-card span{font-size:14px;color:var(--ink-soft);}
+
+  /* ===== СТАТЬИ ===== */
+  .article-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .article-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:24px;text-decoration:none;display:flex;flex-direction:column;}
+  .article-card:hover{border-color:var(--accent);}
+  .article-date{font-size:12.5px;color:var(--ink-soft);margin-bottom:10px;}
+  .article-card h3{font-size:17px;margin-bottom:8px;}
+  .article-card p{font-size:14.5px;color:var(--ink-soft);flex:1;}
+  .article-more{margin-top:14px;font-size:14.5px;font-weight:600;color:var(--accent-text);}
+  .articles-all{margin-top:22px;}
+  .articles-all a{font-size:15px;font-weight:600;color:var(--accent-text);}
+
+  /* ===== FAQ ===== */
+  .faq-item{border-bottom:1px solid var(--line);}
+  .faq-item summary{padding:18px 0;font-weight:600;font-size:16px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px;}
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-item summary::after{content:"+";font-family:'Manrope',sans-serif;font-weight:700;font-size:20px;color:var(--accent-text);flex:none;}
+  .faq-item[open] summary::after{content:"–";}
+  .faq-item p{padding-bottom:18px;color:var(--ink-soft);font-size:15px;max-width:70ch;}
+  .faq-item p+p{padding-bottom:18px;margin-top:-8px;}
+
+  /* ===== КОНТАКТЫ ===== */
+  .contacts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .contact-item{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:24px;}
+  .contact-item h3{font-size:15px;margin-bottom:8px;color:var(--ink-soft);font-weight:500;font-family:inherit;}
+  .contact-item .value{font-family:'Manrope',sans-serif;font-weight:700;font-size:19px;}
+  .contact-item .value a{text-decoration:none;}
+  .contact-item .note{font-size:14px;color:var(--ink-soft);margin-top:6px;}
+
+  /* ===== ФИНАЛЬНАЯ CTA ===== */
+  .cta-band{background:var(--ink);color:#fff;padding:44px 0;}
+  .cta-band .wrap{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;}
+  .cta-band h2{color:#fff;font-size:24px;margin-bottom:6px;}
+  .cta-band p{color:#CFD1CC;font-size:15px;}
+  .cta-band .actions{display:flex;gap:12px;flex-wrap:wrap;}
+
+  /* ===== ПОДВАЛ ===== */
+  footer{padding:44px 0 32px;border-top:1px solid var(--line);font-size:14px;color:var(--ink-soft);background:var(--panel);}
+  footer a{text-decoration:none;color:var(--ink-soft);}
+  footer a:hover{color:var(--accent-text);text-decoration:underline;}
+  .footer-cols{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;margin-bottom:32px;}
+  .footer-cols h3{font-size:14px;font-family:'Manrope',sans-serif;font-weight:700;color:var(--ink);margin-bottom:10px;}
+  .footer-cols ul{list-style:none;display:flex;flex-direction:column;gap:7px;font-size:13.5px;}
+  .footer-legal{border-top:1px solid var(--line);padding-top:20px;display:flex;justify-content:space-between;gap:14px 24px;flex-wrap:wrap;font-size:13px;}
+  .footer-legal .req{max-width:60ch;}
+
+  /* ===== МОБИЛЬНАЯ ПАНЕЛЬ ===== */
+  .mobile-callbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:45;background:var(--panel);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));gap:10px;box-shadow:0 -2px 10px rgba(0,0,0,0.08);}
+  .mobile-callbar .btn{flex:1;}
+  .mobile-callbar .btn-outline{background:var(--panel);color:var(--ink);border:1px solid var(--line);}
+
+  /* ===== МОДАЛКА ===== */
+  dialog#callback-modal{border:none;border-radius:12px;padding:0;max-width:400px;width:92%;color:var(--ink);background:var(--panel);}
+  dialog#callback-modal::backdrop{background:rgba(20,20,18,0.55);}
+  .modal-inner{padding:28px;position:relative;}
+  .modal-close{position:absolute;top:10px;right:12px;background:none;border:none;font-size:24px;line-height:1;color:var(--ink-soft);cursor:pointer;padding:4px 8px;}
+  .modal-inner h2{font-size:19px;margin-bottom:6px;padding-right:28px;}
+  .modal-inner .sub{font-size:14px;color:var(--ink-soft);margin-bottom:18px;}
+
+  /* ==========================================================================
+     ХАБ-СПЕЦИФИЧНЫЕ СТИЛИ — этих классов нет в городском шаблоне
+     ========================================================================== */
+
+  /* Выбор города — главный элемент хаба */
+  .cities{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:28px;}
+  .city-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;}
+  .city-card{
+    display:flex;flex-direction:column;gap:4px;
+    border:1px solid var(--line);border-radius:10px;padding:18px 20px;
+    text-decoration:none;background:var(--bg);
+  }
+  .city-card:hover{border-color:var(--accent);background:var(--panel);}
+  .city-card .name{font-family:'Manrope',sans-serif;font-weight:800;font-size:18px;color:var(--ink);}
+  .city-card .meta{font-size:13.5px;color:var(--ink-soft);}
+  .city-card .go{font-size:13.5px;font-weight:600;color:var(--accent-text);margin-top:6px;}
+  .cities-note{font-size:13.5px;color:var(--ink-soft);margin-top:16px;max-width:70ch;}
+
+  /* Таблица симптом → причина → цена */
+  .diag-table{width:100%;border-collapse:collapse;min-width:640px;}
+  .diag-table th,.diag-table td{text-align:left;padding:14px 20px;border-bottom:1px solid var(--line);font-size:15px;vertical-align:top;}
+  .diag-table th{font-family:'Manrope',sans-serif;font-weight:700;background:var(--bg);font-size:14px;}
+  .diag-table tr:last-child td{border-bottom:none;}
+  .diag-table .sym{font-weight:600;}
+  .diag-table .price{white-space:nowrap;font-weight:600;}
+  .diag-table a{color:var(--accent-text);}
+
+  /* Что входит в гарантию */
+  .warranty{display:grid;grid-template-columns:1fr 1fr;gap:0 40px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:28px 32px;}
+  .warranty h3{font-size:16px;margin-bottom:12px;}
+  .warranty ul{list-style:none;font-size:15px;color:var(--ink-soft);}
+  .warranty li{padding:7px 0 7px 28px;position:relative;}
+  .warranty .yes li::before{content:"✓";position:absolute;left:0;color:var(--trust);font-weight:700;}
+  .warranty .no li::before{content:"✕";position:absolute;left:0;color:var(--ink-soft);font-weight:700;}
+  .warranty-note{grid-column:1/-1;border-top:1px solid var(--line);margin-top:18px;padding-top:16px;font-size:14px;color:var(--ink-soft);}
+
+  /* Ремонт или замена */
+  .decide{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+  .decide-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:22px 24px;}
+  .decide-card .tag{display:inline-block;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;margin-bottom:10px;}
+  .decide-card.ok .tag{background:var(--trust-bg);color:var(--trust);}
+  .decide-card.mid .tag{background:#FBEFE2;color:var(--accent-dark);}
+  .decide-card.no .tag{background:#EFEFEC;color:var(--ink-soft);}
+  .decide-card h3{font-size:16.5px;margin-bottom:8px;}
+  .decide-card p{font-size:14.5px;color:var(--ink-soft);}
+
+  /* ===== АДАПТИВ ===== */
+  @media (max-width:1040px){ .main-nav{gap:16px;font-size:14.5px;} }
+  @media (max-width:980px){
+    .main-nav{display:none;}
+    .burger{display:block;}
+    .footer-cols{grid-template-columns:1fr 1fr;}
+    .city-grid{grid-template-columns:1fr 1fr;}
+  }
+  @media (max-width:820px){
+    .hero .grid{grid-template-columns:1fr;gap:32px;}
+    .process{grid-template-columns:1fr 1fr;}
+    .header-phone-wrap{display:none;}
+    .fault-cols{grid-template-columns:1fr;gap:16px;}
+    .trust-grid{grid-template-columns:1fr 1fr;}
+    .warranty{grid-template-columns:1fr;gap:0;padding:24px;}
+    .warranty .no{margin-top:18px;}
+    .decide{grid-template-columns:1fr;}
+    .review-grid{grid-template-columns:1fr 1fr;}
+    .article-grid{grid-template-columns:1fr 1fr;}
+    .link-cards{grid-template-columns:1fr;}
+    .contacts-grid{grid-template-columns:1fr;}
+    .topbar .hours{display:none;}
+    .mobile-callbar{display:flex;}
+    body{padding-bottom:78px;}
+    .cities{padding:22px;}
+  }
+  @media (max-width:600px){
+    .process{grid-template-columns:1fr;}
+    .trust-grid{grid-template-columns:1fr;}
+    .review-grid{grid-template-columns:1fr;}
+    .article-grid{grid-template-columns:1fr;}
+    .city-grid{grid-template-columns:1fr;}
+    .footer-cols{grid-template-columns:1fr;gap:22px;}
+    .section{padding:36px 0;}
+    .cta-strip,.promo{padding:22px;}
+    .lead-card{padding:22px;}
+    .header-cta .btn{padding:10px 14px;font-size:14px;}
+    .wrap{padding:0 16px;}
+    .mobile-nav a{padding:14px 16px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================= ВЕРХНЯЯ ПОЛОСА =============================
+     На хабе города ещё не выбран — поэтому не название города, а призыв выбрать.
+-->
+<div class="topbar">
+  <div class="wrap">
+    <div class="left">
+      <details class="city-switch js-dd">
+        <summary>Выберите город</summary>
+        <div class="city-menu">
+          <a href="/remont-holodilnikov/surgut/">Сургут</a>
+          <a href="/remont-holodilnikov/nizhnevartovsk/">Нижневартовск</a>
+          <a href="/remont-holodilnikov/nefteyugansk/">Нефтеюганск</a>
+          <a href="/remont-holodilnikov/hanty-mansiysk/">Ханты-Мансийск</a>
+        </div>
+      </details>
+      <span class="hours">с 9:00 до 21:00, без выходных</span>
+    </div>
+    <div class="right">
+      <!-- ЗАГЛУШКИ: ссылки на мессенджеры -->
+      <div class="messengers">
+        <a href="#" rel="nofollow noopener" target="_blank" aria-label="Написать в MAX">MAX</a>
+        <a href="#" rel="nofollow noopener" target="_blank" aria-label="Написать в Telegram">TG</a>
+        <a href="#" rel="nofollow noopener" target="_blank" aria-label="Написать в WhatsApp">WA</a>
+      </div>
+      <a href="tel:+70000000000" class="phone" data-goal="call">+7 (000) 000-00-00</a>
+    </div>
+  </div>
+</div>
+
+<!-- ================================= ШАПКА ================================= -->
+<header class="site">
+  <div class="wrap">
+    <a href="/" class="brand">РемонтДом</a>
+
+    <nav class="main-nav" aria-label="Основная навигация">
+      <details class="nav-drop js-dd">
+        <summary>Услуги</summary>
+        <div class="nav-menu">
+          <!-- Текущий хаб помечен и не кликабелен как ссылка «сам на себя» -->
+          <a class="is-current" href="/remont-holodilnikov/" aria-current="page">Ремонт холодильников</a>
+          <a href="/remont-stiralnyh-mashin/">Ремонт стиральных машин</a>
+          <a href="/kompyuternaya-pomosch/">Компьютерная помощь</a>
+        </div>
+      </details>
+      <a href="#cities">Города</a>
+      <a href="#prices">Цены</a>
+      <a href="#faults">Поломки</a>
+      <a href="#reviews">Отзывы</a>
+      <a href="/blog/">Блог</a>
+      <a href="#faq">Вопросы</a>
+    </nav>
+
+    <div class="header-cta">
+      <div class="header-phone-wrap">
+        <a href="tel:+70000000000" class="header-phone" data-goal="call">+7 (000) 000-00-00</a>
+        <button type="button" class="header-callback" data-modal-open>Заказать звонок</button>
+      </div>
+      <a href="#cities" class="btn">Выбрать город</a>
+      <button type="button" class="burger" id="burger" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobile-nav">☰</button>
+    </div>
+  </div>
+
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Мобильная навигация">
+    <span class="group-title">Ремонт холодильников по городам</span>
+    <a href="/remont-holodilnikov/surgut/">Сургут</a>
+    <a href="/remont-holodilnikov/nizhnevartovsk/">Нижневартовск</a>
+    <a href="/remont-holodilnikov/nefteyugansk/">Нефтеюганск</a>
+    <a href="/remont-holodilnikov/hanty-mansiysk/">Ханты-Мансийск</a>
+    <span class="group-title">Другие услуги</span>
+    <a href="/remont-stiralnyh-mashin/">Ремонт стиральных машин</a>
+    <a href="/kompyuternaya-pomosch/">Компьютерная помощь</a>
+    <span class="group-title">Разделы</span>
+    <a href="#prices">Цены</a>
+    <a href="#faults">Поломки</a>
+    <a href="#warranty">Гарантия</a>
+    <a href="#reviews">Отзывы</a>
+    <a href="/blog/">Блог</a>
+    <a href="#faq">Вопросы</a>
+  </nav>
+</header>
+
+<!-- ============================ ХЛЕБНЫЕ КРОШКИ ============================
+     На хабе два уровня, третьего нет.
+-->
+<div class="wrap">
+  <nav class="crumbs" aria-label="Хлебные крошки">
+    <ol>
+      <li><a href="/">Главная</a></li>
+      <li><span aria-current="page">Ремонт холодильников</span></li>
+    </ol>
+  </nav>
+</div>
+
+<main>
+
+  <!-- ============================ ПЕРВЫЙ ЭКРАН ============================
+       В H1 и лиде НЕТ названий городов — иначе хаб начнёт конкурировать
+       с городскими страницами за геозапросы.
+  -->
+  <section class="hero">
+    <div class="wrap grid">
+      <div>
+        <h1>Ремонт холодильников на дому</h1>
+        <div class="rating-line">
+          <span class="stars" role="img" aria-label="Рейтинг 4.9 из 5">★★★★★</span>
+          <span>4.9 на основе 134 отзывов</span>
+          <!-- ЗАГЛУШКА: ссылка на карточку в Яндекс.Картах / 2ГИС -->
+          <a href="#" rel="nofollow noopener" target="_blank">смотреть отзывы</a>
+        </div>
+        <p class="lede">Работаем в 4 городах ХМАО. Мастер приезжает к вам, чинит на месте и оставляет квитанцию с гарантией. Выберите город — увидите цены и условия выезда для него.</p>
+        <div class="trust-row">
+          <span class="trust-badge">4 города ХМАО</span>
+          <span class="trust-badge">Гарантия до 24 месяцев</span>
+          <span class="trust-badge">Ремонт без вывоза техники</span>
+        </div>
+        <div class="hero-actions">
+          <a href="#cities" class="btn btn-lg">Выбрать город</a>
+          <a href="tel:+70000000000" class="btn btn-lg btn-outline-accent" data-goal="call">+7 (000) 000-00-00</a>
+        </div>
+        <p class="hero-note">Работа мастера — от 600 ₽. Выезд и диагностика бесплатны при заказе ремонта.</p>
+      </div>
+
+      <!-- ФОРМА 1 из 4. Ключевое отличие от городской: город выбирается в форме -->
+      <div class="lead-card" id="lead-form">
+        <h2>Оставить заявку</h2>
+        <p class="sub">Перезвоним в течение 15 минут и согласуем время выезда мастера.</p>
+        <form class="js-form" action="https://formspree.io/f/xxxxxxx" method="POST">
+          <input type="hidden" name="_next" value="https://example.ru/spasibo/">
+          <input type="hidden" name="_subject" value="Заявка: Ремонт холодильников / ХАБ / hero">
+          <input type="hidden" name="service" value="Ремонт холодильников">
+          <input type="hidden" name="form_place" value="hub-hero">
+          <input type="hidden" name="page" value="/remont-holodilnikov/">
+          <input type="hidden" name="utm" value="" class="js-utm">
+          <div class="hp" aria-hidden="true"><label>Не заполняйте<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
+
+          <div class="field">
+            <label for="lead-city">Город</label>
+            <select id="lead-city" name="city" required>
+              <option value="" selected disabled>Выберите город</option>
+              <option>Сургут</option>
+              <option>Нижневартовск</option>
+              <option>Нефтеюганск</option>
+              <option>Ханты-Мансийск</option>
+              <option value="Другой">Другой населённый пункт</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="lead-name">Имя</label>
+            <input type="text" id="lead-name" name="name" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="lead-phone">Телефон</label>
+            <input type="tel" id="lead-phone" name="phone" inputmode="tel" autocomplete="tel"
+                   placeholder="+7 (___) ___-__-__" pattern="[0-9+()\s\-]{10,20}" required>
+          </div>
+          <label class="consent">
+            <input type="checkbox" name="consent" value="yes" required>
+            <span>Согласен с <a href="/politika/" target="_blank" rel="noopener">политикой конфиденциальности</a> и на обработку персональных данных</span>
+          </label>
+          <button type="submit" class="btn btn-block">Отправить заявку</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================== ГОРОДА ===============================
+       ГЛАВНЫЙ БЛОК ХАБА. Стоит сразу под первым экраном, а не в подвале:
+       задача хаба — увести человека на страницу его города.
+       ЗАГЛУШКА: цифры «от N ₽» и «выезд за N ч» — под каждый город свои.
+  -->
+  <section class="section section--pt0" id="cities">
+    <div class="wrap">
+      <div class="cities">
+        <h2>Выберите город</h2>
+        <p class="section-lede">На странице города — цены, районы выезда и отзывы именно по нему.</p>
+        <div class="city-grid">
+          <a class="city-card" href="/remont-holodilnikov/surgut/">
+            <span class="name">Сургут</span>
+            <span class="meta">от 600 ₽ · выезд в день обращения</span>
+            <span class="go">Смотреть цены →</span>
+          </a>
+          <a class="city-card" href="/remont-holodilnikov/nizhnevartovsk/">
+            <span class="name">Нижневартовск</span>
+            <span class="meta">от 600 ₽ · выезд в день обращения</span>
+            <span class="go">Смотреть цены →</span>
+          </a>
+          <a class="city-card" href="/remont-holodilnikov/nefteyugansk/">
+            <span class="name">Нефтеюганск</span>
+            <span class="meta">от 600 ₽ · выезд в день обращения</span>
+            <span class="go">Смотреть цены →</span>
+          </a>
+          <a class="city-card" href="/remont-holodilnikov/hanty-mansiysk/">
+            <span class="name">Ханты-Мансийск</span>
+            <span class="meta">от 600 ₽ · выезд в день обращения</span>
+            <span class="go">Смотреть цены →</span>
+          </a>
+        </div>
+        <p class="cities-note">Вашего города нет в списке? Позвоните по номеру <a href="tel:+70000000000" data-goal="call">+7 (000) 000-00-00</a> — часто выезжаем и в прилегающие районы.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== СИМПТОМ → ПРИЧИНА → ЦЕНА ======================
+       Хаб-специфичный блок. Отвечает на бесгеошные запросы вида
+       «холодильник не морозит что делать», «сколько стоит заправить фреоном».
+       Каждая строка ведёт в блог — это и есть связка с симптомными статьями.
+       ЗАГЛУШКИ: URL статей.
+  -->
+  <section class="section" id="diagnostics">
+    <div class="wrap">
+      <h2>Симптом, причина и порядок цен</h2>
+      <p class="section-lede">Таблица не заменяет диагностику, но даёт понять, о каких суммах идёт речь, ещё до звонка мастеру.</p>
+      <div class="table-wrap">
+        <div class="table-scroll">
+          <table class="diag-table">
+            <thead>
+              <tr>
+                <th scope="col">Что происходит</th>
+                <th scope="col">Вероятная причина</th>
+                <th scope="col">Что делаем</th>
+                <th scope="col">Цена работы</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="sym"><a href="#">Не морозит совсем</a></td>
+                <td>Утечка фреона, реже — отказ компрессора</td>
+                <td>Находим течь, паяем, вакуумируем, заправляем</td>
+                <td class="price">от 2 500 ₽</td>
+              </tr>
+              <tr>
+                <td class="sym"><a href="#">Морозит слабо, мотор не выключается</a></td>
+                <td>Частичная утечка или загрязнённый конденсатор</td>
+                <td>Диагностика контура, чистка, дозаправка</td>
+                <td class="price">от 1 200 ₽</td>
+              </tr>
+              <tr>
+                <td class="sym"><a href="#">Вода под холодильника</a></td>
+                <td>Забился дренаж или порвалась трубка</td>
+                <td>Прочистка дренажной системы, замена трубки</td>
+                <td class="price">от 600 ₽</td>
+              </tr>
+              <tr>
+                <td class="sym"><a href="#">«Шуба» в морозилке</a></td>
+                <td>ТЭН оттайки, таймер или датчик No Frost</td>
+                <td>Проверка цепи оттайки, замена элемента</td>
+                <td class="price">от 1 500 ₽</td>
+              </tr>
+              <tr>
+                <td class="sym"><a href="#">Громкий гул или треск</a></td>
+                <td>Износ компрессора или вентилятора обдува</td>
+                <td>Замена вентилятора или мотор-компрессора</td>
+                <td class="price">от 1 500 ₽</td>
+              </tr>
+              <tr>
+                <td class="sym"><a href="#">Не включается, тёмный дисплей</a></td>
+                <td>Плата управления, пусковое реле, проводка</td>
+                <td>Прозвонка цепей, ремонт или замена платы</td>
+                <td class="price">от 2 500 ₽</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="price-note">Указана стоимость работы мастера без запчастей. Цены отличаются по городам — точный прайс смотрите на <a href="#cities">странице своего города</a>.</p>
+    </div>
+  </section>
+
+  <!-- ============================== ПОЛОМКИ ==============================
+       На хабе разбор глубже, чем на городских страницах: там 3 поломки,
+       здесь 6. Это и есть «энциклопедичность», за счёт которой хаб ранжируется
+       по информационным запросам без гео.
+       ЗАГЛУШКА: при желании добавьте ещё 2–4 поломки.
+  -->
+  <section class="section" id="faults">
+    <div class="wrap">
+      <h2>Разбор частых поломок холодильников</h2>
+      <p class="section-lede">Что именно ломается, как это проявляется, сколько занимает ремонт и какая на него гарантия.</p>
+
+      <div class="fault">
+        <h3>Утечка фреона</h3>
+        <p class="fault-desc">Самая частая причина обращения. Фреон — хладагент, без которого охлаждение невозможно. Протечки возникают в местах пайки трубок, на испарителе или из-за коррозии контура.</p>
+        <div class="fault-cols">
+          <div>
+            <h4>Признаки</h4>
+            <ul>
+              <li>Камера тёплая, морозилка работает слабо</li>
+              <li>Шипение после включения</li>
+              <li>Масляные пятна на трубках</li>
+              <li>Компрессор работает почти без пауз</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Как устраняем</h4>
+            <ul>
+              <li>Поиск течи детектором и опрессовкой</li>
+              <li>Пайка трубок аргоном</li>
+              <li>Замена фильтра-осушителя</li>
+              <li>Вакуумирование и заправка по весу</li>
+            </ul>
+          </div>
+        </div>
+        <div class="fault-meta">
+          <span>Срок: <strong>1–3 часа</strong></span>
+          <span>Работа: <strong>от 2 500 ₽</strong></span>
+          <span>Гарантия: <strong>12 месяцев</strong></span>
+        </div>
+      </div>
+
+      <div class="fault">
+        <h3>Отказ компрессора</h3>
+        <p class="fault-desc">Компрессор выходит из строя от перепадов напряжения, работы «на износ» при утечке фреона или естественного старения после 10–15 лет службы.</p>
+        <div class="fault-cols">
+          <div>
+            <h4>Признаки</h4>
+            <ul>
+              <li>Громкий гудящий звук, щелчки реле</li>
+              <li>Корпус греется, но мотор не запускается</li>
+              <li>Срабатывает защита через 10–20 секунд</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Как устраняем</h4>
+            <ul>
+              <li>Проверка обмоток и пускового реле</li>
+              <li>Установка нового мотор-компрессора</li>
+              <li>Замена фильтра-осушителя, заправка</li>
+              <li>Тестовый прогон 2 часа</li>
+            </ul>
+          </div>
+        </div>
+        <div class="fault-meta">
+          <span>Срок: <strong>2–3 часа</strong></span>
+          <span>Работа: <strong>от 4 000 ₽</strong></span>
+          <span>Гарантия: <strong>24 месяца</strong></span>
+        </div>
+      </div>
+
+      <div class="fault">
+        <h3>Неисправность системы No Frost</h3>
+        <p class="fault-desc">Вентилятор обдува, ТЭН оттайки, таймер и датчик — уязвимые места системы. При отказе одного элемента перестаёт работать весь цикл оттайки, и испаритель зарастает льдом.</p>
+        <div class="fault-cols">
+          <div>
+            <h4>Признаки</h4>
+            <ul>
+              <li>Снежная «шуба» в морозилке</li>
+              <li>Холодильная камера не охлаждается</li>
+              <li>Не слышно вентилятора</li>
+              <li>Запах гари — перегорел ТЭН</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Как устраняем</h4>
+            <ul>
+              <li>Разморозка и прозвонка цепи оттайки</li>
+              <li>Замена ТЭНа, таймера или датчика</li>
+              <li>Замена вентилятора обдува</li>
+              <li>Проверка в трёх режимах</li>
+            </ul>
+          </div>
+        </div>
+        <div class="fault-meta">
+          <span>Срок: <strong>2 часа</strong></span>
+          <span>Работа: <strong>от 1 500 ₽</strong></span>
+          <span>Гарантия: <strong>12 месяцев</strong></span>
+        </div>
+      </div>
+
+      <div class="fault">
+        <h3>Засор дренажной системы</h3>
+        <p class="fault-desc">Самая дешёвая и самая частая «страшная» поломка: лужа под холодильника обычно означает не пробитый контур, а забитое дренажное отверстие.</p>
+        <div class="fault-cols">
+          <div>
+            <h4>Признаки</h4>
+            <ul>
+              <li>Вода под нижним ящиком или на полу</li>
+              <li>Лёд у задней стенки холодильной камеры</li>
+              <li>Неприятный запах из камеры</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Как устраняем</h4>
+            <ul>
+              <li>Прочистка дренажного отверстия и трубки</li>
+              <li>Промывка испарительной ванночки</li>
+              <li>Замена трубки при повреждении</li>
+            </ul>
+          </div>
+        </div>
+        <div class="fault-meta">
+          <span>Срок: <strong>40–60 минут</strong></span>
+          <span>Работа: <strong>от 600 ₽</strong></span>
+          <span>Гарантия: <strong>6 месяцев</strong></span>
+        </div>
+      </div>
+
+      <div class="fault">
+        <h3>Отказ термостата или датчика температуры</h3>
+        <p class="fault-desc">В механических моделях ломается термостат, в электронных — датчик NTC. Результат одинаковый: техника либо морозит без остановки, либо не включается вовсе.</p>
+        <div class="fault-cols">
+          <div>
+            <h4>Признаки</h4>
+            <ul>
+              <li>Продукты подмерзают на средних настройках</li>
+              <li>Компрессор не запускается совсем</li>
+              <li>Показания на дисплее не меняются</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Как устраняем</h4>
+            <ul>
+              <li>Замер сопротивления датчика</li>
+              <li>Замена термостата или NTC-датчика</li>
+              <li>Калибровка и контрольный замер температуры</li>
+            </ul>
+          </div>
+        </div>
+        <div class="fault-meta">
+          <span>Срок: <strong>1 час</strong></span>
+          <span>Работа: <strong>от 1 200 ₽</strong></span>
+          <span>Гарантия: <strong>12 месяцев</strong></span>
+        </div>
+      </div>
+
+      <div class="fault">
+        <h3>Выход из строя платы управления</h3>
+        <p class="fault-desc">Электроника страдает от скачков напряжения — в частном секторе и старых домах это основная причина. Часто чинится на уровне компонентов, без замены платы целиком.</p>
+        <div class="fault-cols">
+          <div>
+            <h4>Признаки</h4>
+            <ul>
+              <li>Хаотичные ошибки на дисплее</li>
+              <li>Техника произвольно перезапускается</li>
+              <li>Не реагирует на кнопки</li>
+            </ul>
+          </div>
+          <div>
+            <h4>Как устраняем</h4>
+            <ul>
+              <li>Диагностика цепей питания</li>
+              <li>Замена реле, конденсаторов, симисторов</li>
+              <li>Замена платы, если ремонт нецелесообразен</li>
+            </ul>
+          </div>
+        </div>
+        <div class="fault-meta">
+          <span>Срок: <strong>от 1 часа</strong></span>
+          <span>Работа: <strong>от 2 500 ₽</strong></span>
+          <span>Гарантия: <strong>12 месяцев</strong></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ФОРМА 2 из 4 -->
+  <section class="section section--pt0">
+    <div class="wrap">
+      <div class="cta-strip">
+        <div>
+          <h2>Не нашли свою поломку?</h2>
+          <p>Опишите симптом — мастер определит вероятную причину по телефону и назовёт порядок цен.</p>
+        </div>
+        <form class="js-form" action="https://formspree.io/f/xxxxxxx" method="POST">
+          <input type="hidden" name="_next" value="https://example.ru/spasibo/">
+          <input type="hidden" name="_subject" value="Заявка: Ремонт холодильников / ХАБ / консультация">
+          <input type="hidden" name="service" value="Ремонт холодильников">
+          <input type="hidden" name="form_place" value="hub-consult">
+          <input type="hidden" name="page" value="/remont-holodilnikov/">
+          <input type="hidden" name="utm" value="" class="js-utm">
+          <div class="hp" aria-hidden="true"><label>Не заполняйте<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
+          <label class="visually-hidden" for="consult-city">Город</label>
+          <select id="consult-city" name="city" required>
+            <option value="" selected disabled>Город</option>
+            <option>Сургут</option>
+            <option>Нижневартовск</option>
+            <option>Нефтеюганск</option>
+            <option>Ханты-Мансийск</option>
+            <option value="Другой">Другой</option>
+          </select>
+          <label class="visually-hidden" for="consult-phone">Ваш телефон</label>
+          <input type="tel" id="consult-phone" name="phone" inputmode="tel" autocomplete="tel"
+                 placeholder="Ваш телефон" pattern="[0-9+()\s\-]{10,20}" required>
+          <button type="submit" class="btn">Получить консультацию</button>
+          <label class="consent">
+            <input type="checkbox" name="consent" value="yes" required>
+            <span>Согласен на обработку персональных данных, <a href="/politika/" target="_blank" rel="noopener">политика конфиденциальности</a></span>
+          </label>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== РЕМОНТ ИЛИ ЗАМЕНА ========================
+       Хаб-специфичный экспертный блок. Закрывает запрос «стоит ли чинить
+       холодильник» и заметно повышает доверие: вы честно говорите, когда
+       чинить не надо.
+  -->
+  <section class="section" id="repair-or-replace">
+    <div class="wrap">
+      <h2>Чинить или менять</h2>
+      <p class="section-lede">Универсальный ориентир: если ремонт с запчастями дороже 40–50% стоимости аналогичной новой модели — выгоднее покупать новую. Мастер скажет об этом прямо, даже если это значит, что заказа не будет.</p>
+      <div class="decide">
+        <div class="decide-card ok">
+          <span class="tag">Однозначно чинить</span>
+          <h3>Технике до 10 лет</h3>
+          <p>Дренаж, термостат, датчик, вентилятор, уплотнитель, пусковое реле. Ремонт обходится в 5–15% цены новой техники и продлевает срок службы на годы.</p>
+        </div>
+        <div class="decide-card mid">
+          <span class="tag">Считать</span>
+          <h3>Технике 10–15 лет</h3>
+          <p>Компрессор или плата управления. Здесь важна модель: у надёжной европейской техники ремонт оправдан, у бюджетной — на грани. Мастер посчитает вместе с вами.</p>
+        </div>
+        <div class="decide-card no">
+          <span class="tag">Скорее менять</span>
+          <h3>Технике больше 15 лет</h3>
+          <p>Повреждён испаритель в корпусе, проржавел контур, нет запчастей на снятую с производства модель. Такой ремонт не даёт предсказуемого результата — мы за него не беремся.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================== ГАРАНТИЯ ===========================
+       Хаб-специфичный блок. Честно перечисляем, что в гарантию НЕ входит —
+       это снимает конфликты и хорошо читается людьми и алгоритмами.
+  -->
+  <section class="section" id="warranty">
+    <div class="wrap">
+      <h2>Что входит в гарантию</h2>
+      <p class="section-lede">Срок — от 6 до 24 месяцев в зависимости от работ, указывается в квитанции.</p>
+      <div class="warranty">
+        <div class="yes">
+          <h3>Гарантия действует</h3>
+          <ul>
+            <li>На выполненную работу мастера</li>
+            <li>На установленную нами запчасть</li>
+            <li>На повторное проявление той же неисправности</li>
+            <li>На повторный выезд — бесплатно</li>
+          </ul>
+        </div>
+        <div class="no">
+          <h3>Гарантия не действует</h3>
+          <ul>
+            <li>На новые, не связанные с ремонтом поломки</li>
+            <li>При механическом повреждении после ремонта</li>
+            <li>При вмешательстве другого мастера</li>
+            <li>На запчасть, которую предоставил клиент</li>
+          </ul>
+        </div>
+        <p class="warranty-note">Квитанция с перечнем работ, ценой и сроком гарантии остаётся у вас. По ней же обращаетесь, если что-то пошло не так — достаточно позвонить по <a href="tel:+70000000000" data-goal="call">+7 (000) 000-00-00</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================== ПРОЦЕСС =============================== -->
+  <section class="section">
+    <div class="wrap">
+      <h2>Как проходит ремонт</h2>
+      <p class="section-lede">Одинаково во всех городах — отличается только время доезда.</p>
+      <div class="process">
+        <div class="process-step">
+          <h3>Заявка</h3>
+          <p>Звоните или оставляете заявку с сайта. Уточняем город, симптом и модель техники.</p>
+        </div>
+        <div class="process-step">
+          <h3>Выезд мастера</h3>
+          <p>Согласуем интервал и приезжаем с инструментом и ходовыми запчастями.</p>
+        </div>
+        <div class="process-step">
+          <h3>Диагностика и цена</h3>
+          <p>Находим причину, называем точную сумму. Не устроила — платите только за выезд.</p>
+        </div>
+        <div class="process-step">
+          <h3>Ремонт и квитанция</h3>
+          <p>Чиним в этот же визит, проверяем работу и оставляем документ с гарантией.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ ПРЕИМУЩЕСТВА ============================ -->
+  <section class="section">
+    <div class="wrap">
+      <h2>Почему обращаются к нам</h2>
+      <div class="trust-grid">
+        <div class="trust-point">
+          <h3>Мастер, а не диспетчер</h3>
+          <p>Вы говорите сразу с тем, кто приедет. Без call-центра и передачи заявки подрядчику.</p>
+        </div>
+        <div class="trust-point">
+          <h3>Запчасти с собой</h3>
+          <p>Мастер возит ходовые компрессоры, термостаты, ТЭНы и датчики — редко приходится ждать заказ.</p>
+        </div>
+        <div class="trust-point">
+          <h3>Ремонт без демонтажа</h3>
+          <p>Работаем у вас дома. Технику не нужно везти в сервис и оставлять там на неделю.</p>
+        </div>
+        <div class="trust-point">
+          <h3>Квитанция и гарантийный талон</h3>
+          <p>После ремонта остаётся документ с перечнем работ, ценой и сроком гарантии.</p>
+        </div>
+        <div class="trust-point">
+          <h3>9 лет и встраиваемая техника</h3>
+          <p>С 2017 года. Работаем в том числе со встройкой и электронным управлением.</p>
+        </div>
+        <div class="trust-point">
+          <h3>Скажем, если чинить не стоит</h3>
+          <p>Если ремонт дороже новой техники — назовём это прямо, а не «накрутим» смету.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================ БРЕНДЫ ================================ -->
+  <section class="section">
+    <div class="wrap">
+      <h2>С какими марками работаем</h2>
+      <p class="section-lede">Список открытый: если вашей марки нет в перечне — позвоните, скорее всего берёмся.</p>
+      <div class="brands-row">
+        <span>Samsung</span><span>LG</span><span>Bosch</span><span>Indesit</span>
+        <span>Atlant</span><span>Stinol</span><span>Beko</span><span>Haier</span>
+      </div>
+      <div class="brands-row" id="brands-extra" hidden style="margin-top:14px;">
+        <span>Electrolux</span><span>Liebherr</span><span>Gorenje</span><span>Whirlpool</span>
+        <span>Sharp</span><span>Siemens</span><span>Candy</span><span>Hotpoint-Ariston</span>
+        <span>Vestfrost</span><span>Zanussi</span><span>Biryusa</span><span>Pozis</span>
+        <span>Nord</span><span>Snaige</span><span>Hisense</span><span>Midea</span>
+      </div>
+      <button type="button" class="toggle-btn" data-toggle="brands-extra"
+              data-label-open="Скрыть марки" aria-expanded="false" aria-controls="brands-extra">Показать все марки</button>
+    </div>
+  </section>
+
+  <!-- ================================ ПРОМО ================================ -->
+  <section class="section section--pb0">
+    <div class="wrap">
+      <div class="promo">
+        <div>
+          <h2>Скидка 10% при заявке с сайта</h2>
+          <p>Оставьте заявку через форму или закажите обратный звонок — скидка применяется к стоимости работ.</p>
+          <!-- ЗАГЛУШКА: условия обязательны -->
+          <p class="promo-terms">Скидка распространяется на стоимость работ и не суммируется с другими предложениями. Действует до 31.12.2026 во всех городах. Подробности по телефону.</p>
+        </div>
+        <a href="#lead-form" class="btn btn-lg">Оставить заявку</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================ ПРАЙС ================================
+       ВАЖНО: на хабе прайс ОРИЕНТИРОВОЧНЫЙ, с явной отсылкой к городам.
+       Если продублировать сюда точный городской прайс — страницы станут дублями.
+  -->
+  <section class="section" id="prices">
+    <div class="wrap">
+      <h2>Сколько стоит ремонта холодильников</h2>
+      <p class="section-lede">Ориентировочные цены на работу мастера. Запчасти оплачиваются отдельно и согласовываются до установки. В каждом городе цены немного отличаются — точный прайс на странице города.</p>
+
+      <div class="table-wrap">
+        <div class="table-scroll">
+          <table class="price-table">
+            <caption class="visually-hidden">Ориентировочные цены на ремонта холодильников</caption>
+            <thead>
+              <tr><th scope="col">Вид работ</th><th scope="col">Цена работы</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Выезд и диагностика при заказе ремонта</td><td>бесплатно</td></tr>
+              <tr><td>Выезд с диагностикой при отказе от ремонта</td><td>от 500 ₽</td></tr>
+              <tr><td>Заправка фреоном</td><td>от 2 500 ₽</td></tr>
+              <tr><td>Замена компрессора</td><td>от 4 000 ₽</td></tr>
+              <tr><td>Устранение течи</td><td>от 1 500 ₽</td></tr>
+              <tr><td>Ремонт системы No Frost</td><td>от 1 500 ₽</td></tr>
+              <tr><td>Замена термостата или датчика</td><td>от 1 200 ₽</td></tr>
+            </tbody>
+            <tbody id="price-extra" hidden>
+              <tr><td>Чистка конденсатора</td><td>от 1 200 ₽</td></tr>
+              <tr><td>Прочистка дренажа, замена трубки</td><td>от 600 ₽</td></tr>
+              <tr><td>Замена уплотнительной резинки</td><td>от 1 400 ₽</td></tr>
+              <tr><td>Ремонт платы управления</td><td>от 2 500 ₽</td></tr>
+              <tr><td>Перенавес дверей</td><td>от 1 800 ₽</td></tr>
+              <tr><td>Демонтаж/монтаж встроенного холодильника</td><td>от 2 000 ₽</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="price-more-wrap">
+          <button type="button" class="toggle-btn" data-toggle="price-extra"
+                  data-label-open="Свернуть прайс" aria-expanded="false" aria-controls="price-extra">Показать полный прайс-лист</button>
+        </div>
+      </div>
+
+      <p class="price-note">Точную сумму мастер называет после диагностики, <strong>до начала работ</strong>. Если она вас не устраивает — платите только за выезд и ничего больше. Цены и условия выезда по городам: <a href="/remont-holodilnikov/surgut/">Сургут</a>, <a href="/remont-holodilnikov/nizhnevartovsk/">Нижневартовск</a>, <a href="/remont-holodilnikov/nefteyugansk/">Нефтеюганск</a>, <a href="/remont-holodilnikov/hanty-mansiysk/">Ханты-Мансийск</a>.</p>
+    </div>
+  </section>
+
+  <!-- =============================== ОТЗЫВЫ ===============================
+       Отличие от городской страницы: отзывы СМЕШАННЫЕ по городам, и у каждого
+       подписан город со ссылкой на его страницу — ещё один канал перелинковки.
+       ЗАГЛУШКА: заменить на реальные отзывы.
+  -->
+  <section class="section" id="reviews">
+    <div class="wrap">
+      <h2>Отзывы клиентов</h2>
+      <p class="section-lede">4.9 из 5 на основе 134 отзывов из всех городов, где мы работаем.</p>
+      <div class="review-grid">
+        <div class="review-card">
+          <div class="review-head"><span class="review-name">Юрий К.</span><span class="review-date">02.09.2026</span></div>
+          <div class="review-stars" role="img" aria-label="5 из 5">★★★★★</div>
+          <span class="review-tag">Утечка фреона</span>
+          <p class="review-text">Заявку оставил утром, мастер приехал в тот же день. Нашёл утечку, запаял, заправил. Морозит как новый.</p>
+          <span class="review-city"><a href="/remont-holodilnikov/surgut/">Сургут</a></span>
+        </div>
+        <div class="review-card">
+          <div class="review-head"><span class="review-name">Валерия Л.</span><span class="review-date">27.08.2026</span></div>
+          <div class="review-stars" role="img" aria-label="5 из 5">★★★★★</div>
+          <span class="review-tag">Компрессор</span>
+          <p class="review-text">Думала, технике конец — оказалось, компрессор. Заменили за пару часов, цену назвали сразу и не меняли.</p>
+          <span class="review-city"><a href="/remont-holodilnikov/nizhnevartovsk/">Нижневартовск</a></span>
+        </div>
+        <div class="review-card">
+          <div class="review-head"><span class="review-name">Денис Ш.</span><span class="review-date">19.08.2026</span></div>
+          <div class="review-stars" role="img" aria-label="4 из 5">★★★★☆</div>
+          <span class="review-tag">Термостат</span>
+          <p class="review-text">LG перестал морозить, оказался термостат. Поменяли за час. Снял звезду за то, что приехали позже оговорённого.</p>
+          <span class="review-city"><a href="/remont-holodilnikov/nefteyugansk/">Нефтеюганск</a></span>
+        </div>
+        <div class="review-card">
+          <div class="review-head"><span class="review-name">Алевтина С.</span><span class="review-date">11.08.2026</span></div>
+          <div class="review-stars" role="img" aria-label="5 из 5">★★★★★</div>
+          <span class="review-tag">Дренаж</span>
+          <p class="review-text">Вода под холодильника — забился дренаж. Почистили быстро, показали, как самой промывать раз в полгода.</p>
+          <span class="review-city"><a href="/remont-holodilnikov/hanty-mansiysk/">Ханты-Мансийск</a></span>
+        </div>
+        <div class="review-card">
+          <div class="review-head"><span class="review-name">Владимир А.</span><span class="review-date">30.07.2026</span></div>
+          <div class="review-stars" role="img" aria-label="5 из 5">★★★★★</div>
+          <span class="review-tag">Электроника</span>
+          <p class="review-text">Samsung то работал, то нет. Поменяли плату, дали талон на год. Через месяц всё в порядке.</p>
+          <span class="review-city"><a href="/remont-holodilnikov/surgut/">Сургут</a></span>
+        </div>
+        <div class="review-card">
+          <div class="review-head"><span class="review-name">Галина Ф.</span><span class="review-date">21.07.2026</span></div>
+          <div class="review-stars" role="img" aria-label="5 из 5">★★★★★</div>
+          <span class="review-tag">Честная оценка</span>
+          <p class="review-text">Мастер посмотрел и честно сказал, что чинить невыгодно, проще купить новый. Заплатила только за выезд. Уважаю такой подход.</p>
+          <span class="review-city"><a href="/remont-holodilnikov/nizhnevartovsk/">Нижневартовск</a></span>
+        </div>
+      </div>
+      <!-- ЗАГЛУШКА: ссылка на независимую площадку -->
+      <p class="reviews-source"><a href="#" rel="nofollow noopener" target="_blank">Все отзывы на Яндекс.Картах →</a></p>
+    </div>
+  </section>
+
+  <!-- ФОРМА 3 из 4 -->
+  <section class="section section--pt0">
+    <div class="wrap">
+      <div class="cta-strip">
+        <div>
+          <h2>Вызвать мастера</h2>
+          <p>Работаем с 9:00 до 21:00 без выходных во всех 4 городах. Согласуем выезд за один звонок.</p>
+        </div>
+        <form class="js-form" action="https://formspree.io/f/xxxxxxx" method="POST">
+          <input type="hidden" name="_next" value="https://example.ru/spasibo/">
+          <input type="hidden" name="_subject" value="Заявка: Ремонт холодильников / ХАБ / вызов мастера">
+          <input type="hidden" name="service" value="Ремонт холодильников">
+          <input type="hidden" name="form_place" value="hub-master">
+          <input type="hidden" name="page" value="/remont-holodilnikov/">
+          <input type="hidden" name="utm" value="" class="js-utm">
+          <div class="hp" aria-hidden="true"><label>Не заполняйте<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
+          <label class="visually-hidden" for="master-city">Город</label>
+          <select id="master-city" name="city" required>
+            <option value="" selected disabled>Город</option>
+            <option>Сургут</option>
+            <option>Нижневартовск</option>
+            <option>Нефтеюганск</option>
+            <option>Ханты-Мансийск</option>
+            <option value="Другой">Другой</option>
+          </select>
+          <label class="visually-hidden" for="master-phone">Ваш телефон</label>
+          <input type="tel" id="master-phone" name="phone" inputmode="tel" autocomplete="tel"
+                 placeholder="Ваш телефон" pattern="[0-9+()\s\-]{10,20}" required>
+          <button type="submit" class="btn">Вызвать мастера</button>
+          <label class="consent">
+            <input type="checkbox" name="consent" value="yes" required>
+            <span>Согласен на обработку персональных данных, <a href="/politika/" target="_blank" rel="noopener">политика конфиденциальности</a></span>
+          </label>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== ПЕРЕЛИНКОВКА: ДРУГИЕ ХАБЫ ======================
+       Хаб ↔ хаб. Городских ссылок здесь нет — они уже есть в блоке #cities.
+  -->
+  <section class="section">
+    <div class="wrap">
+      <h2>Другие услуги</h2>
+      <div class="link-cards">
+        <a class="link-card" href="/remont-stiralnyh-mashin/">
+          <strong>Ремонт стиральных машин</strong>
+          <span>Не сливает, не отжимает, течёт, шумит при отжиме</span>
+        </a>
+        <a class="link-card" href="/kompyuternaya-pomosch/">
+          <strong>Компьютерная помощь</strong>
+          <span>Не включается, тормозит, переустановка системы, чистка</span>
+        </a>
+        <a class="link-card" href="/">
+          <strong>Все услуги и города</strong>
+          <span>Полный список того, с чем мы работаем</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================================ СТАТЬИ ================================
+       На хабе статей больше, чем на городской (там 3): хаб собирает
+       информационный трафик. Только по теме этой услуги.
+       ЗАГЛУШКИ: URL и даты.
+  -->
+  <section class="section section--pt0" id="articles">
+    <div class="wrap">
+      <h2>Статьи и советы мастера</h2>
+      <p class="section-lede">Разбираем поломки холодильников и рассказываем, что можно проверить самому до вызова мастера.</p>
+      <div class="article-grid">
+        <a href="#" class="article-card">
+          <span class="article-date">ЗАГЛУШКА: дата</span>
+          <h3>холодильник не морозит: 6 причин</h3>
+          <p>От банально приоткрытой двери до утечки фреона — разбираем по порядку.</p>
+          <span class="article-more">Читать</span>
+        </a>
+        <a href="#" class="article-card">
+          <span class="article-date">ЗАГЛУШКА: дата</span>
+          <h3>холодильник шумит: когда это норма</h3>
+          <p>Какие звуки штатные, а какие говорят о поломке компрессора или вентилятора.</p>
+          <span class="article-more">Читать</span>
+        </a>
+        <a href="#" class="article-card">
+          <span class="article-date">ЗАГЛУШКА: дата</span>
+          <h3>Наледь и «шуба» в морозилке</h3>
+          <p>Почему намерзает лёд в No Frost и что с этим делать до приезда мастера.</p>
+          <span class="article-more">Читать</span>
+        </a>
+        <a href="#" class="article-card">
+          <span class="article-date">ЗАГЛУШКА: дата</span>
+          <h3>Вода под холодильника: что проверить</h3>
+          <p>Три места, где чаще всего забивается дренаж, и как промыть его самому.</p>
+          <span class="article-more">Читать</span>
+        </a>
+        <a href="#" class="article-card">
+          <span class="article-date">ЗАГЛУШКА: дата</span>
+          <h3>Сколько служит холодильник</h3>
+          <p>Реальные сроки по типам компрессоров и что сокращает их вдвое.</p>
+          <span class="article-more">Читать</span>
+        </a>
+        <a href="#" class="article-card">
+          <span class="article-date">ЗАГЛУШКА: дата</span>
+          <h3>Как перевозить холодильник</h3>
+          <p>Почему нельзя включать сразу после перевозки и сколько ждать на самом деле.</p>
+          <span class="article-more">Читать</span>
+        </a>
+      </div>
+      <p class="articles-all"><a href="/blog/">Все статьи и советы →</a></p>
+    </div>
+  </section>
+
+  <!-- ================================= FAQ =================================
+       Отличие от городской страницы: здесь НЕТ городских вопросов
+       («выезжаете в Белый Яр?»). Только общие по услуге.
+       Тексты продублированы в JSON-LD FAQPage — правьте вместе.
+  -->
+  <section class="section" id="faq">
+    <div class="wrap">
+      <h2>Частые вопросы</h2>
+      <div>
+        <details class="faq-item">
+          <summary>Сколько стоит ремонт холодильника?</summary>
+          <p>Работа мастера — от 600 ₽ за простую замену детали до 4 000 ₽ и выше за замену компрессора. Запчасти оплачиваются отдельно. Точную сумму мастер называет после диагностики, до начала работ. Цены по конкретному городу смотрите на странице этого города.</p>
+        </details>
+        <details class="faq-item">
+          <summary>В каких городах вы работаете?</summary>
+          <p>Ремонт холодильников выполняем в 4 городах ХМАО: Сургут, Нижневартовск, Нефтеюганск, Ханты-Мансийск. Также выезжаем в прилегающие районы — уточняйте при оформлении заявки.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Что входит в гарантию на ремонт?</summary>
+          <p>Гарантия от 6 до 24 месяцев распространяется на выполненную работу и установленную нами запчасть. Если в течение срока та же неисправность повторилась — приезжаем и устраняем бесплатно. Срок фиксируется в квитанции.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Когда ремонт дешевле замены техники?</summary>
+          <p>Ориентир простой: если стоимость ремонта с запчастями превышает 40–50% цены аналогичной новой модели, выгоднее покупать новую. Мастер честно скажет, если чинить нет смысла — за такую консультацию вы платите только стоимость выезда.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Нужно ли везти технику в сервис?</summary>
+          <p>Нет. Более 90% неисправностей устраняются на дому — мастер приезжает с инструментом и ходовыми запчастями. В сервис технику забирают только при сложном ремонте платы управления, и это согласовывается отдельно.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Работаете с юридическими лицами?</summary>
+          <p>Да, обслуживаем кафе, магазины и офисы: работаем по договору и безналичному расчёту, выдаём закрывающие документы. ЗАГЛУШКА: укажите, есть ли обслуживание по абонементу.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================== КОНТАКТЫ =============================== -->
+  <section class="section" id="contacts">
+    <div class="wrap">
+      <h2>Контакты</h2>
+      <p class="section-lede">Принимаем заявки с 9:00 до 21:00 без выходных. Один номер для всех городов.</p>
+      <div class="contacts-grid">
+        <div class="contact-item">
+          <h3>Телефон</h3>
+          <p class="value"><a href="tel:+70000000000" data-goal="call">+7 (000) 000-00-00</a></p>
+          <p class="note">Звоните или напишите в мессенджер</p>
+        </div>
+        <div class="contact-item">
+          <h3>Почта</h3>
+          <p class="value"><a href="mailto:info@example.ru">info@example.ru</a></p>
+          <p class="note">Отвечаем в течение рабочего дня</p>
+        </div>
+        <div class="contact-item">
+          <h3>География работы</h3>
+          <p class="value">4 города ХМАО</p>
+          <p class="note"><a href="#cities">Выбрать свой город →</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============================= ФИНАЛЬНАЯ CTA =============================
+     На хабе финальный призыв ведёт к выбору города, а не «вызвать сегодня»:
+     мы ещё не знаем, откуда человек.
+-->
+<div class="cta-band">
+  <div class="wrap">
+    <div>
+      <h2>Нужен мастер?</h2>
+      <p>Выберите город — увидите цены, районы выезда и сможете оставить заявку.</p>
+    </div>
+    <div class="actions">
+      <a href="#cities" class="btn btn-lg">Выбрать город</a>
+      <a href="tel:+70000000000" class="btn btn-lg btn-ghost" data-goal="call">+7 (000) 000-00-00</a>
+    </div>
+  </div>
+</div>
+
+<!-- ================================= ПОДВАЛ =================================
+     Матрица одинакова на всех страницах сайта.
+     ВНИМАНИЕ: у стиральных машин Нягань вместо Ханты-Мансийска.
+-->
+<footer>
+  <div class="wrap">
+    <div class="footer-cols">
+      <div>
+        <h3><a href="/remont-holodilnikov/">Ремонт холодильников</a></h3>
+        <ul>
+          <li><a href="/remont-holodilnikov/surgut/">Сургут</a></li>
+          <li><a href="/remont-holodilnikov/nizhnevartovsk/">Нижневартовск</a></li>
+          <li><a href="/remont-holodilnikov/nefteyugansk/">Нефтеюганск</a></li>
+          <li><a href="/remont-holodilnikov/hanty-mansiysk/">Ханты-Мансийск</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3><a href="/remont-stiralnyh-mashin/">Ремонт стиральных машин</a></h3>
+        <ul>
+          <li><a href="/remont-stiralnyh-mashin/surgut/">Сургут</a></li>
+          <li><a href="/remont-stiralnyh-mashin/nizhnevartovsk/">Нижневартовск</a></li>
+          <li><a href="/remont-stiralnyh-mashin/nefteyugansk/">Нефтеюганск</a></li>
+          <li><a href="/remont-stiralnyh-mashin/nyagan/">Нягань</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3><a href="/kompyuternaya-pomosch/">Компьютерная помощь</a></h3>
+        <ul>
+          <li><a href="/kompyuternaya-pomosch/surgut/">Сургут</a></li>
+          <li><a href="/kompyuternaya-pomosch/nizhnevartovsk/">Нижневартовск</a></li>
+          <li><a href="/kompyuternaya-pomosch/nefteyugansk/">Нефтеюганск</a></li>
+          <li><a href="/kompyuternaya-pomosch/hanty-mansiysk/">Ханты-Мансийск</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Компания</h3>
+        <ul>
+          <li><a href="/blog/">Блог</a></li>
+          <li><a href="#contacts">Контакты</a></li>
+          <li><a href="/politika/">Политика конфиденциальности</a></li>
+          <li><a href="tel:+70000000000" data-goal="call">+7 (000) 000-00-00</a></li>
+          <li><a href="mailto:info@example.ru">info@example.ru</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-legal">
+      <!-- ЗАГЛУШКА: реквизиты обязательны -->
+      <span class="req">© 2026 РемонтДом. ИП Иванов Иван Иванович, ИНН 860000000000, ОГРНИП 300000000000000. Информация на сайте не является публичной офертой.</span>
+      <span><a href="/politika/">Политика конфиденциальности</a></span>
+    </div>
+  </div>
+</footer>
+
+<!-- ========================= МОБИЛЬНАЯ ПАНЕЛЬ =========================
+     На хабе вторая кнопка ведёт к выбору города, а не к форме.
+-->
+<div class="mobile-callbar">
+  <a href="tel:+70000000000" class="btn btn-outline" data-goal="call">Позвонить</a>
+  <a href="#cities" class="btn">Выбрать город</a>
+</div>
+
+<!-- ФОРМА 4 из 4 — модалка -->
+<dialog id="callback-modal" aria-labelledby="callback-title">
+  <div class="modal-inner">
+    <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+    <h2 id="callback-title">Закажите обратный звонок</h2>
+    <p class="sub">Перезвоним в течение 15 минут, с 9:00 до 21:00.</p>
+    <form class="js-form" action="https://formspree.io/f/xxxxxxx" method="POST">
+      <input type="hidden" name="_next" value="https://example.ru/spasibo/">
+      <input type="hidden" name="_subject" value="Заявка: Ремонт холодильников / ХАБ / обратный звонок">
+      <input type="hidden" name="service" value="Ремонт холодильников">
+      <input type="hidden" name="form_place" value="hub-callback-modal">
+      <input type="hidden" name="page" value="/remont-holodilnikov/">
+      <input type="hidden" name="utm" value="" class="js-utm">
+      <div class="hp" aria-hidden="true"><label>Не заполняйте<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
+      <div class="field">
+        <label for="cb-city">Город</label>
+        <select id="cb-city" name="city" required>
+          <option value="" selected disabled>Выберите город</option>
+          <option>Сургут</option>
+          <option>Нижневартовск</option>
+          <option>Нефтеюганск</option>
+          <option>Ханты-Мансийск</option>
+          <option value="Другой">Другой населённый пункт</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="cb-phone">Телефон</label>
+        <input type="tel" id="cb-phone" name="phone" inputmode="tel" autocomplete="tel"
+               placeholder="+7 (___) ___-__-__" pattern="[0-9+()\s\-]{10,20}" required>
+      </div>
+      <label class="consent">
+        <input type="checkbox" name="consent" value="yes" required>
+        <span>Согласен с <a href="/politika/" target="_blank" rel="noopener">политикой конфиденциальности</a> и на обработку персональных данных</span>
+      </label>
+      <button type="submit" class="btn btn-block">Жду звонка</button>
+    </form>
+  </div>
+</dialog>
+
+<script>
+/* Скрипт идентичен городскому шаблону — при правке меняйте оба файла
+   (или вынесите в /assets/app.js и подключите <script src> в обоих). */
+(function () {
+  'use strict';
+
+  /* ---------- Выпадающие меню: закрытие по клику вне и по Esc ---------- */
+  var dropdowns = document.querySelectorAll('details.js-dd');
+  function closeDropdowns(except) {
+    dropdowns.forEach(function (d) { if (d !== except) { d.open = false; } });
+  }
+  dropdowns.forEach(function (d) {
+    d.addEventListener('toggle', function () { if (d.open) { closeDropdowns(d); } });
+  });
+  document.addEventListener('click', function (e) {
+    dropdowns.forEach(function (d) { if (d.open && !d.contains(e.target)) { d.open = false; } });
+  });
+
+  /* ---------- Бургер ---------- */
+  var burger = document.getElementById('burger');
+  var mnav = document.getElementById('mobile-nav');
+  function setNav(open) {
+    mnav.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    burger.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
+    burger.textContent = open ? '✕' : '☰';
+  }
+  if (burger && mnav) {
+    burger.addEventListener('click', function () { setNav(!mnav.classList.contains('open')); });
+    mnav.addEventListener('click', function (e) { if (e.target.closest('a')) { setNav(false); } });
+  }
+
+  /* ---------- Esc закрывает всё ---------- */
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      closeDropdowns(null);
+      if (mnav && mnav.classList.contains('open')) { setNav(false); }
+    }
+  });
+
+  /* ---------- Кнопки «показать ещё» ---------- */
+  document.querySelectorAll('[data-toggle]').forEach(function (btn) {
+    var target = document.getElementById(btn.getAttribute('data-toggle'));
+    if (!target) { return; }
+    var closedLabel = btn.textContent;
+    var openLabel = btn.getAttribute('data-label-open') || 'Свернуть';
+    btn.addEventListener('click', function () {
+      var willOpen = target.hidden;
+      target.hidden = !willOpen;
+      btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+      btn.textContent = willOpen ? openLabel : closedLabel;
+    });
+  });
+
+  /* ---------- Модалка с фоллбэком ---------- */
+  var modal = document.getElementById('callback-modal');
+  document.querySelectorAll('[data-modal-open]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      if (modal && typeof modal.showModal === 'function') {
+        modal.showModal();
+      } else {
+        var form = document.getElementById('lead-form');
+        if (form) { form.scrollIntoView({ block: 'center' }); }
+        else { window.location.href = 'tel:+70000000000'; }
+      }
+    });
+  });
+  document.querySelectorAll('[data-modal-close]').forEach(function (btn) {
+    btn.addEventListener('click', function () { if (modal && modal.close) { modal.close(); } });
+  });
+  if (modal) {
+    modal.addEventListener('click', function (e) { if (e.target === modal) { modal.close(); } });
+  }
+
+  /* ---------- Перенос UTM в скрытое поле ---------- */
+  try {
+    var qs = window.location.search;
+    if (qs && qs.length > 1) {
+      document.querySelectorAll('.js-utm').forEach(function (i) { i.value = qs.slice(0, 500); });
+    }
+  } catch (err) { /* пусто */ }
+
+  /* ---------- Цели Яндекс.Метрики ----------
+     ЗАГЛУШКА: раскомментировать после установки счётчика.
+     На хабе стоит завести ещё одну цель — city_click: переход на страницу
+     города. Она показывает, работает ли хаб как распределитель трафика.
+  */
+  /*
+  document.querySelectorAll('[data-goal="call"]').forEach(function (a) {
+    a.addEventListener('click', function () { if (window.ym) { ym(00000000, 'reachGoal', 'call'); } });
+  });
+  document.querySelectorAll('.js-form').forEach(function (f) {
+    f.addEventListener('submit', function () { if (window.ym) { ym(00000000, 'reachGoal', 'form_send'); } });
+  });
+  document.querySelectorAll('.city-card').forEach(function (a) {
+    a.addEventListener('click', function () { if (window.ym) { ym(00000000, 'reachGoal', 'city_click'); } });
+  });
+  */
+})();
+</script>
+
+<!-- ЗАГЛУШКА: код счётчика Яндекс.Метрики -->
+
+</body>
+</html>
