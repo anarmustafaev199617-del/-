@@ -91,7 +91,22 @@ h1,h2,h3,h4{font-family:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Ar
 a{color:inherit;}
 img{max-width:100%;height:auto;display:block;}
 .wrap{max-width:1080px;margin:0 auto;padding:0 24px;width:100%;}
-.visually-hidden{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+
+/*
+  [hidden] в браузерном стиле — это display:none с САМЫМ НИЗКИМ приоритетом:
+  любое авторское правило, задающее display, его перебивает.
+
+  Мы на это наступили: у блока #brands-extra есть класс .brands-row
+  с display:flex, поэтому атрибут hidden его не скрывал. Все марки всегда были
+  на экране, а кнопка «Показать все марки» переключала атрибут вхолостую.
+  С <tbody id="price-extra"> такого не случилось только потому, что для tbody
+  display нигде не задан.
+
+  Это один из немногих оправданных случаев !important: правило обязано
+  выигрывать у любого display, заданного классом элемента. Иначе каждый новый
+  скрываемый блок придётся чинить отдельным правилом — как было с .post-card.
+*/
+[hidden]{display:none!important;}
 
 /* Доступность: видимый фокус на всём интерактивном */
 a:focus-visible,button:focus-visible,summary:focus-visible,
@@ -545,7 +560,7 @@ dialog#callback-modal::backdrop{background:rgba(20,20,18,0.55);}
 .post-card p{font-size:14.5px;color:var(--ink-soft);flex:1;}
 .post-card .meta{display:flex;gap:12px;align-items:center;margin-top:14px;font-size:12.5px;color:var(--ink-soft);}
 .post-card .more{font-size:14.5px;font-weight:600;color:var(--accent-text);margin-top:12px;}
-.post-card[hidden]{display:none;}
+/* .post-card[hidden] убрано — работает общее правило [hidden] выше */
 .empty{display:none;background:var(--panel);border:1px dashed var(--line);border-radius:12px; padding:36px;text-align:center;color:var(--ink-soft);font-size:15px;margin-top:22px;}
 .empty.show{display:block;}
 .need-master{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:30px 32px;margin-top:48px;}

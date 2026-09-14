@@ -35,8 +35,18 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Пути, которыми страницы ссылаются на ассеты: абсолютный в боевой сборке,
 # относительные — в ранее сделанных превью.
-LINK_RE = re.compile(r'[ \t]*<link rel="stylesheet" href="(?:/|\.\./|)assets/style\.css">\n?')
-SCRIPT_RE = re.compile(r'[ \t]*<script src="(?:/|\.\./|)assets/app\.js" defer></script>\n?')
+#
+# ⚠️ Регулярки привязаны к НАЧАЛУ СТРОКИ (?m)^ и это принципиально.
+# Внутри самого style.css в шапке написано «Подключается на всех страницах:
+# <link rel="stylesheet" href="/assets/style.css">». Без привязки к началу
+# строки повторный прогон по уже вшитому файлу находит это упоминание
+# в комментарии и вшивает стили ВТОРОЙ раз. Так и произошло: файлы примеров
+# распухли до 280 КБ с тройным CSS внутри.
+LINK_RE = re.compile(r'(?m)^[ \t]*<link rel="stylesheet" href="(?:/|\.\./|)assets/style\.css">\n?')
+SCRIPT_RE = re.compile(r'(?m)^[ \t]*<script src="(?:/|\.\./|)assets/app\.js" defer></script>\n?')
+
+# Признак того, что стили уже внутри файла
+ALREADY_INLINED = re.compile(r'<style>.*?\.wrap\{max-width:1080px', re.S)
 
 
 def read_asset(name):
@@ -48,6 +58,9 @@ def read_asset(name):
 
 def inline(page, css, js):
     """Убирает внешние подключения и вставляет их содержимое."""
+    if ALREADY_INLINED.search(page):
+        sys.exit('стили уже вшиты в этот файл — повторный прогон продублирует их.\n'
+                 'Пересоберите страницу из шаблона и прогоните preview.py один раз.')
     if not LINK_RE.search(page):
         sys.exit('в файле нет подключения assets/style.css — нечего вшивать')
 
