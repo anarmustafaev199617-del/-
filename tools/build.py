@@ -87,6 +87,89 @@ def stars(n):
 # Генераторы блоков. Каждый возвращает HTML для одного BUILD-региона.
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# Фотографии
+# ---------------------------------------------------------------------------
+
+CAMERA_SVG = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" '
+              'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+              '<path d="M3 8.5h3.2l1.4-2h8.8l1.4 2H21v10H3z"/>'
+              '<circle cx="12" cy="13" r="3.4"/></svg>')
+
+
+def shot(item, w, h, eager=False, cls=''):
+    """
+    Возвращает <figure> с фотографией, а пока её нет — пунктирную заглушку
+    с описанием нужного кадра.
+
+    Заглушка это не забытая вёрстка, а техзадание на съёмку: открыл страницу —
+    видно, что снимать и в каком блоке это окажется.
+
+    width и height проставляются всегда: без них браузер не знает высоту
+    до загрузки, страница дёргается при подгрузке (метрика CLS), и человек
+    промахивается мимо кнопки.
+    """
+    item = item or {}
+    img = item.get('img')
+    caption = item.get('caption', '')
+
+    if not img:
+        return ('<figure class="shot-ph%s">%s<b>Фото</b><span>%s</span></figure>'
+                % ((' ' + cls) if cls else '', CAMERA_SVG,
+                   e(item.get('brief', 'ЗАГЛУШКА: опишите нужный кадр'))))
+
+    alt = item.get('alt', '')
+    if not alt:
+        raise SystemExit('у фото %s не заполнен alt — пустой alt допустим только '
+                         'у чисто декоративных изображений' % img)
+    loading = 'eager" fetchpriority="high' if eager else 'lazy'
+    cap = '<figcaption>%s</figcaption>' % e(caption) if caption else ''
+    return ('<figure class="shot%s"><img src="%s" width="%d" height="%d" loading="%s" '
+            'decoding="async" alt="%s">%s</figure>'
+            % ((' ' + cls) if cls else '', img, w, h, loading, e(alt), cap))
+
+
+def gen_gallery(svc, cities, ctx):
+    out = []
+    for it in svc['gallery']:
+        if it['kind'] == 'ba':
+            body = ('          <div class="ba">\n'
+                    '            <div><span class="label">Было</span>%s</div>\n'
+                    '            <div><span class="label label--after">Стало</span>%s</div>\n'
+                    '          </div>'
+                    % (shot({'brief': it['before'], 'img': it.get('before_img'),
+                             'alt': it.get('before_alt', '')}, 380, 285),
+                       shot({'brief': it['after'], 'img': it.get('after_img'),
+                             'alt': it.get('after_alt', '')}, 380, 285)))
+        else:
+            body = '          ' + shot(it, 900, 506, cls='shot--wide')
+        out.append('        <div class="gallery-card">\n'
+                   '          <h3>%s</h3>\n%s\n        </div>' % (e(it['h3']), body))
+    return '\n' + '\n'.join(out) + '\n      '
+
+
+def gen_masters(svc, cities, ctx):
+    out = []
+    for m in svc['masters']:
+        out.append('        <div class="master-card">\n'
+                   '          %s\n'
+                   '          <h3>%s</h3>\n'
+                   '          <p class="role">%s</p>\n'
+                   '          <p>%s</p>\n'
+                   '        </div>' % (shot(m.get('shot'), 320, 320),
+                                       e(m['name']), e(m['role']), e(m['text'])))
+    return '\n' + '\n'.join(out) + '\n      '
+
+
+def gen_warranty_shot(svc, cities, ctx):
+    return ('\n        <div class="warranty-shot">\n'
+            '          %s\n'
+            '          <p>Так выглядит документ, который остаётся у вас. В нём перечень работ, '
+            'установленные запчасти, цена и срок гарантии. По нему же обращаетесь, '
+            'если что-то пошло не так.</p>\n'
+            '        </div>\n' % shot(svc.get('warranty_shot'), 380, 285))
+
+
 def gen_city_switch(svc, cities, ctx):
     out = []
     for slug in svc['cities']:
@@ -143,22 +226,27 @@ def gen_faults(svc, cities, ctx):
             '      <div class="fault">\n'
             '        <h3>%s</h3>\n'
             '        <p class="fault-desc">%s</p>\n'
-            '        <div class="fault-cols">\n'
-            '          <div>\n'
-            '            <h4>Признаки</h4>\n'
-            '            <ul>\n%s\n            </ul>\n'
+            '        <div class="fault-grid">\n'
+            '          <div class="fault-cols">\n'
+            '            <div>\n'
+            '              <h4>Признаки</h4>\n'
+            '              <ul>\n%s\n              </ul>\n'
+            '            </div>\n'
+            '            <div>\n'
+            '              <h4>Как устраняем</h4>\n'
+            '              <ul>\n%s\n              </ul>\n'
+            '            </div>\n'
             '          </div>\n'
-            '          <div>\n'
-            '            <h4>Как устраняем</h4>\n'
-            '            <ul>\n%s\n            </ul>\n'
-            '          </div>\n'
+            '          %s\n'
             '        </div>\n'
             '        <div class="fault-meta">\n'
             '          <span>Срок: <strong>%s</strong></span>\n'
             '          <span>Работа: <strong>%s</strong></span>\n'
             '          <span>Гарантия: <strong>%s</strong></span>\n'
             '        </div>\n'
-            '      </div>' % (e(f['h3']), e(f['desc']), signs, fix, e(f['time']), e(f['price']), e(f['warranty'])))
+            '      </div>' % (e(f['h3']), e(f['desc']), signs, fix,
+                               shot(f.get('shot'), 260, 195, eager=False),
+                               e(f['time']), e(f['price']), e(f['warranty'])))
     return '\n\n' + '\n\n'.join(out) + '\n'
 
 
@@ -356,6 +444,9 @@ BLOCKS = {
     'articles': gen_articles,
     'faq': gen_faq,
     'trust': gen_trust,
+    'gallery': gen_gallery,
+    'masters': gen_masters,
+    'warranty-shot': gen_warranty_shot,
 }
 
 
@@ -387,6 +478,12 @@ def check(site, cities, services):
             if r['city'] not in svc['cities']:
                 errors.append('%s: отзыв %s привязан к городу %r, которого нет у этой услуги'
                               % (slug, r['name'], r['city']))
+
+        shots = [f.get('shot') for f in svc['faults']] + \
+                [m.get('shot') for m in svc.get('masters', [])] + [svc.get('warranty_shot')]
+        for sh in shots:
+            if sh and sh.get('img') and not sh.get('alt'):
+                errors.append('%s: у фото %s не заполнен alt' % (slug, sh['img']))
 
         for key in ('faults', 'diag', 'faq', 'articles', 'decide', 'reviews'):
             if not svc.get(key):
@@ -426,6 +523,8 @@ def build_hub(svc, site, cities, template):
         'HERO_LEDE': svc['hero_lede'], 'DIAG_LEDE': svc['diag_lede'],
         'DECIDE_LEDE': svc['decide_lede'], 'PRICES_LEDE': svc['prices_lede'],
         'BRANDS_TITLE': svc['brands_title'], 'BRANDS_LEDE': svc['brands_lede'],
+        'GALLERY_TITLE': svc['gallery_title'], 'GALLERY_LEDE': svc['gallery_lede'],
+        'GALLERY_NOTE': svc['gallery_note'],
     }
     ctx['ALL_SERVICES'] = build_hub.all_services
 

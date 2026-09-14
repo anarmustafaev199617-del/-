@@ -677,6 +677,48 @@
     </div>
   </section>
 
+
+  <!-- ======================= ГАЛЕРЕЯ РАБОТ =======================
+       Самый убедительный визуал на сайте: снятая деталь, забитый радиатор,
+       обледеневший испаритель. Снимается телефоном за пять минут и работает
+       лучше любого стока — стоковые фото узнаются мгновенно и доверие роняют.
+       Наполнение — поле gallery в data/services.json.
+  -->
+  <section class="section" id="gallery">
+    <div class="wrap">
+      <h2>{{GALLERY_TITLE}}</h2>
+      <p class="section-lede">{{GALLERY_LEDE}}</p>
+      <div class="gallery">
+<!-- BUILD:gallery -->
+
+        <div class="gallery-card">
+          <h3>Испаритель до и после оттайки</h3>
+          <div class="ba">
+            <div><span class="label">Было</span><figure class="shot-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5h3.2l1.4-2h8.8l1.4 2H21v10H3z"/><circle cx="12" cy="13" r="3.4"/></svg><b>Фото</b><span>Испаритель зарос льдом, вентилятор не проворачивается.</span></figure></div>
+            <div><span class="label label--after">Стало</span><figure class="shot-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5h3.2l1.4-2h8.8l1.4 2H21v10H3z"/><circle cx="12" cy="13" r="3.4"/></svg><b>Фото</b><span>Чистый испаритель, цепь оттайки восстановлена.</span></figure></div>
+          </div>
+        </div>
+        <div class="gallery-card">
+          <h3>Конденсатор сзади</h3>
+          <div class="ba">
+            <div><span class="label">Было</span><figure class="shot-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5h3.2l1.4-2h8.8l1.4 2H21v10H3z"/><circle cx="12" cy="13" r="3.4"/></svg><b>Фото</b><span>Решётка в слое пыли — тепло не отводится.</span></figure></div>
+            <div><span class="label label--after">Стало</span><figure class="shot-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5h3.2l1.4-2h8.8l1.4 2H21v10H3z"/><circle cx="12" cy="13" r="3.4"/></svg><b>Фото</b><span>Та же решётка после чистки.</span></figure></div>
+          </div>
+        </div>
+        <div class="gallery-card">
+          <h3>Пайка контура</h3>
+          <figure class="shot-ph shot--wide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5h3.2l1.4-2h8.8l1.4 2H21v10H3z"/><circle cx="12" cy="13" r="3.4"/></svg><b>Фото</b><span>Пайка трубки аргоном, рядом манометрический коллектор.</span></figure>
+        </div>
+        <div class="gallery-card">
+          <h3>Заправка по весу</h3>
+          <figure class="shot-ph shot--wide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5h3.2l1.4-2h8.8l1.4 2H21v10H3z"/><circle cx="12" cy="13" r="3.4"/></svg><b>Фото</b><span>Баллон с фреоном на электронных весах, показания в кадре.</span></figure>
+        </div>
+      <!-- /BUILD:gallery -->
+      </div>
+      <p class="gallery-note">{{GALLERY_NOTE}}</p>
+    </div>
+  </section>
+
   <!-- ФОРМА 2 из 4 -->
   <section class="section section--pt0">
     <div class="wrap">
@@ -772,6 +814,22 @@
             <li>На запчасть, которую предоставил клиент</li>
           </ul>
         </div>
+<!-- BUILD:warranty-shot -->        <div class="no">
+          <h3>Гарантия не действует</h3>
+          <ul>
+            <li>На новые, не связанные с ремонтом поломки</li>
+            <li>При механическом повреждении после ремонта</li>
+            <li>При вмешательстве другого мастера</li>
+            <li>На запчасть, которую предоставил клиент</li>
+          </ul>
+        </div>
+
+        <div class="warranty-shot">
+          <figure class="shot-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5h3.2l1.4-2h8.8l1.4 2H21v10H3z"/><circle cx="12" cy="13" r="3.4"/></svg><b>Фото</b><span>Заполненная квитанция с перечнем работ и сроком гарантии. Персональные данные клиента закрыть.</span></figure>
+          <p>Так выглядит документ, который остаётся у вас. В нём перечень работ, установленные запчасти, цена и срок гарантии. По нему же обращаетесь, если что-то пошло не так.</p>
+        </div>
+
+        <!-- /BUILD:warranty-shot -->
         <p class="warranty-note">Квитанция с перечнем работ, ценой и сроком гарантии остаётся у вас. По ней же обращаетесь, если что-то пошло не так — достаточно позвонить по <a href="tel:{{PHONE_E164}}" data-goal="call">{{PHONE_DISPLAY}}</a>.</p>
       </div>
     </div>
@@ -783,19 +841,23 @@
       <h2>Как проходит ремонт</h2>
       <p class="section-lede">Одинаково во всех городах — отличается только время доезда.</p>
       <div class="process">
-        <div class="process-step">
+        <div class="process-step has-ico">
+          <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 5.5c0-.6.4-1 1-1h3l1.5 4-2 1.5a12 12 0 0 0 5 5l1.5-2 4 1.5v3c0 .6-.4 1-1 1A14.5 14.5 0 0 1 4.5 5.5Z"/></svg></div>
           <h3>Заявка</h3>
           <p>Звоните или оставляете заявку с сайта. Уточняем город, симптом и модель техники.</p>
         </div>
-        <div class="process-step">
+        <div class="process-step has-ico">
+          <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 16V7.5h10V16"/><path d="M12.5 10.5h3.2l2.8 3V16"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="16" cy="17.5" r="1.8"/></svg></div>
           <h3>Выезд мастера</h3>
           <p>Согласуем интервал и приезжаем с инструментом и ходовыми запчастями.</p>
         </div>
-        <div class="process-step">
+        <div class="process-step has-ico">
+          <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="5.5"/><path d="M14.6 14.6 20 20"/></svg></div>
           <h3>Диагностика и цена</h3>
           <p>Находим причину, называем точную сумму. Не устроила — платите только за выезд.</p>
         </div>
-        <div class="process-step">
+        <div class="process-step has-ico">
+          <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3.5h8l4 4V20a.5.5 0 0 1-.5.5h-11A.5.5 0 0 1 6 20V4a.5.5 0 0 1 .5-.5Z"/><path d="M14 3.5V8h4"/><path d="M9 14.5l2 2 4-4"/></svg></div>
           <h3>Ремонт и квитанция</h3>
           <p>Чиним в этот же визит, проверяем работу и оставляем документ с гарантией.</p>
         </div>
@@ -835,6 +897,43 @@
         </div>
       <!-- /BUILD:trust -->
 </div>
+    </div>
+  </section>
+
+
+  <!-- ========================== МАСТЕРА ==========================
+       E-E-A-T и доверие: живые люди с именами и лицами. Фото обязательно
+       настоящие — сток здесь вреднее, чем его отсутствие.
+       ⚠️ На использование фотографии человека нужно его согласие
+       (ст. 152.1 ГК РФ). Для сотрудников это пункт в трудовом договоре.
+  -->
+  <section class="section" id="masters">
+    <div class="wrap">
+      <h2>Кто приедет</h2>
+      <p class="section-lede">Постоянная команда, без подрядчиков и случайных исполнителей.</p>
+      <div class="masters">
+<!-- BUILD:masters -->
+
+        <div class="master-card">
+          <figure class="shot-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5h3.2l1.4-2h8.8l1.4 2H21v10H3z"/><circle cx="12" cy="13" r="3.4"/></svg><b>Фото</b><span>Портрет по пояс на рабочем месте, без постановки. Квадратный кадр, лицо крупно, фон — реальный, не студия.</span></figure>
+          <h3>ЗАГЛУШКА: Имя Фамилия</h3>
+          <p class="role">Мастер по холодильному оборудованию, стаж 12 лет</p>
+          <p>Специализация: герметичный контур, компрессоры, инверторные модели.</p>
+        </div>
+        <div class="master-card">
+          <figure class="shot-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5h3.2l1.4-2h8.8l1.4 2H21v10H3z"/><circle cx="12" cy="13" r="3.4"/></svg><b>Фото</b><span>Портрет по пояс на рабочем месте, без постановки. Квадратный кадр, лицо крупно, фон — реальный, не студия.</span></figure>
+          <h3>ЗАГЛУШКА: Имя Фамилия</h3>
+          <p class="role">Мастер-электронщик, стаж 8 лет</p>
+          <p>Специализация: платы управления, датчики, системы No Frost.</p>
+        </div>
+        <div class="master-card">
+          <figure class="shot-ph"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8.5h3.2l1.4-2h8.8l1.4 2H21v10H3z"/><circle cx="12" cy="13" r="3.4"/></svg><b>Фото</b><span>Портрет по пояс на рабочем месте, без постановки. Квадратный кадр, лицо крупно, фон — реальный, не студия.</span></figure>
+          <h3>ЗАГЛУШКА: Имя Фамилия</h3>
+          <p class="role">Мастер по встраиваемой технике, стаж 6 лет</p>
+          <p>Специализация: демонтаж из ниши, Liebherr, Bosch, Siemens.</p>
+        </div>
+      <!-- /BUILD:masters -->
+      </div>
     </div>
   </section>
 

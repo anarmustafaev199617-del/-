@@ -1024,6 +1024,106 @@ dialog#callback-modal::backdrop{background:rgba(20,20,18,0.55);}
 .page-404 .service-links a:hover{background:var(--panel);}
 .page-404 .service-links strong{font-size:16.5px;margin-bottom:3px;}
 
+
+/* ==========================================================================
+   7. ФОТОГРАФИИ
+   ==========================================================================
+
+   ПРАВИЛА, КОТОРЫЕ НЕЛЬЗЯ НАРУШАТЬ
+
+   1. У каждого <img> обязаны быть width и height. Без них браузер не знает
+      высоту до загрузки, и страница дёргается, когда картинка подгружается —
+      человек промахивается мимо кнопки. Это метрика CLS, её меряет и Google,
+      и Яндекс.
+   2. Всё, что ниже первого экрана — loading="lazy". Первый экран, наоборот,
+      eager + fetchpriority="high", иначе картинка тормозит LCP.
+   3. Пустой alt="" только у чисто декоративных. У остальных — что на фото,
+      а не «ремонт стиральных машин Сургут».
+
+   ЗАГЛУШКИ. Пока фото нет, на их месте стоит пунктирная рамка с описанием
+   нужного кадра. Это не забытая вёрстка, а техзадание на съёмку: открыл
+   страницу — видно, что снимать. Заменяется на <img> через данные в
+   services.json (поле img у элемента).
+   ========================================================================== */
+
+.shot{margin:0;border-radius:10px;overflow:hidden;background:var(--bg);}
+.shot img{width:100%;height:auto;display:block;aspect-ratio:4/3;object-fit:cover;}
+.shot figcaption{font-size:13.5px;color:var(--ink-soft);padding:10px 2px 0;line-height:1.45;}
+
+/* Заглушка-бриф на месте будущего фото */
+.shot-ph{
+  aspect-ratio:4/3;border:1px dashed var(--line);border-radius:10px;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:16px;gap:8px;color:var(--ink-soft);font-size:13px;line-height:1.45;
+}
+.shot-ph svg{width:26px;height:26px;opacity:.4;flex:none;}
+.shot-ph b{
+  font-family:'Manrope',sans-serif;font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.7px;color:var(--accent-text);
+}
+
+/* ===== Галерея работ: «было — стало» и одиночные кадры ===== */
+.gallery{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.gallery-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;}
+.gallery-card h3{font-size:16px;margin-bottom:12px;}
+.ba{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+/* Подпись «Было/Стало» лежит рядом с <figure>, а не внутри него,
+   поэтому контекст позиционирования задаётся на обёртке. Без этого
+   position:absolute у подписи считался от другого предка и она уезжала
+   за пределы карточки. */
+.ba > div{position:relative;}
+.ba figure{margin:0;}
+.ba .label{
+  position:absolute;top:8px;left:8px;z-index:1;
+  background:rgba(28,35,33,0.82);color:#fff;font-size:11px;font-weight:700;
+  padding:3px 9px;border-radius:999px;letter-spacing:.4px;
+}
+.ba .label--after{background:var(--trust);}
+/* Одиночный кадр занимает всю ширину карточки, поэтому при 4:3 он выходит
+   заметно выше парных. Для него формат пошире, чтобы сетка не рвалась. */
+.shot--wide img,.shot-ph.shot--wide{aspect-ratio:16/9;}
+
+.gallery-note{margin-top:18px;font-size:14px;color:var(--ink-soft);max-width:70ch;}
+
+/* ===== Фото внутри карточки поломки ===== */
+.fault-grid{display:grid;grid-template-columns:1fr 260px;gap:24px;margin-bottom:14px;}
+.fault-grid .fault-cols{margin-bottom:0;}
+.fault-photo{align-self:start;}
+
+/* ===== Мастера ===== */
+.masters{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.master-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;}
+.master-card .shot,.master-card .shot-ph{margin-bottom:14px;}
+.master-card .shot img,.master-card .shot-ph{aspect-ratio:1/1;}
+.master-card h3{font-size:16.5px;margin-bottom:2px;}
+.master-card .role{font-size:13px;color:var(--ink-soft);margin-bottom:8px;}
+.master-card p{font-size:14px;color:var(--ink-soft);}
+
+/* ===== Фото квитанции в блоке гарантии ===== */
+.warranty-shot{grid-column:1/-1;margin-top:20px;padding-top:20px;border-top:1px solid var(--line);
+  display:grid;grid-template-columns:260px 1fr;gap:22px;align-items:center;}
+.warranty-shot p{font-size:14.5px;color:var(--ink-soft);margin:0;}
+
+/* ===== Иконки в блоке «Как проходит ремонт» ===== */
+.process-step .ico{
+  width:44px;height:44px;border-radius:10px;background:var(--trust-bg);color:var(--trust);
+  display:flex;align-items:center;justify-content:center;margin-bottom:12px;
+}
+.process-step .ico svg{width:24px;height:24px;display:block;}
+/* номер шага уезжает к иконке, а не над ней */
+.process-step.has-ico::before{display:inline-block;margin:0 0 6px;}
+
+@media (max-width:980px){
+  .masters{grid-template-columns:1fr;}
+}
+@media (max-width:820px){
+  .fault-grid{grid-template-columns:1fr;gap:16px;}
+  .fault-photo{max-width:340px;}
+  .gallery{grid-template-columns:1fr;}
+  .warranty-shot{grid-template-columns:1fr;gap:14px;}
+  .warranty-shot .shot,.warranty-shot .shot-ph{max-width:320px;}
+}
+
 </style>
 </head>
 <body class="page-city" data-phone="+70000000000" data-metrika="" data-modal-fallback="#lead-form">
