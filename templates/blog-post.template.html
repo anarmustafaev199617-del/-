@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#1C2321">
+
+<!--
+================================================================================
+  ШАБЛОН СТАТЬИ БЛОГА  (/blog/слаг/)
+  Пример заполнения: «Холодильник не морозит: 6 причин»
+================================================================================
+
+  ЗАЧЕМ БЛОГ В ЭТОМ КЛАСТЕРЕ
+
+  Статьи — не посадочные страницы. Их задача двойная:
+
+    1. Ловить симптомный спрос без гео и без коммерческого намерения:
+       «холодильник не морозит что делать», «почему стиральная машина
+       не отжимает». Такой человек ещё не готов вызывать мастера.
+    2. ЗАМЫКАТЬ ПЕРЕЛИНКОВКУ. Статья получает ссылки с городских страниц
+       (блок «Когда пора вызывать мастера») и с хаба (таблица симптомов),
+       и обязана вернуть ссылки обратно — на хаб и на все города услуги.
+
+       городская ──→ статья ──→ хаб + все города услуги
+           ↑                          │
+           └──────────────────────────┘
+
+  ЧЕГО СТАТЬЯ НЕ ДЕЛАЕТ:
+
+    ✕ не содержит города в <title> и <h1>
+      («холодильник не морозит сургут» — это запрос городской страницы)
+    ✕ не дублирует таблицу «симптом → причина → цена» с хаба
+      Хаб даёт сводку на 6 строк, статья — разбор ОДНОГО симптома вглубь.
+      Если статья пересказывает хаб — одна из двух страниц лишняя.
+    ✕ не содержит прайс-таблиц
+
+    ✓ даёт то, чего нет нигде: пошаговую самодиагностику, что можно
+      проверить самому, когда точно пора звонить
+
+  --------------------------------------------------------------------------
+  ТОКЕНЫ. Общие — в легенде templates/service-city.template.html.
+  Специфичные для статьи:
+
+  {{POST_SLUG}}         holodilnik-ne-morozit
+  {{POST_TITLE}}        Холодильник не морозит: 6 причин и что проверить самому
+  {{POST_H1}}           Холодильник не морозит: 6 причин
+  {{POST_DESC}}         мета-описание, 140–160 символов
+  {{POST_DATE_ISO}}     2026-05-15            (для разметки, формат ГГГГ-ММ-ДД)
+  {{POST_DATE}}         15 мая 2026           (для показа)
+  {{POST_MOD_ISO}}      2026-09-01            ОБЯЗАТЕЛЬНО обновляйте при правках
+  {{POST_MOD}}          1 сентября 2026
+  {{READ_TIME}}         7
+  {{AUTHOR_NAME}}       Имя Фамилия           ЗАГЛУШКА
+  {{AUTHOR_ROLE}}       мастер по холодильному оборудованию, стаж 12 лет
+  {{AUTHOR_SLUG}}       imya-familiya         для /blog/авторы/ если заведёте
+
+  Плюс токены услуги, к которой относится статья:
+  {{SERVICE_SLUG}} {{SERVICE_NOM}} {{SERVICE_GEN}}
+  {{DEVICE_NOM}} {{DEVICE_GEN}} {{DEVICE_PL_GEN}}
+
+  Токенов {{CITY_*}} нет — статья одна на все города.
+
+  --------------------------------------------------------------------------
+  ОБЯЗАТЕЛЬНЫЙ МИНИМУМ ССЫЛОК ИЗ СТАТЬИ (проверяйте перед публикацией):
+    • 1 ссылка на хаб услуги            /{{SERVICE_SLUG}}/
+    • 4 ссылки на города этой услуги    блок #post-cities
+    • 2–3 ссылки на соседние статьи     блок #related
+    • 1 ссылка на /blog/
+  Без этого статья собирает трафик и никуда его не отдаёт.
+
+  СПИСОК ГОРОДОВ — свой для каждой услуги:
+    Стиралки:    surgut, nizhnevartovsk, nefteyugansk, nyagan
+    Холодильники: surgut, nizhnevartovsk, nefteyugansk, hanty-mansiysk
+    Компьютеры:   surgut, nizhnevartovsk, nefteyugansk, hanty-mansiysk
+================================================================================
+-->
+
+<title>{{POST_TITLE}}</title>
+<meta name="description" content="{{POST_DESC}}">
+<link rel="canonical" href="{{SITE_URL}}/blog/{{POST_SLUG}}/">
+
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:site_name" content="{{BRAND}}">
+<meta property="og:title" content="{{POST_H1}}">
+<meta property="og:description" content="{{POST_DESC}}">
+<meta property="og:url" content="{{SITE_URL}}/blog/{{POST_SLUG}}/">
+<!-- ЗАГЛУШКА: обложка статьи 1200×630 -->
+<meta property="og:image" content="{{SITE_URL}}/img/blog/{{POST_SLUG}}.jpg">
+<meta property="article:published_time" content="{{POST_DATE_ISO}}">
+<meta property="article:modified_time" content="{{POST_MOD_ISO}}">
+
+<!-- ЗАГЛУШКА: фавиконки -->
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- ЗАГЛУШКА: заменить на самохостинг woff2 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "{{SITE_URL}}/#organization",
+      "name": "{{BRAND}}",
+      "legalName": "{{LEGAL_NAME}}",
+      "url": "{{SITE_URL}}/",
+      "logo": { "@type": "ImageObject", "url": "{{SITE_URL}}/img/logo.png", "width": 512, "height": 512 },
+      "telephone": "{{PHONE_E164}}",
+      "email": "{{EMAIL}}"
+    },
+    {
+      "@type": "Person",
+      "@id": "{{SITE_URL}}/blog/avtory/{{AUTHOR_SLUG}}/#person",
+      "name": "{{AUTHOR_NAME}}",
+      "jobTitle": "{{AUTHOR_ROLE}}",
+      "worksFor": { "@id": "{{SITE_URL}}/#organization" }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "@id": "{{SITE_URL}}/blog/{{POST_SLUG}}/#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Главная", "item": "{{SITE_URL}}/" },
+        { "@type": "ListItem", "position": 2, "name": "Блог", "item": "{{SITE_URL}}/blog/" },
+        { "@type": "ListItem", "position": 3, "name": "{{POST_H1}}" }
+      ]
+    },
+    {
+      "@type": "BlogPosting",
+      "@id": "{{SITE_URL}}/blog/{{POST_SLUG}}/#post",
+      "mainEntityOfPage": { "@id": "{{SITE_URL}}/blog/{{POST_SLUG}}/#post" },
+      "headline": "{{POST_H1}}",
+      "description": "{{POST_DESC}}",
+      "inLanguage": "ru-RU",
+      "url": "{{SITE_URL}}/blog/{{POST_SLUG}}/",
+      "image": "{{SITE_URL}}/img/blog/{{POST_SLUG}}.jpg",
+      "datePublished": "{{POST_DATE_ISO}}",
+      "dateModified": "{{POST_MOD_ISO}}",
+      "author": { "@id": "{{SITE_URL}}/blog/avtory/{{AUTHOR_SLUG}}/#person" },
+      "publisher": { "@id": "{{SITE_URL}}/#organization" },
+      "about": { "@type": "Thing", "name": "{{SERVICE_NOM}}" }
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "{{SITE_URL}}/blog/{{POST_SLUG}}/#faq",
+      "mainEntity": [
+        { "@type": "Question", "name": "Сколько ждать после разморозки, прежде чем включать?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Не меньше 8 часов, а если {{DEVICE_NOM}} перевозили в горизонтальном положении — сутки. Масло должно стечь обратно в компрессор, иначе при запуске оно уйдёт в контур." } },
+        { "@type": "Question", "name": "Можно ли дозаправить фреон самому?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Нет. Заправка выполняется по весу, через вакуумирование контура и с заменой фильтра-осушителя. Без поиска и устранения течи фреон уйдёт снова за несколько недель, а лишний объём выведет из строя компрессор." } },
+        { "@type": "Question", "name": "Сколько стоит устранить причину?",
+          "acceptedAnswer": { "@type": "Answer", "text": "От прочистки дренажа за несколько сотен рублей до замены компрессора за несколько тысяч. Точные цены по вашему городу — на странице {{SERVICE_GEN}} в нём." } }
+      ]
+    }
+  ]
+}
+</script>
+
+<style>
+  /* ===== ПЕРЕМЕННЫЕ ===== */
+  :root{
+    --ink:#1C2321;
+    --ink-soft:#4B534F;
+    --bg:#F7F7F4;
+    --panel:#FFFFFF;
+    --line:#E1DED4;
+    --accent:#B75B12;
+    --accent-dark:#8A430D;
+    --accent-text:#8A430D;
+    --trust:#1F4B43;
+    --trust-bg:#EAF1EE;
+    --star:#A76C12;
+    --radius:6px;
+    --header-h:74px;
+  }
+
+  /*
+    ЗАГЛУШКА — самохостинг шрифтов, раскомментировать после загрузки woff2 в /fonts/
+    @font-face{font-family:'Manrope';src:url('/fonts/manrope-500.woff2') format('woff2');font-weight:500;font-display:swap;}
+    @font-face{font-family:'Manrope';src:url('/fonts/manrope-700.woff2') format('woff2');font-weight:700;font-display:swap;}
+    @font-face{font-family:'Manrope';src:url('/fonts/manrope-800.woff2') format('woff2');font-weight:800;font-display:swap;}
+    @font-face{font-family:'IBM Plex Sans';src:url('/fonts/ibmplexsans-400.woff2') format('woff2');font-weight:400;font-display:swap;}
+    @font-face{font-family:'IBM Plex Sans';src:url('/fonts/ibmplexsans-500.woff2') format('woff2');font-weight:500;font-display:swap;}
+    @font-face{font-family:'IBM Plex Sans';src:url('/fonts/ibmplexsans-600.woff2') format('woff2');font-weight:600;font-display:swap;}
+  */
+
+  /* ===== БАЗА ===== */
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 20px);}
+  body{
+    font-family:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+    color:var(--ink);background:var(--bg);line-height:1.6;font-size:16px;-webkit-text-size-adjust:100%;
+  }
+  h1,h2,h3,h4{font-family:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-weight:800;line-height:1.2;color:var(--ink);}
+  a{color:inherit;}
+  img{max-width:100%;height:auto;display:block;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+  .visually-hidden{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+
+  a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,select:focus-visible{
+    outline:3px solid var(--accent-dark);outline-offset:2px;border-radius:4px;
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto;}
+    *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}
+  }
+
+  /* ===== ВЕРХНЯЯ ПОЛОСА ===== */
+  .topbar{background:var(--ink);color:#fff;font-size:13.5px;}
+  .topbar .wrap{display:flex;justify-content:space-between;align-items:center;min-height:44px;gap:8px 16px;flex-wrap:wrap;padding-top:6px;padding-bottom:6px;}
+  .topbar a{text-decoration:none;color:#fff;}
+  .topbar .left,.topbar .right{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .topbar .hours{color:#C2C5BF;}
+  .topbar .geo{border-bottom:1px dashed rgba(255,255,255,0.45);}
+  .messengers{display:flex;gap:8px;}
+  .messengers a{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;padding:0 8px;border-radius:999px;border:1px solid rgba(255,255,255,0.3);font-size:11.5px;font-weight:600;letter-spacing:0.3px;}
+  .messengers a:hover{background:rgba(255,255,255,0.14);}
+  .topbar .phone{font-weight:600;white-space:nowrap;}
+
+  /* ===== ШАПКА ===== */
+  header.site{background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50;}
+  header.site .wrap{display:flex;justify-content:space-between;align-items:center;height:var(--header-h);gap:20px;}
+  .brand{font-family:'Manrope',sans-serif;font-weight:800;font-size:20px;text-decoration:none;color:var(--ink);white-space:nowrap;}
+  .main-nav{display:flex;align-items:center;gap:20px;font-size:15px;}
+  .main-nav > a,.main-nav > details > summary{text-decoration:none;color:var(--ink);white-space:nowrap;}
+  .main-nav > a:hover{color:var(--accent-text);}
+  .nav-drop{position:relative;}
+  .nav-drop summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px;}
+  .nav-drop summary::-webkit-details-marker{display:none;}
+  .nav-drop summary::after{content:"▾";font-size:11px;color:var(--ink-soft);}
+  .nav-drop summary:hover{color:var(--accent-text);}
+  .nav-menu{position:absolute;top:calc(100% + 16px);left:-12px;z-index:60;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px;min-width:260px;box-shadow:0 6px 20px rgba(0,0,0,0.14);}
+  .nav-menu a{display:block;padding:9px 12px;text-decoration:none;color:var(--ink);font-size:14.5px;border-radius:6px;}
+  .nav-menu a:hover{background:var(--bg);}
+  .header-cta{display:flex;align-items:center;gap:14px;}
+  .header-phone-wrap{display:flex;flex-direction:column;align-items:flex-end;line-height:1.25;}
+  .header-phone{font-weight:600;font-size:17px;text-decoration:none;white-space:nowrap;}
+  .header-callback{background:none;border:none;padding:0;cursor:pointer;font-family:inherit;font-size:12.5px;color:var(--accent-text);border-bottom:1px dashed var(--accent-text);}
+  .burger{display:none;background:none;border:none;font-size:24px;cursor:pointer;color:var(--ink);line-height:1;padding:4px 8px;}
+  .mobile-nav{display:none;position:absolute;left:0;right:0;top:100%;z-index:55;background:var(--panel);border-bottom:1px solid var(--line);box-shadow:0 10px 24px rgba(0,0,0,0.10);max-height:calc(100dvh - var(--header-h));overflow-y:auto;}
+  .mobile-nav.open{display:block;}
+  .mobile-nav a{display:block;padding:14px 24px;text-decoration:none;border-bottom:1px solid var(--line);font-size:15.5px;}
+  .mobile-nav a:last-child{border-bottom:none;}
+  .mobile-nav .group-title{padding:14px 24px 6px;font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--ink-soft);}
+
+  /* ===== КНОПКИ ===== */
+  .btn{display:inline-block;background:var(--accent);color:#fff;font-weight:600;font-size:15px;padding:12px 24px;border-radius:var(--radius);border:1px solid var(--accent);cursor:pointer;text-decoration:none;white-space:nowrap;font-family:inherit;text-align:center;}
+  .btn:hover{background:var(--accent-dark);border-color:var(--accent-dark);}
+  .btn-lg{font-size:17px;padding:16px 32px;}
+  .btn-outline-accent{background:transparent;color:var(--accent-text);border:1px solid var(--accent);}
+  .btn-outline-accent:hover{background:var(--trust-bg);color:var(--accent-dark);}
+  .btn-ghost{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.45);}
+  .btn-ghost:hover{background:rgba(255,255,255,0.12);border-color:#fff;}
+  .btn-block{width:100%;}
+
+  /* ===== ХЛЕБНЫЕ КРОШКИ ===== */
+  .crumbs{padding:14px 0 0;font-size:13.5px;color:var(--ink-soft);}
+  .crumbs ol{list-style:none;display:flex;flex-wrap:wrap;gap:6px 8px;}
+  .crumbs li{display:flex;align-items:center;gap:8px;min-width:0;}
+  .crumbs li+li::before{content:"/";color:var(--line);}
+  .crumbs a{color:var(--ink-soft);text-decoration:underline;text-underline-offset:2px;}
+  .crumbs a:hover{color:var(--accent-text);}
+  .crumbs [aria-current]{color:var(--ink);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:46ch;}
+
+  /* ===== ФОРМЫ ===== */
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:13px;color:var(--ink-soft);margin-bottom:6px;}
+  .field input,.field select{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:var(--radius);font-size:16px;font-family:inherit;background:#fff;color:var(--ink);}
+  .field select{
+    appearance:none;-webkit-appearance:none;cursor:pointer;padding-right:40px;
+    background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%234B534F' stroke-width='1.8'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 14px center;
+  }
+  .field input:focus,.field select:focus{outline:3px solid var(--accent-dark);outline-offset:1px;}
+  .hp{position:absolute!important;left:-9999px;width:1px;height:1px;overflow:hidden;}
+  .consent{display:flex;gap:9px;align-items:flex-start;font-size:12px;color:var(--ink-soft);margin:12px 0 14px;line-height:1.45;cursor:pointer;}
+  .consent input{flex:none;margin-top:2px;width:16px;height:16px;accent-color:var(--accent);}
+  .consent a{color:var(--accent-text);}
+
+  /* ===== ПОДВАЛ ===== */
+  footer{padding:44px 0 32px;border-top:1px solid var(--line);font-size:14px;color:var(--ink-soft);background:var(--panel);}
+  footer a{text-decoration:none;color:var(--ink-soft);}
+  footer a:hover{color:var(--accent-text);text-decoration:underline;}
+  .footer-cols{display:grid;grid-template-columns:repeat(4,1fr);gap:28px;margin-bottom:32px;}
+  .footer-cols h3{font-size:14px;font-family:'Manrope',sans-serif;font-weight:700;color:var(--ink);margin-bottom:10px;}
+  .footer-cols ul{list-style:none;display:flex;flex-direction:column;gap:7px;font-size:13.5px;}
+  .footer-legal{border-top:1px solid var(--line);padding-top:20px;display:flex;justify-content:space-between;gap:14px 24px;flex-wrap:wrap;font-size:13px;}
+  .footer-legal .req{max-width:60ch;}
+
+  /* ===== МОБИЛЬНАЯ ПАНЕЛЬ ===== */
+  .mobile-callbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:45;background:var(--panel);border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));gap:10px;box-shadow:0 -2px 10px rgba(0,0,0,0.08);}
+  .mobile-callbar .btn{flex:1;}
+  .mobile-callbar .btn-outline{background:var(--panel);color:var(--ink);border:1px solid var(--line);}
+
+  /* ===== МОДАЛКА ===== */
+  dialog#callback-modal{border:none;border-radius:12px;padding:0;max-width:400px;width:92%;color:var(--ink);background:var(--panel);}
+  dialog#callback-modal::backdrop{background:rgba(20,20,18,0.55);}
+  .modal-inner{padding:28px;position:relative;}
+  .modal-close{position:absolute;top:10px;right:12px;background:none;border:none;font-size:24px;line-height:1;color:var(--ink-soft);cursor:pointer;padding:4px 8px;}
+  .modal-inner h2{font-size:19px;margin-bottom:6px;padding-right:28px;}
+  .modal-inner .sub{font-size:14px;color:var(--ink-soft);margin-bottom:18px;}
+
+  /* ==========================================================================
+     СПЕЦИФИЧНЫЕ ДЛЯ СТАТЬИ
+     ========================================================================== */
+
+  .post-layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:48px;align-items:start;padding:28px 0 56px;}
+
+  /* Шапка статьи */
+  .post-head{margin-bottom:28px;}
+  .post-head h1{font-size:clamp(26px,3.6vw,34px);margin-bottom:14px;}
+  .post-meta{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:13.5px;color:var(--ink-soft);align-items:center;}
+  .post-meta .sep{color:var(--line);}
+  .post-meta a{color:var(--accent-text);}
+  .post-lede{font-size:18px;color:var(--ink-soft);margin-top:18px;}
+
+  /* Содержание */
+  .toc{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 24px;margin:26px 0 32px;}
+  .toc h2{font-size:14px;font-family:'Manrope',sans-serif;text-transform:uppercase;letter-spacing:.6px;color:var(--ink-soft);margin-bottom:12px;}
+  .toc ol{list-style:none;counter-reset:toc;display:flex;flex-direction:column;gap:8px;font-size:15px;}
+  .toc li{counter-increment:toc;padding-left:26px;position:relative;}
+  .toc li::before{content:counter(toc) ".";position:absolute;left:0;color:var(--accent-text);font-weight:600;font-size:14px;}
+  .toc a{color:var(--ink);text-decoration:none;}
+  .toc a:hover{color:var(--accent-text);text-decoration:underline;text-underline-offset:2px;}
+
+  /* Типографика тела статьи */
+  .post-body{font-size:17px;line-height:1.72;}
+  .post-body > * + *{margin-top:18px;}
+  .post-body h2{font-size:23px;margin-top:40px;scroll-margin-top:calc(var(--header-h) + 20px);}
+  .post-body h3{font-size:18.5px;margin-top:28px;}
+  .post-body p{color:#333A37;}
+  .post-body strong{color:var(--ink);}
+  .post-body a{color:var(--accent-text);text-underline-offset:3px;}
+  .post-body ul,.post-body ol{padding-left:24px;color:#333A37;}
+  .post-body li+li{margin-top:8px;}
+  .post-body li::marker{color:var(--accent);}
+  .post-body figure{margin-top:26px;}
+  .post-body figcaption{font-size:13.5px;color:var(--ink-soft);margin-top:8px;}
+  .post-body .lead{font-size:18px;color:var(--ink-soft);}
+
+  /* Врезки */
+  .callout{
+    border-left:3px solid var(--trust);background:var(--trust-bg);
+    border-radius:0 10px 10px 0;padding:18px 22px;font-size:15.5px;color:#2A3A36;
+  }
+  .callout strong{display:block;font-family:'Manrope',sans-serif;font-size:14px;margin-bottom:6px;color:var(--trust);text-transform:uppercase;letter-spacing:.5px;}
+  .callout--warn{border-left-color:var(--accent);background:#FBEFE2;color:#4A3520;}
+  .callout--warn strong{color:var(--accent-dark);}
+  .callout a{color:var(--accent-dark);}
+
+  /* Табличка внутри статьи */
+  .post-table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--panel);}
+  .post-table{width:100%;border-collapse:collapse;min-width:460px;font-size:15px;}
+  .post-table th,.post-table td{text-align:left;padding:12px 18px;border-bottom:1px solid var(--line);vertical-align:top;}
+  .post-table th{font-family:'Manrope',sans-serif;font-weight:700;background:var(--bg);font-size:14px;}
+  .post-table tr:last-child td{border-bottom:none;}
+
+  /* Врезка-CTA внутри текста */
+  .inline-cta{
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:24px 26px;display:flex;gap:20px;align-items:center;flex-wrap:wrap;justify-content:space-between;
+    margin-top:32px;
+  }
+  .inline-cta p{font-size:15.5px;color:var(--ink-soft);max-width:46ch;margin:0;}
+  .inline-cta strong{display:block;font-family:'Manrope',sans-serif;font-size:17px;color:var(--ink);margin-bottom:4px;}
+
+  /* FAQ статьи */
+  .faq-item{border-bottom:1px solid var(--line);}
+  .faq-item summary{padding:18px 0;font-weight:600;font-size:16px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px;}
+  .faq-item summary::-webkit-details-marker{display:none;}
+  .faq-item summary::after{content:"+";font-family:'Manrope',sans-serif;font-weight:700;font-size:20px;color:var(--accent-text);flex:none;}
+  .faq-item[open] summary::after{content:"–";}
+  .faq-item p{padding-bottom:18px;color:var(--ink-soft);font-size:15.5px;}
+
+  /* Автор */
+  .author-box{
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:24px 26px;display:flex;gap:18px;align-items:flex-start;margin-top:40px;
+  }
+  .author-photo{
+    flex:none;width:64px;height:64px;border-radius:50%;object-fit:cover;
+    background:var(--trust-bg);color:var(--trust);display:flex;align-items:center;justify-content:center;
+    font-family:'Manrope',sans-serif;font-weight:800;font-size:20px;
+  }
+  .author-box h2{font-size:16px;margin-bottom:2px;}
+  .author-box .role{font-size:13.5px;color:var(--ink-soft);margin-bottom:8px;}
+  .author-box p{font-size:14.5px;color:var(--ink-soft);}
+
+  /* Боковая колонка */
+  .post-aside{display:flex;flex-direction:column;gap:20px;position:sticky;top:calc(var(--header-h) + 20px);}
+  .aside-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:22px 24px;}
+  .aside-card h2{font-size:17px;margin-bottom:6px;}
+  .aside-card .sub{font-size:14px;color:var(--ink-soft);margin-bottom:16px;}
+  .aside-phone{
+    display:block;font-family:'Manrope',sans-serif;font-weight:800;font-size:20px;
+    text-decoration:none;margin-bottom:14px;color:var(--ink);
+  }
+  .aside-links{list-style:none;display:flex;flex-direction:column;gap:9px;font-size:14.5px;margin-top:4px;}
+  .aside-links a{color:var(--ink);text-decoration:none;display:inline-flex;gap:8px;align-items:baseline;}
+  .aside-links a::before{content:"→";color:var(--accent);font-size:13px;}
+  .aside-links a:hover{color:var(--accent-text);}
+  .aside-hub{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);font-size:14px;}
+  .aside-hub a{color:var(--accent-text);font-weight:600;}
+
+  /* Города под статьёй — основной канал возврата трафика в коммерцию */
+  .post-cities{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:28px;margin-top:44px;}
+  .post-cities h2{font-size:21px;margin-bottom:6px;}
+  .post-cities p{font-size:15px;color:var(--ink-soft);margin-bottom:18px;max-width:66ch;}
+  .post-city-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+  .post-city-grid a{
+    display:block;border:1px solid var(--line);border-radius:10px;padding:14px 16px;
+    text-decoration:none;background:var(--bg);font-family:'Manrope',sans-serif;font-weight:700;font-size:15.5px;
+  }
+  .post-city-grid a:hover{border-color:var(--accent);background:var(--panel);color:var(--accent-text);}
+  .post-cities .hub{margin-top:16px;margin-bottom:0;font-size:14.5px;}
+  .post-cities .hub a{color:var(--accent-text);font-weight:600;}
+
+  /* Похожие статьи */
+  .related{margin-top:44px;}
+  .related h2{font-size:21px;margin-bottom:18px;}
+  .article-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .article-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:22px;text-decoration:none;display:flex;flex-direction:column;}
+  .article-card:hover{border-color:var(--accent);}
+  .article-date{font-size:12.5px;color:var(--ink-soft);margin-bottom:10px;}
+  .article-card h3{font-size:16.5px;margin-bottom:8px;}
+  .article-card p{font-size:14px;color:var(--ink-soft);flex:1;}
+  .article-more{margin-top:12px;font-size:14px;font-weight:600;color:var(--accent-text);}
+  .articles-all{margin-top:20px;font-size:15px;}
+  .articles-all a{font-weight:600;color:var(--accent-text);}
+
+  /* ===== АДАПТИВ ===== */
+  @media (max-width:1040px){
+    .main-nav{gap:16px;font-size:14.5px;}
+    .post-layout{grid-template-columns:minmax(0,1fr) 290px;gap:36px;}
+  }
+  @media (max-width:980px){
+    .main-nav{display:none;}
+    .burger{display:block;}
+    .footer-cols{grid-template-columns:1fr 1fr;}
+    /* Боковая колонка уезжает под текст и перестаёт быть липкой */
+    .post-layout{grid-template-columns:1fr;gap:32px;}
+    .post-aside{position:static;}
+    .post-city-grid{grid-template-columns:1fr 1fr;}
+  }
+  @media (max-width:820px){
+    .topbar .hours{display:none;}
+    .header-phone-wrap{display:none;}
+    .mobile-callbar{display:flex;}
+    body{padding-bottom:78px;}
+    .article-grid{grid-template-columns:1fr 1fr;}
+  }
+  @media (max-width:600px){
+    .wrap{padding:0 16px;}
+    .post-body{font-size:16.5px;}
+    .post-body h2{font-size:21px;margin-top:32px;}
+    .article-grid{grid-template-columns:1fr;}
+    .post-city-grid{grid-template-columns:1fr;}
+    .post-cities{padding:22px;}
+    .footer-cols{grid-template-columns:1fr;gap:22px;}
+    .header-cta .btn{padding:10px 14px;font-size:14px;}
+    .mobile-nav a{padding:14px 16px;}
+    .crumbs [aria-current]{max-width:22ch;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================= ВЕРХНЯЯ ПОЛОСА ============================= -->
+<div class="topbar">
+  <div class="wrap">
+    <div class="left">
+      <a href="/#cities" class="geo">{{CITIES_COUNT}} городов {{REGION_SHORT}}</a>
+      <span class="hours">{{WORK_HOURS}}, без выходных</span>
+    </div>
+    <div class="right">
+      <!-- ЗАГЛУШКИ: ссылки на мессенджеры -->
+      <div class="messengers">
+        <a href="#" rel="nofollow noopener" target="_blank" aria-label="Написать в MAX">MAX</a>
+        <a href="#" rel="nofollow noopener" target="_blank" aria-label="Написать в Telegram">TG</a>
+        <a href="#" rel="nofollow noopener" target="_blank" aria-label="Написать в WhatsApp">WA</a>
+      </div>
+      <a href="tel:{{PHONE_E164}}" class="phone" data-goal="call">{{PHONE_DISPLAY}}</a>
+    </div>
+  </div>
+</div>
+
+<!-- ================================= ШАПКА ================================= -->
+<header class="site">
+  <div class="wrap">
+    <a href="/" class="brand">{{BRAND}}</a>
+
+    <nav class="main-nav" aria-label="Основная навигация">
+      <details class="nav-drop js-dd">
+        <summary>Услуги</summary>
+        <div class="nav-menu">
+          <a href="/remont-stiralnyh-mashin/">Ремонт стиральных машин</a>
+          <a href="/remont-holodilnikov/">Ремонт холодильников</a>
+          <a href="/kompyuternaya-pomosch/">Компьютерная помощь</a>
+        </div>
+      </details>
+      <a href="/#cities">Города</a>
+      <a href="/blog/">Блог</a>
+      <a href="/#faq">Вопросы</a>
+      <a href="/#contacts">Контакты</a>
+    </nav>
+
+    <div class="header-cta">
+      <div class="header-phone-wrap">
+        <a href="tel:{{PHONE_E164}}" class="header-phone" data-goal="call">{{PHONE_DISPLAY}}</a>
+        <button type="button" class="header-callback" data-modal-open>Заказать звонок</button>
+      </div>
+      <a href="#post-cities" class="btn">Вызвать мастера</a>
+      <button type="button" class="burger" id="burger" aria-label="Открыть меню" aria-expanded="false" aria-controls="mobile-nav">☰</button>
+    </div>
+  </div>
+
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Мобильная навигация">
+    <span class="group-title">Услуги</span>
+    <a href="/remont-stiralnyh-mashin/">Ремонт стиральных машин</a>
+    <a href="/remont-holodilnikov/">Ремонт холодильников</a>
+    <a href="/kompyuternaya-pomosch/">Компьютерная помощь</a>
+    <span class="group-title">Разделы</span>
+    <a href="/#cities">Города</a>
+    <a href="/blog/">Блог</a>
+    <a href="/#faq">Вопросы</a>
+    <a href="/#contacts">Контакты</a>
+  </nav>
+</header>
+
+<!-- ============================ ХЛЕБНЫЕ КРОШКИ ============================ -->
+<div class="wrap">
+  <nav class="crumbs" aria-label="Хлебные крошки">
+    <ol>
+      <li><a href="/">Главная</a></li>
+      <li><a href="/blog/">Блог</a></li>
+      <li><span aria-current="page">{{POST_H1}}</span></li>
+    </ol>
+  </nav>
+</div>
+
+<div class="wrap">
+  <div class="post-layout">
+
+    <!-- ============================== СТАТЬЯ ============================== -->
+    <article>
+
+      <header class="post-head">
+        <h1>{{POST_H1}}</h1>
+        <div class="post-meta">
+          <span>{{AUTHOR_NAME}}, {{AUTHOR_ROLE}}</span>
+          <span class="sep" aria-hidden="true">•</span>
+          <span>Опубликовано <time datetime="{{POST_DATE_ISO}}">{{POST_DATE}}</time></span>
+          <span class="sep" aria-hidden="true">•</span>
+          <!-- Дату обновления показывайте обязательно: для симптомных статей
+               свежесть — фактор ранжирования и доверия -->
+          <span>Обновлено <time datetime="{{POST_MOD_ISO}}">{{POST_MOD}}</time></span>
+          <span class="sep" aria-hidden="true">•</span>
+          <span>{{READ_TIME}} мин чтения</span>
+        </div>
+        <p class="post-lede">Если {{DEVICE_NOM}} работает, но не холодит, паниковать рано: примерно в половине случаев причина лечится без мастера. Разбираем шесть причин по порядку — от самых безобидных к тем, где нужен специалист.</p>
+      </header>
+
+      <!--
+        ЗАГЛУШКА: обложка статьи.
+        <figure>
+          <img src="/img/blog/{{POST_SLUG}}.jpg" width="760" height="428"
+               alt="Описание того, что на фото" loading="eager" fetchpriority="high">
+          <figcaption>Подпись к иллюстрации</figcaption>
+        </figure>
+      -->
+
+      <!-- СОДЕРЖАНИЕ. Обязательно для статей длиннее ~5 экранов:
+           даёт быстрые ссылки и иногда попадает в сниппет. -->
+      <nav class="toc" aria-label="Содержание статьи">
+        <h2>Содержание</h2>
+        <ol>
+          <li><a href="#p1">Дверь закрыта неплотно</a></li>
+          <li><a href="#p2">Выставлен неверный режим</a></li>
+          <li><a href="#p3">Забит дренаж или конденсатор</a></li>
+          <li><a href="#p4">Утечка фреона</a></li>
+          <li><a href="#p5">Отказ вентилятора или ТЭНа оттайки</a></li>
+          <li><a href="#p6">Компрессор или плата управления</a></li>
+          <li><a href="#check">Что проверить самому за 10 минут</a></li>
+          <li><a href="#post-faq">Частые вопросы</a></li>
+        </ol>
+      </nav>
+
+      <div class="post-body">
+
+        <h2 id="p1">1. Дверь закрыта неплотно</h2>
+        <p>Самая частая и самая обидная причина. Уплотнительная резинка со временем дубеет, теряет форму или забивается крошками — и камера перестаёт держать холод. Компрессор при этом работает почти без остановки, а иней намерзает у задней стенки.</p>
+        <p>Проверяется за минуту: вложите лист бумаги в дверной проём и закройте дверь. Если лист вытаскивается без сопротивления — уплотнитель не держит.</p>
+        <div class="callout">
+          <strong>Что можно сделать самому</strong>
+          Промойте резинку тёплой водой с мылом и просушите. Если она деформирована, прогрейте феном на минимальной температуре и дайте остыть в закрытом положении. Помогает не всегда, но попробовать стоит до вызова мастера.
+        </div>
+
+        <h2 id="p2">2. Выставлен неверный режим</h2>
+        <p>Ручку термостата случайно задели при уборке, или кто-то включил режим отпуска. В электронных моделях сбой настроек случается после отключения электричества.</p>
+        <p>Проверьте текущее положение регулятора и сравните с инструкцией. Оптимальная температура в холодильной камере — от +2 до +5 °C, в морозильной — от −18 °C. Измерить можно обычным термометром: поставьте стакан воды на среднюю полку и оставьте на 6 часов.</p>
+
+        <h2 id="p3">3. Забит дренаж или конденсатор</h2>
+        <p>Пыль на решётке конденсатора сзади работает как одеяло: тепло не отводится, техника не справляется. Забитое дренажное отверстие даёт лужу внутри камеры и лёд у задней стенки.</p>
+        <ul>
+          <li>Отключите {{DEVICE_NOM}} от сети</li>
+          <li>Пропылесосьте решётку сзади мягкой насадкой</li>
+          <li>Промойте дренажное отверстие тёплой водой из спринцовки</li>
+          <li>Отодвиньте технику от стены минимум на 5 см</li>
+        </ul>
+
+        <div class="inline-cta">
+          <p>
+            <strong>Проверили всё и не помогло?</strong>
+            Дальше начинается зона, где нужен инструмент: манометры, детектор утечек, мультиметр. Мастер приедет, найдёт причину и назовёт цену до начала работ.
+          </p>
+          <a href="#post-cities" class="btn">Вызвать мастера</a>
+        </div>
+
+        <h2 id="p4">4. Утечка фреона</h2>
+        <p>Если морозилка ещё работает, а холодильная камера тёплая — это классическая картина частичной утечки. Фреон уходит через микротрещину в контуре, чаще всего в местах пайки или на испарителе.</p>
+        <p>Косвенные признаки: масляные пятна на трубках сзади, шипение при запуске, компрессор не выключается вообще.</p>
+        <div class="callout callout--warn">
+          <strong>Важно</strong>
+          Дозаправить фреон самому нельзя. Заправка делается по весу, с вакуумированием контура и заменой фильтра-осушителя. Без поиска и устранения самой течи газ уйдёт снова за несколько недель, а лишний объём выведет компрессор из строя.
+        </div>
+
+        <h2 id="p5">5. Отказ вентилятора или ТЭНа оттайки</h2>
+        <p>Касается моделей с системой No Frost. Вентилятор гонит холодный воздух из морозильного отделения в холодильное; если он встал, морозилка морозит, а камера остаётся тёплой. ТЭН оттайки периодически растапливает иней на испарителе; при его отказе испаритель обрастает льдом и перестаёт отдавать холод.</p>
+        <p>Проверить просто: откройте дверь морозилки и прислушайтесь. При работающем вентиляторе слышен ровный шум воздуха. Если тихо, а внутри при этом снежная «шуба» — причина здесь.</p>
+
+        <h2 id="p6">6. Компрессор или плата управления</h2>
+        <p>Самый неприятный вариант. Компрессор гудит, греется, но не запускается — или срабатывает защита через 10–20 секунд после включения. Электроника даёт хаотичные ошибки на дисплее и самопроизвольные перезапуски.</p>
+        <p>Оба случая требуют диагностики мультиметром и замены узла. Здесь же стоит считать целесообразность: если технике больше 15 лет, ремонт компрессора может оказаться дороже половины стоимости новой модели.</p>
+
+        <h2 id="check">Что проверить самому за 10 минут</h2>
+        <div class="post-table-wrap">
+          <table class="post-table">
+            <thead>
+              <tr><th scope="col">Проверка</th><th scope="col">Что это значит</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Лист бумаги в двери вытаскивается свободно</td><td>Уплотнитель не держит — причина 1</td></tr>
+              <tr><td>Регулятор стоит не на рабочем значении</td><td>Сбой настроек — причина 2</td></tr>
+              <tr><td>Решётка сзади в пыли, техника вплотную к стене</td><td>Перегрев конденсатора — причина 3</td></tr>
+              <tr><td>Морозилка морозит, камера тёплая</td><td>Утечка фреона или вентилятор — причины 4 и 5</td></tr>
+              <tr><td>Компрессор не выключается вообще</td><td>Утечка фреона — причина 4</td></tr>
+              <tr><td>В морозилке снежная «шуба»</td><td>Система оттайки — причина 5</td></tr>
+              <tr><td>Гудит, греется, не запускается</td><td>Компрессор — причина 6, нужен мастер</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout">
+          <strong>Коротко</strong>
+          Причины 1–3 можно устранить самому за полчаса. Причины 4–6 требуют инструмента и опыта: там либо герметичный контур, либо электрика. Если первые три проверки ничего не дали — дальше самостоятельные попытки чаще вредят, чем помогают.
+        </div>
+      </div>
+
+      <!-- ============================ FAQ СТАТЬИ ============================
+           2–4 вопроса, продублированы в JSON-LD FAQPage вверху файла.
+           Правите текст — правьте и разметку.
+      -->
+      <section id="post-faq" style="margin-top:44px;">
+        <h2 style="font-size:21px;margin-bottom:8px;">Частые вопросы</h2>
+        <details class="faq-item">
+          <summary>Сколько ждать после разморозки, прежде чем включать?</summary>
+          <p>Не меньше 8 часов, а если {{DEVICE_NOM}} перевозили в горизонтальном положении — сутки. Масло должно стечь обратно в компрессор, иначе при запуске оно уйдёт в контур.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Можно ли дозаправить фреон самому?</summary>
+          <p>Нет. Заправка выполняется по весу, через вакуумирование контура и с заменой фильтра-осушителя. Без поиска и устранения течи фреон уйдёт снова за несколько недель, а лишний объём выведет из строя компрессор.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Сколько стоит устранить причину?</summary>
+          <p>От прочистки дренажа за несколько сотен рублей до замены компрессора за несколько тысяч. Точные цены по вашему городу — на странице <a href="/{{SERVICE_SLUG}}/">{{SERVICE_GEN}}</a> в нём.</p>
+        </details>
+      </section>
+
+      <!-- ============================== АВТОР ==============================
+           E-E-A-T: у симптомной статьи должен быть живой автор с профессией.
+           ЗАГЛУШКА: имя, стаж, фото.
+      -->
+      <div class="author-box">
+        <!-- ЗАГЛУШКА ФОТО: заменить <div> на
+             <img class="author-photo" src="/img/masters/{{AUTHOR_SLUG}}.jpg"
+                  width="64" height="64" loading="lazy" alt="{{AUTHOR_NAME}}"> -->
+        <div class="author-photo" aria-hidden="true">ИФ</div>
+        <div>
+          <h2>{{AUTHOR_NAME}}</h2>
+          <p class="role">{{AUTHOR_ROLE}}</p>
+          <p>ЗАГЛУШКА: 1–2 предложения об авторе — с какой техникой работает, сколько ремонтов за плечами. Это то, чем симптомная статья отличается от рерайта с чужого сайта.</p>
+        </div>
+      </div>
+
+      <!-- ====================== ГОРОДА: ВОЗВРАТ В КОММЕРЦИЮ ======================
+           ГЛАВНЫЙ БЛОК СТАТЬИ с точки зрения структуры сайта.
+           Отсюда трафик уходит на городские страницы. Без него статья —
+           тупик: собирает визиты и не конвертирует.
+           СПИСОК ГОРОДОВ — под услугу этой статьи (см. легенду вверху).
+      -->
+      <section class="post-cities" id="post-cities">
+        <h2>Нужен мастер? Выберите город</h2>
+        <p>Выезжаем на дом, диагностика на месте, цена известна до начала работ. На странице города — прайс, районы выезда и местные отзывы.</p>
+        <div class="post-city-grid">
+          <a href="/{{SERVICE_SLUG}}/surgut/">Сургут</a>
+          <a href="/{{SERVICE_SLUG}}/nizhnevartovsk/">Нижневартовск</a>
+          <a href="/{{SERVICE_SLUG}}/nefteyugansk/">Нефтеюганск</a>
+          <a href="/{{SERVICE_SLUG}}/hanty-mansiysk/">Ханты-Мансийск</a>
+        </div>
+        <p class="hub"><a href="/{{SERVICE_SLUG}}/">{{SERVICE_NOM}} — цены, разбор поломок и все города →</a></p>
+      </section>
+
+      <!-- ========================== ПОХОЖИЕ СТАТЬИ ==========================
+           2–3 статьи по ТОЙ ЖЕ услуге. ЗАГЛУШКИ: URL и даты.
+      -->
+      <section class="related" id="related">
+        <h2>Читайте также</h2>
+        <div class="article-grid">
+          <a href="#" class="article-card">
+            <span class="article-date">ЗАГЛУШКА: дата</span>
+            <h3>{{DEVICE_NOM}} шумит: когда это норма</h3>
+            <p>Какие звуки штатные, а какие говорят о поломке компрессора.</p>
+            <span class="article-more">Читать</span>
+          </a>
+          <a href="#" class="article-card">
+            <span class="article-date">ЗАГЛУШКА: дата</span>
+            <h3>Наледь и «шуба» в морозилке</h3>
+            <p>Почему намерзает лёд в No Frost и что делать до приезда мастера.</p>
+            <span class="article-more">Читать</span>
+          </a>
+          <a href="#" class="article-card">
+            <span class="article-date">ЗАГЛУШКА: дата</span>
+            <h3>Вода под {{DEVICE_GEN}}: что проверить</h3>
+            <p>Три места, где чаще всего забивается дренаж, и как промыть его самому.</p>
+            <span class="article-more">Читать</span>
+          </a>
+        </div>
+        <p class="articles-all"><a href="/blog/">Все статьи и советы →</a></p>
+      </section>
+
+    </article>
+
+    <!-- ============================ БОКОВАЯ КОЛОНКА ============================
+         Липкая на десктопе, уезжает под текст на планшете и мобильном.
+         Держит телефон и ссылки на города в поле зрения всю статью.
+    -->
+    <aside class="post-aside">
+      <div class="aside-card">
+        <h2>Нужен мастер сейчас?</h2>
+        <p class="sub">Выезд на дом, диагностика на месте, гарантия до {{WARRANTY_MAX}} месяцев.</p>
+        <a href="tel:{{PHONE_E164}}" class="aside-phone" data-goal="call">{{PHONE_DISPLAY}}</a>
+        <button type="button" class="btn btn-block" data-modal-open>Заказать звонок</button>
+      </div>
+
+      <div class="aside-card">
+        <h2>{{SERVICE_NOM}}</h2>
+        <p class="sub">Выберите свой город:</p>
+        <ul class="aside-links">
+          <li><a href="/{{SERVICE_SLUG}}/surgut/">Сургут</a></li>
+          <li><a href="/{{SERVICE_SLUG}}/nizhnevartovsk/">Нижневартовск</a></li>
+          <li><a href="/{{SERVICE_SLUG}}/nefteyugansk/">Нефтеюганск</a></li>
+          <li><a href="/{{SERVICE_SLUG}}/hanty-mansiysk/">Ханты-Мансийск</a></li>
+        </ul>
+        <p class="aside-hub"><a href="/{{SERVICE_SLUG}}/">Цены и разбор поломок →</a></p>
+      </div>
+    </aside>
+
+  </div>
+</div>
+
+<!-- ================================= ПОДВАЛ ================================= -->
+<footer>
+  <div class="wrap">
+    <div class="footer-cols">
+      <div>
+        <h3><a href="/remont-stiralnyh-mashin/">Ремонт стиральных машин</a></h3>
+        <ul>
+          <li><a href="/remont-stiralnyh-mashin/surgut/">Сургут</a></li>
+          <li><a href="/remont-stiralnyh-mashin/nizhnevartovsk/">Нижневартовск</a></li>
+          <li><a href="/remont-stiralnyh-mashin/nefteyugansk/">Нефтеюганск</a></li>
+          <li><a href="/remont-stiralnyh-mashin/nyagan/">Нягань</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3><a href="/remont-holodilnikov/">Ремонт холодильников</a></h3>
+        <ul>
+          <li><a href="/remont-holodilnikov/surgut/">Сургут</a></li>
+          <li><a href="/remont-holodilnikov/nizhnevartovsk/">Нижневартовск</a></li>
+          <li><a href="/remont-holodilnikov/nefteyugansk/">Нефтеюганск</a></li>
+          <li><a href="/remont-holodilnikov/hanty-mansiysk/">Ханты-Мансийск</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3><a href="/kompyuternaya-pomosch/">Компьютерная помощь</a></h3>
+        <ul>
+          <li><a href="/kompyuternaya-pomosch/surgut/">Сургут</a></li>
+          <li><a href="/kompyuternaya-pomosch/nizhnevartovsk/">Нижневартовск</a></li>
+          <li><a href="/kompyuternaya-pomosch/nefteyugansk/">Нефтеюганск</a></li>
+          <li><a href="/kompyuternaya-pomosch/hanty-mansiysk/">Ханты-Мансийск</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Компания</h3>
+        <ul>
+          <li><a href="/#about">О компании</a></li>
+          <li><a href="/blog/">Блог</a></li>
+          <li><a href="/#contacts">Контакты</a></li>
+          <li><a href="/politika/">Политика конфиденциальности</a></li>
+          <li><a href="tel:{{PHONE_E164}}" data-goal="call">{{PHONE_DISPLAY}}</a></li>
+          <li><a href="mailto:{{EMAIL}}">{{EMAIL}}</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-legal">
+      <!-- ЗАГЛУШКА: реквизиты обязательны -->
+      <span class="req">© {{YEAR}} {{BRAND}}. {{LEGAL_NAME}}, ИНН {{INN}}, ОГРНИП {{OGRN}}. Информация на сайте не является публичной офертой.</span>
+      <span><a href="/politika/">Политика конфиденциальности</a></span>
+    </div>
+  </div>
+</footer>
+
+<!-- ========================= МОБИЛЬНАЯ ПАНЕЛЬ ========================= -->
+<div class="mobile-callbar">
+  <a href="tel:{{PHONE_E164}}" class="btn btn-outline" data-goal="call">Позвонить</a>
+  <a href="#post-cities" class="btn">Вызвать мастера</a>
+</div>
+
+<!-- Модалка обратного звонка -->
+<dialog id="callback-modal" aria-labelledby="callback-title">
+  <div class="modal-inner">
+    <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
+    <h2 id="callback-title">Закажите обратный звонок</h2>
+    <p class="sub">Перезвоним в течение 15 минут, {{WORK_HOURS}}.</p>
+    <form class="js-form" action="https://formspree.io/f/{{FORMSPREE_ID}}" method="POST">
+      <input type="hidden" name="_next" value="{{SITE_URL}}/spasibo/">
+      <input type="hidden" name="_subject" value="Заявка: БЛОГ / {{POST_SLUG}}">
+      <input type="hidden" name="service" value="{{SERVICE_NOM}}">
+      <input type="hidden" name="form_place" value="blog-callback-modal">
+      <input type="hidden" name="page" value="/blog/{{POST_SLUG}}/">
+      <input type="hidden" name="utm" value="" class="js-utm">
+      <div class="hp" aria-hidden="true"><label>Не заполняйте<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
+      <div class="field">
+        <label for="cb-city">Город</label>
+        <select id="cb-city" name="city" required>
+          <option value="" selected disabled>Выберите город</option>
+          <option>Сургут</option>
+          <option>Нижневартовск</option>
+          <option>Нефтеюганск</option>
+          <option>Ханты-Мансийск</option>
+          <option value="Другой">Другой населённый пункт</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="cb-phone">Телефон</label>
+        <input type="tel" id="cb-phone" name="phone" inputmode="tel" autocomplete="tel"
+               placeholder="+7 (___) ___-__-__" pattern="[0-9+()\s\-]{10,20}" required>
+      </div>
+      <label class="consent">
+        <input type="checkbox" name="consent" value="yes" required>
+        <span>Согласен с <a href="/politika/" target="_blank" rel="noopener">политикой конфиденциальности</a> и на обработку персональных данных</span>
+      </label>
+      <button type="submit" class="btn btn-block">Жду звонка</button>
+    </form>
+  </div>
+</dialog>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- Выпадающие меню ---------- */
+  var dropdowns = document.querySelectorAll('details.js-dd');
+  function closeDropdowns(except) {
+    dropdowns.forEach(function (d) { if (d !== except) { d.open = false; } });
+  }
+  dropdowns.forEach(function (d) {
+    d.addEventListener('toggle', function () { if (d.open) { closeDropdowns(d); } });
+  });
+  document.addEventListener('click', function (e) {
+    dropdowns.forEach(function (d) { if (d.open && !d.contains(e.target)) { d.open = false; } });
+  });
+
+  /* ---------- Бургер ---------- */
+  var burger = document.getElementById('burger');
+  var mnav = document.getElementById('mobile-nav');
+  function setNav(open) {
+    mnav.classList.toggle('open', open);
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+    burger.setAttribute('aria-label', open ? 'Закрыть меню' : 'Открыть меню');
+    burger.textContent = open ? '✕' : '☰';
+  }
+  if (burger && mnav) {
+    burger.addEventListener('click', function () { setNav(!mnav.classList.contains('open')); });
+    mnav.addEventListener('click', function (e) { if (e.target.closest('a')) { setNav(false); } });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') {
+      closeDropdowns(null);
+      if (mnav && mnav.classList.contains('open')) { setNav(false); }
+    }
+  });
+
+  /* ---------- Модалка с фоллбэком ---------- */
+  var modal = document.getElementById('callback-modal');
+  document.querySelectorAll('[data-modal-open]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      if (modal && typeof modal.showModal === 'function') {
+        modal.showModal();
+      } else {
+        var cities = document.getElementById('post-cities');
+        if (cities) { cities.scrollIntoView({ block: 'start' }); }
+        else { window.location.href = 'tel:{{PHONE_E164}}'; }
+      }
+    });
+  });
+  document.querySelectorAll('[data-modal-close]').forEach(function (btn) {
+    btn.addEventListener('click', function () { if (modal && modal.close) { modal.close(); } });
+  });
+  if (modal) {
+    modal.addEventListener('click', function (e) { if (e.target === modal) { modal.close(); } });
+  }
+
+  /* ---------- Перенос UTM ---------- */
+  try {
+    var qs = window.location.search;
+    if (qs && qs.length > 1) {
+      document.querySelectorAll('.js-utm').forEach(function (i) { i.value = qs.slice(0, 500); });
+    }
+  } catch (err) { /* пусто */ }
+
+  /* ---------- Цели Яндекс.Метрики ----------
+     ЗАГЛУШКА: раскомментировать после установки счётчика.
+     Для блога ключевая цель — blog_to_city: переход из статьи на городскую
+     страницу. Если она близка к нулю, статья собирает трафик впустую.
+  */
+  /*
+  document.querySelectorAll('[data-goal="call"]').forEach(function (a) {
+    a.addEventListener('click', function () { if (window.ym) { ym({{METRIKA_ID}}, 'reachGoal', 'call'); } });
+  });
+  document.querySelectorAll('.post-city-grid a, .aside-links a').forEach(function (a) {
+    a.addEventListener('click', function () { if (window.ym) { ym({{METRIKA_ID}}, 'reachGoal', 'blog_to_city'); } });
+  });
+  document.querySelectorAll('.js-form').forEach(function (f) {
+    f.addEventListener('submit', function () { if (window.ym) { ym({{METRIKA_ID}}, 'reachGoal', 'form_send'); } });
+  });
+  */
+})();
+</script>
+
+<!-- ЗАГЛУШКА: код счётчика Яндекс.Метрики -->
+
+</body>
+</html>
