@@ -52,7 +52,10 @@
   --- ПО УСЛУГЕ ---
   {{SERVICE_SLUG}}      remont-holodilnikov
   {{SERVICE_NOM}}       Ремонт холодильников
-  {{SERVICE_GEN}}       ремонта холодильников
+  {{SERVICE_GEN}}       ремонта холодильников   «стоимость ремонта…»
+  {{SERVICE_NOM_LC}}    ремонт холодильников    «сколько стоит ремонт…»
+  {{SERVICE_ACC}}       ремонт холодильников    «цены на ремонт…»
+  {{SERVICE_INS}}       ремонтом холодильников  «занимаемся ремонтом…»
   {{DEVICE_NOM}}        холодильник
   {{DEVICE_GEN}}        холодильника
   {{DEVICE_PL_GEN}}     холодильников
@@ -158,7 +161,7 @@
       },
       "hasOfferCatalog": {
         "@type": "OfferCatalog",
-        "name": "Цены на {{SERVICE_GEN}} в {{CITY_LOC}}",
+        "name": "Цены на {{SERVICE_ACC}} в {{CITY_LOC}}",
         "itemListElement": [
           { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Заправка фреоном" }, "priceSpecification": { "@type": "PriceSpecification", "minPrice": "2500", "priceCurrency": "RUB" } },
           { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Замена компрессора" }, "priceSpecification": { "@type": "PriceSpecification", "minPrice": "4000", "priceCurrency": "RUB" } },
@@ -679,7 +682,7 @@
       <div class="about-grid">
         <div>
           <h2>О мастерской</h2>
-          <p>Мы занимаемся {{SERVICE_GEN}} в {{CITY_LOC}} с {{FOUNDED_YEAR}} года. За это время через руки наших мастеров прошли сотни моделей — от простых однокамерных {{DEVICE_PL_GEN}} до сложной встраиваемой техники с электронным управлением.</p>
+          <p>Мы занимаемся {{SERVICE_INS}} в {{CITY_LOC}} с {{FOUNDED_YEAR}} года. За это время через руки наших мастеров прошли сотни моделей — от простых однокамерных {{DEVICE_PL_GEN}} до сложной встраиваемой техники с электронным управлением.</p>
           <p>Работаем без диспетчеров и посредников: мастер приезжает сам, сам называет цену и сам отвечает за качество ремонта. Все работы фиксируются в квитанции — по ней же действует гарантия.</p>
         </div>
         <div class="stat-list">
@@ -719,7 +722,7 @@
       <div class="table-wrap">
         <div class="table-scroll">
           <table class="price-table">
-            <caption class="visually-hidden">Цены на {{SERVICE_GEN}} в {{CITY_LOC}}</caption>
+            <caption class="visually-hidden">Цены на {{SERVICE_ACC}} в {{CITY_LOC}}</caption>
             <thead>
               <tr><th scope="col">Вид работ</th><th scope="col">Цена</th></tr>
             </thead>

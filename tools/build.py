@@ -42,7 +42,12 @@ import re
 import shutil
 import sys
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import preview  # noqa: E402  — лежит рядом, в tools/
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+PREVIEW_CSS = PREVIEW_JS = ''
 
 
 def load(name):
@@ -308,7 +313,7 @@ def gen_jsonld(svc, cities, ctx):
              "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
              "opens": "09:00", "closes": "21:00"},
          "hasOfferCatalog": {
-             "@type": "OfferCatalog", "name": "Ориентировочные цены на %s" % svc['gen'],
+             "@type": "OfferCatalog", "name": "Ориентировочные цены на %s" % svc['acc'],
              "itemListElement": [
                  {"@type": "Offer", "itemOffered": {"@type": "Service", "name": o['name']},
                   "priceSpecification": {"@type": "PriceSpecification", "minPrice": o['min'],
@@ -413,6 +418,7 @@ def build_hub(svc, site, cities, template):
         'PHONE_E164': cities[svc['cities'][0]]['phone_e164'],
 
         'SERVICE_SLUG': svc['slug'], 'SERVICE_NOM': svc['nom'], 'SERVICE_GEN': svc['gen'],
+        'SERVICE_NOM_LC': svc['nom_lc'], 'SERVICE_ACC': svc['acc'], 'SERVICE_INS': svc['ins'],
         'DEVICE_NOM': svc['device_nom'], 'DEVICE_GEN': svc['device_gen'],
         'DEVICE_PL_GEN': svc['device_pl_gen'],
         'CITIES_COUNT': str(len(svc['cities'])),
@@ -461,6 +467,10 @@ def main():
 
     build_hub.all_services = services
 
+    global PREVIEW_CSS, PREVIEW_JS
+    PREVIEW_CSS = preview.read_asset('style.css')
+    PREVIEW_JS = preview.read_asset('app.js')
+
     tpl_path = os.path.join(ROOT, 'templates', 'service-hub.template.html')
     template = io.open(tpl_path, encoding='utf-8').read()
 
@@ -477,15 +487,16 @@ def main():
         os.makedirs(d, exist_ok=True)
         io.open(os.path.join(d, 'index.html'), 'w', encoding='utf-8').write(page)
 
-        # Копия для просмотра с диска. В боевой странице путь к ассетам
-        # абсолютный (/assets/…) — иначе он сломается на вложенных адресах
-        # и на 404. Но при открытии файла двойным кликом абсолютный путь
-        # указывает в корень диска, и стили не подхватываются. Поэтому рядом
-        # кладём копию с относительным путём — только чтобы посмотреть.
+        # Копия для просмотра и отправки: стили и скрипт вшиты внутрь.
+        # Боевая страница ссылается на /assets/ абсолютным путём — иначе
+        # ссылки сломаются на вложенных адресах и на 404. Но такой файл нельзя
+        # открыть двойным кликом или отправить кому-то: соседней папки assets
+        # рядом не окажется, и браузер покажет голый HTML без стилей.
+        # На хостинг эти копии не выкладываются, см. tools/preview.py.
         prev = os.path.join(outdir, '_preview')
         os.makedirs(prev, exist_ok=True)
         io.open(os.path.join(prev, svc['slug'] + '.html'), 'w', encoding='utf-8').write(
-            page.replace('"/assets/', '"../assets/'))
+            preview.inline(page, PREVIEW_CSS, PREVIEW_JS))
 
         print('  /%s/  %6.1f КБ' % (svc['slug'], len(page.encode('utf-8')) / 1024))
 
