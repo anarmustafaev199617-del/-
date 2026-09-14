@@ -6,253 +6,327 @@
 <meta name="format-detection" content="telephone=no">
 <meta name="theme-color" content="#1C2321">
 
-<!--
-================================================================================
-  ШАБЛОН ХАБ-СТРАНИЦЫ УСЛУГИ  (уровень 2: /услуга/)
-  Пример заполнения: Ремонт холодильников — хаб по ХМАО
-================================================================================
 
-  ЧЕМ ХАБ ОТЛИЧАЕТСЯ ОТ ГОРОДСКОЙ СТРАНИЦЫ — И ПОЧЕМУ ЭТО ВАЖНО
 
-  Хаб и 4 его города не должны конкурировать за одни и те же запросы,
-  иначе Яндекс выберет одну страницу сам, и не факт что ту, что вам нужна.
-  Разделение ответственности:
-
-    ХАБ (эта страница)              ГОРОД (/услуга/город/)
-    ─────────────────────────       ─────────────────────────
-    Запрос без гео:                 Запрос с гео:
-    «ремонт холодильников»          «ремонт холодильников сургут»
-    «сколько стоит заправить        «мастер по холодильникам
-     холодильник фреоном»            на дом сургут»
-    ─────────────────────────       ─────────────────────────
-    ЗАДАЧА: выбрать город           ЗАДАЧА: оставить заявку
-    и получить экспертизу           прямо здесь
-    ─────────────────────────       ─────────────────────────
-    ЕСТЬ:                           ЕСТЬ:
-    • крупный выбор города          • районы и посёлки выезда
-    • таблица симптом→причина→цена  • карта зоны выезда
-    • 6 поломок с деталями          • 3 поломки кратко
-    • что входит в гарантию         • местные отзывы
-    • ремонт или замена             • городские вопросы FAQ
-    • ориентировочный прайс         • точный прайс города
-    ─────────────────────────       ─────────────────────────
-    НЕТ:                            НЕТ:
-    • районов и карты               • выбора города
-    • «в день обращения» как         • энциклопедических блоков
-      главного оффера
-    • городских отзывов
-
-  ГЛАВНОЕ ПРАВИЛО: в <title>, <h1> и первом экране хаба НЕ должно быть
-  названия ни одного города. Иначе хаб начнёт перетягивать городской запрос.
-
-  --------------------------------------------------------------------------
-  ТОКЕНЫ. Общие с городским шаблоном значения не дублирую — см. легенду
-  в templates/service-city.template.html. Здесь только то, что отличается.
-
-  {{REGION_SHORT}}     ХМАО                (аббревиатура не склоняется — удобно)
-  {{REGION_FULL}}      Ханты-Мансийский автономный округ — Югра
-  {{CITIES_COUNT}}     4
-  {{PHONE_DISPLAY}}    +7 (000) 000-00-00  ЗАГЛУШКА
-  {{PHONE_E164}}       +70000000000        ЗАГЛУШКА
-
-  ТОКЕНОВ {{CITY_*}} ЗДЕСЬ НЕТ — это и есть главное отличие от городского шаблона.
-
-  --------------------------------------------------------------------------
-  СПИСОК ГОРОДОВ В ЭТОМ ФАЙЛЕ ВСТРЕЧАЕТСЯ В 5 МЕСТАХ:
-    1. переключатель в topbar        4. JSON-LD (areaServed + ItemList)
-    2. секция #cities (главный блок) 5. матрица ссылок в подвале
-    3. select в форме заявки
-  Списки РАЗНЫЕ по услугам:
-    Стиральные машины:   surgut, nizhnevartovsk, nefteyugansk, nyagan
-    Холодильники:        surgut, nizhnevartovsk, nefteyugansk, hanty-mansiysk
-    Компьютерная помощь: surgut, nizhnevartovsk, nefteyugansk, hanty-mansiysk
-
-  --------------------------------------------------------------------------
-  Стили и скрипты — в /assets/style.css и /assets/app.js, общие на весь сайт.
-  Правила, специфичные для хаба, лежат в style.css под классом .page-hub.
-================================================================================
--->
-
-<title>{{SERVICE_NOM}} на дому — цены, сроки и вызов мастера в {{REGION_SHORT}}</title>
-<meta name="description" content="{{SERVICE_NOM}} на дому в {{REGION_SHORT}}: {{CITIES_COUNT}} города, выезд мастера, гарантия до {{WARRANTY_MAX}} месяцев. Разбираем частые поломки, сроки и цены. Выберите свой город и вызовите мастера.">
-<link rel="canonical" href="{{SITE_URL}}/{{SERVICE_SLUG}}/">
+<title>Ремонт холодильников на дому — цены, сроки и вызов мастера в ХМАО</title>
+<meta name="description" content="Ремонт холодильников на дому в ХМАО: 4 города, выезд мастера, гарантия до 24 месяцев. Разбираем частые поломки, сроки и цены. Выберите свой город и вызовите мастера.">
+<link rel="canonical" href="https://example.ru/remont-holodilnikov/">
 
 <meta property="og:type" content="website">
 <meta property="og:locale" content="ru_RU">
-<meta property="og:site_name" content="{{BRAND}}">
-<meta property="og:title" content="{{SERVICE_NOM}} на дому в {{REGION_SHORT}} — цены и вызов мастера">
-<meta property="og:description" content="{{CITIES_COUNT}} города, выезд мастера, гарантия до {{WARRANTY_MAX}} месяцев.">
-<meta property="og:url" content="{{SITE_URL}}/{{SERVICE_SLUG}}/">
-<!-- ЗАГЛУШКА: картинка 1200×630 -->
-<meta property="og:image" content="{{SITE_URL}}/img/og/{{SERVICE_SLUG}}.jpg">
+<meta property="og:site_name" content="РемонтДом">
+<meta property="og:title" content="Ремонт холодильников на дому в ХМАО — цены и вызов мастера">
+<meta property="og:description" content="4 города, выезд мастера, гарантия до 24 месяцев.">
+<meta property="og:url" content="https://example.ru/remont-holodilnikov/">
 
-<!-- ЗАГЛУШКА: фавиконки -->
+<meta property="og:image" content="https://example.ru/img/og/remont-holodilnikov.jpg">
+
+
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
-<!-- ЗАГЛУШКА: заменить на самохостинг woff2, см. @font-face в CSS -->
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
 <script type="application/ld+json">
-<!-- BUILD:jsonld -->
+
 {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Organization",
-      "@id": "{{SITE_URL}}/#organization",
-      "name": "{{BRAND}}",
-      "legalName": "{{LEGAL_NAME}}",
-      "url": "{{SITE_URL}}/",
-      "logo": "{{SITE_URL}}/img/logo.png",
-      "telephone": "{{PHONE_E164}}",
-      "email": "{{EMAIL}}",
-      "foundingDate": "{{FOUNDED_YEAR}}",
-      "taxID": "{{INN}}"
+      "@id": "https://example.ru/#organization",
+      "name": "РемонтДом",
+      "legalName": "ЗАГЛУШКА: ИП Иванов Иван Иванович",
+      "url": "https://example.ru/",
+      "logo": "https://example.ru/img/logo.png",
+      "telephone": "+70000000000",
+      "email": "info@example.ru",
+      "foundingDate": "2017",
+      "taxID": "ЗАГЛУШКА: 860000000000"
     },
     {
       "@type": "WebPage",
-      "@id": "{{SITE_URL}}/{{SERVICE_SLUG}}/#webpage",
-      "url": "{{SITE_URL}}/{{SERVICE_SLUG}}/",
-      "name": "{{SERVICE_NOM}} на дому в {{REGION_SHORT}}",
+      "@id": "https://example.ru/remont-holodilnikov/#webpage",
+      "url": "https://example.ru/remont-holodilnikov/",
+      "name": "Ремонт холодильников на дому в ХМАО",
       "inLanguage": "ru-RU",
-      "isPartOf": { "@id": "{{SITE_URL}}/#organization" }
+      "isPartOf": {
+        "@id": "https://example.ru/#organization"
+      }
     },
     {
       "@type": "BreadcrumbList",
-      "@id": "{{SITE_URL}}/{{SERVICE_SLUG}}/#breadcrumb",
+      "@id": "https://example.ru/remont-holodilnikov/#breadcrumb",
       "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Главная", "item": "{{SITE_URL}}/" },
-        { "@type": "ListItem", "position": 2, "name": "{{SERVICE_NOM}}" }
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Главная",
+          "item": "https://example.ru/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Ремонт холодильников"
+        }
       ]
     },
     {
       "@type": "Service",
-      "@id": "{{SITE_URL}}/{{SERVICE_SLUG}}/#service",
-      "name": "{{SERVICE_NOM}} на дому",
-      "serviceType": "{{SERVICE_NOM}}",
-      "provider": { "@id": "{{SITE_URL}}/#organization" },
+      "@id": "https://example.ru/remont-holodilnikov/#service",
+      "name": "Ремонт холодильников на дому",
+      "serviceType": "Ремонт холодильников",
+      "provider": {
+        "@id": "https://example.ru/#organization"
+      },
       "areaServed": [
-        { "@type": "City", "name": "Сургут" },
-        { "@type": "City", "name": "Нижневартовск" },
-        { "@type": "City", "name": "Нефтеюганск" },
-        { "@type": "City", "name": "Ханты-Мансийск" }
+        {
+          "@type": "City",
+          "name": "Сургут"
+        },
+        {
+          "@type": "City",
+          "name": "Нижневартовск"
+        },
+        {
+          "@type": "City",
+          "name": "Нефтеюганск"
+        },
+        {
+          "@type": "City",
+          "name": "Ханты-Мансийск"
+        }
       ],
       "availableChannel": {
         "@type": "ServiceChannel",
-        "servicePhone": { "@type": "ContactPoint", "telephone": "{{PHONE_E164}}", "contactType": "customer service" },
-        "serviceUrl": "{{SITE_URL}}/{{SERVICE_SLUG}}/"
+        "servicePhone": {
+          "@type": "ContactPoint",
+          "telephone": "+70000000000",
+          "contactType": "customer service"
+        },
+        "serviceUrl": "https://example.ru/remont-holodilnikov/"
       },
       "hoursAvailable": {
         "@type": "OpeningHoursSpecification",
-        "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
-        "opens": "09:00", "closes": "21:00"
+        "dayOfWeek": [
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+          "Sunday"
+        ],
+        "opens": "09:00",
+        "closes": "21:00"
       },
       "hasOfferCatalog": {
         "@type": "OfferCatalog",
-        "name": "Ориентировочные цены на {{SERVICE_GEN}}",
+        "name": "Ориентировочные цены на ремонта холодильников",
         "itemListElement": [
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Заправка фреоном" }, "priceSpecification": { "@type": "PriceSpecification", "minPrice": "2500", "priceCurrency": "RUB" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Замена компрессора" }, "priceSpecification": { "@type": "PriceSpecification", "minPrice": "4000", "priceCurrency": "RUB" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Устранение течи" }, "priceSpecification": { "@type": "PriceSpecification", "minPrice": "1500", "priceCurrency": "RUB" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Ремонт системы No Frost" }, "priceSpecification": { "@type": "PriceSpecification", "minPrice": "1500", "priceCurrency": "RUB" } },
-          { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Замена термостата" }, "priceSpecification": { "@type": "PriceSpecification", "minPrice": "1200", "priceCurrency": "RUB" } }
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Заправка фреоном"
+            },
+            "priceSpecification": {
+              "@type": "PriceSpecification",
+              "minPrice": "2500",
+              "priceCurrency": "RUB"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Замена компрессора"
+            },
+            "priceSpecification": {
+              "@type": "PriceSpecification",
+              "minPrice": "4000",
+              "priceCurrency": "RUB"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Устранение течи"
+            },
+            "priceSpecification": {
+              "@type": "PriceSpecification",
+              "minPrice": "1500",
+              "priceCurrency": "RUB"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Ремонт системы No Frost"
+            },
+            "priceSpecification": {
+              "@type": "PriceSpecification",
+              "minPrice": "1500",
+              "priceCurrency": "RUB"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Замена термостата"
+            },
+            "priceSpecification": {
+              "@type": "PriceSpecification",
+              "minPrice": "1200",
+              "priceCurrency": "RUB"
+            }
+          }
         ]
       }
     },
     {
       "@type": "ItemList",
-      "@id": "{{SITE_URL}}/{{SERVICE_SLUG}}/#cities",
-      "name": "{{SERVICE_NOM}} по городам",
+      "@id": "https://example.ru/remont-holodilnikov/#cities",
+      "name": "Ремонт холодильников по городам",
       "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "{{SERVICE_NOM}} в Сургуте", "url": "{{SITE_URL}}/{{SERVICE_SLUG}}/surgut/" },
-        { "@type": "ListItem", "position": 2, "name": "{{SERVICE_NOM}} в Нижневартовске", "url": "{{SITE_URL}}/{{SERVICE_SLUG}}/nizhnevartovsk/" },
-        { "@type": "ListItem", "position": 3, "name": "{{SERVICE_NOM}} в Нефтеюганске", "url": "{{SITE_URL}}/{{SERVICE_SLUG}}/nefteyugansk/" },
-        { "@type": "ListItem", "position": 4, "name": "{{SERVICE_NOM}} в Ханты-Мансийске", "url": "{{SITE_URL}}/{{SERVICE_SLUG}}/hanty-mansiysk/" }
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Ремонт холодильников в Сургуте",
+          "url": "https://example.ru/remont-holodilnikov/surgut/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Ремонт холодильников в Нижневартовске",
+          "url": "https://example.ru/remont-holodilnikov/nizhnevartovsk/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Ремонт холодильников в Нефтеюганске",
+          "url": "https://example.ru/remont-holodilnikov/nefteyugansk/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Ремонт холодильников в Ханты-Мансийске",
+          "url": "https://example.ru/remont-holodilnikov/hanty-mansiysk/"
+        }
       ]
     },
     {
       "@type": "FAQPage",
-      "@id": "{{SITE_URL}}/{{SERVICE_SLUG}}/#faq",
+      "@id": "https://example.ru/remont-holodilnikov/#faq",
       "mainEntity": [
-        { "@type": "Question", "name": "Сколько стоит ремонт холодильника?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Работа мастера — от {{PRICE_FROM}} ₽ за простую замену детали до 4 000 ₽ и выше за замену компрессора. Запчасти оплачиваются отдельно. Точную сумму мастер называет после диагностики, до начала работ. Цены по конкретному городу смотрите на странице этого города." } },
-        { "@type": "Question", "name": "В каких городах вы работаете?",
-          "acceptedAnswer": { "@type": "Answer", "text": "{{SERVICE_NOM}} выполняем в {{CITIES_COUNT}} городах {{REGION_SHORT}}: Сургут, Нижневартовск, Нефтеюганск, Ханты-Мансийск. Также выезжаем в прилегающие районы — уточняйте при оформлении заявки." } },
-        { "@type": "Question", "name": "Что входит в гарантию на ремонт?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Гарантия от {{WARRANTY_MIN}} до {{WARRANTY_MAX}} месяцев распространяется на выполненную работу и установленную нами запчасть. Если в течение срока та же неисправность повторилась — приезжаем и устраняем бесплатно. Срок фиксируется в квитанции." } },
-        { "@type": "Question", "name": "Когда ремонт дешевле замены техники?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Ориентир простой: если стоимость ремонта с запчастями превышает 40–50% цены аналогичной новой модели, выгоднее покупать новую. Мастер честно скажет, если чинить нет смысла — за такую консультацию вы платите только стоимость выезда." } },
-        { "@type": "Question", "name": "Нужно ли везти технику в сервис?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Нет. Более 90% неисправностей устраняются на дому — мастер приезжает с инструментом и ходовыми запчастями. В сервис технику забирают только при сложном ремонте платы управления, и это согласовывается отдельно." } },
-        { "@type": "Question", "name": "Работаете с юридическими лицами?",
-          "acceptedAnswer": { "@type": "Answer", "text": "Да, обслуживаем кафе, магазины и офисы: работаем по договору и безналичному расчёту, выдаём закрывающие документы. ЗАГЛУШКА: укажите, есть ли обслуживание по абонементу." } }
+        {
+          "@type": "Question",
+          "name": "Сколько стоит ремонт холодильника?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Работа мастера — от 600 ₽ за простую замену детали до 4 000 ₽ и выше за замену компрессора. Запчасти оплачиваются отдельно. Точную сумму мастер называет после диагностики, до начала работ. Цены по конкретному городу смотрите на странице этого города."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Нужно ли везти технику в сервис?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Нет. Более 90% неисправностей устраняются на дому — мастер приезжает с инструментом и ходовыми запчастями. В сервис технику забирают только при сложном ремонте платы управления, и это согласовывается отдельно."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Что входит в гарантию на ремонт?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Гарантия от 6 до 24 месяцев распространяется на выполненную работу и установленную нами запчасть. Если в течение срока та же неисправность повторилась — приезжаем и устраняем бесплатно. Срок фиксируется в квитанции."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Когда ремонт дешевле замены техники?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Ориентир простой: если стоимость ремонта с запчастями превышает 40–50% цены аналогичной новой модели, выгоднее покупать новую. Мастер честно скажет, если чинить нет смысла — за такую консультацию вы платите только стоимость выезда."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Ремонтируете встраиваемую технику?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Да, работаем со встраиваемой техникой всех основных производителей. Демонтаж и обратный монтаж из ниши выполняем сами, это отдельная строка в прайсе."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Работаете с юридическими лицами?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Да, обслуживаем кафе, магазины и офисы: работаем по договору и безналичному расчёту, выдаём закрывающие документы. ЗАГЛУШКА: укажите, есть ли обслуживание по абонементу."
+          }
+        }
       ]
     }
   ]
 }
-<!-- /BUILD:jsonld -->
-</script>
-<!--
-  aggregateRating намеренно не размечен — см. пояснение в городском шаблоне.
-  Рейтинг показываем визуально, ссылаемся на независимую площадку.
--->
 
-<!--
-  Стили и скрипты вынесены в /assets/ — один файл на все 16 страниц.
-  Браузер скачивает их один раз и переиспользует на остальных страницах.
-  Класс page-* на теге body ниже разводит те правила, где типам страниц
-  нужно разное поведение одного селектора (см. конец style.css).
--->
+</script>
+
+
+
 <link rel="stylesheet" href="/assets/style.css">
 <script src="/assets/app.js" defer></script>
 </head>
-<body class="page-hub" data-phone="{{PHONE_E164}}" data-metrika="{{METRIKA_ID}}" data-modal-fallback="#lead-form">
+<body class="page-hub" data-phone="+70000000000" data-metrika="" data-modal-fallback="#lead-form">
 
-<!-- ============================= ВЕРХНЯЯ ПОЛОСА =============================
-     На хабе города ещё не выбран — поэтому не название города, а призыв выбрать.
--->
+
 <div class="topbar">
   <div class="wrap">
     <div class="left">
       <details class="city-switch js-dd">
         <summary>Выберите город</summary>
         <div class="city-menu">
-<!-- BUILD:city-switch -->
-          <a href="/{{SERVICE_SLUG}}/surgut/">Сургут</a>
-          <a href="/{{SERVICE_SLUG}}/nizhnevartovsk/">Нижневартовск</a>
-          <a href="/{{SERVICE_SLUG}}/nefteyugansk/">Нефтеюганск</a>
-          <a href="/{{SERVICE_SLUG}}/hanty-mansiysk/">Ханты-Мансийск</a>
-        <!-- /BUILD:city-switch -->
+
+          <a href="/remont-holodilnikov/surgut/">Сургут</a>
+          <a href="/remont-holodilnikov/nizhnevartovsk/">Нижневартовск</a>
+          <a href="/remont-holodilnikov/nefteyugansk/">Нефтеюганск</a>
+          <a href="/remont-holodilnikov/hanty-mansiysk/">Ханты-Мансийск</a>
+        
 </div>
       </details>
-      <span class="hours">{{WORK_HOURS}}, без выходных</span>
+      <span class="hours">с 9:00 до 21:00, без выходных</span>
     </div>
     <div class="right">
-      <!-- ЗАГЛУШКИ: ссылки на мессенджеры -->
+      
       <div class="messengers">
         <a href="#" rel="nofollow noopener" target="_blank" aria-label="Написать в MAX">MAX</a>
         <a href="#" rel="nofollow noopener" target="_blank" aria-label="Написать в Telegram">TG</a>
         <a href="#" rel="nofollow noopener" target="_blank" aria-label="Написать в WhatsApp">WA</a>
       </div>
-      <a href="tel:{{PHONE_E164}}" class="phone" data-goal="call">{{PHONE_DISPLAY}}</a>
+      <a href="tel:+70000000000" class="phone" data-goal="call">+7 (000) 000-00-00</a>
     </div>
   </div>
 </div>
 
-<!-- ================================= ШАПКА ================================= -->
+
 <header class="site">
   <div class="wrap">
-    <a href="/" class="brand">{{BRAND}}</a>
+    <a href="/" class="brand">РемонтДом</a>
 
     <nav class="main-nav" aria-label="Основная навигация">
       <details class="nav-drop js-dd">
         <summary>Услуги</summary>
         <div class="nav-menu">
-          <!-- Текущий хаб помечен и не кликабелен как ссылка «сам на себя» -->
+          
           <a class="is-current" href="/remont-holodilnikov/" aria-current="page">Ремонт холодильников</a>
           <a href="/remont-stiralnyh-mashin/">Ремонт стиральных машин</a>
           <a href="/kompyuternaya-pomosch/">Компьютерная помощь</a>
@@ -268,7 +342,7 @@
 
     <div class="header-cta">
       <div class="header-phone-wrap">
-        <a href="tel:{{PHONE_E164}}" class="header-phone" data-goal="call">{{PHONE_DISPLAY}}</a>
+        <a href="tel:+70000000000" class="header-phone" data-goal="call">+7 (000) 000-00-00</a>
         <button type="button" class="header-callback" data-modal-open>Заказать звонок</button>
       </div>
       <a href="#cities" class="btn">Выбрать город</a>
@@ -277,13 +351,13 @@
   </div>
 
   <nav class="mobile-nav" id="mobile-nav" aria-label="Мобильная навигация">
-    <span class="group-title">{{SERVICE_NOM}} по городам</span>
-<!-- BUILD:mobile-cities -->
-    <a href="/{{SERVICE_SLUG}}/surgut/">Сургут</a>
-    <a href="/{{SERVICE_SLUG}}/nizhnevartovsk/">Нижневартовск</a>
-    <a href="/{{SERVICE_SLUG}}/nefteyugansk/">Нефтеюганск</a>
-    <a href="/{{SERVICE_SLUG}}/hanty-mansiysk/">Ханты-Мансийск</a>
-    <!-- /BUILD:mobile-cities -->
+    <span class="group-title">Ремонт холодильников по городам</span>
+
+    <a href="/remont-holodilnikov/surgut/">Сургут</a>
+    <a href="/remont-holodilnikov/nizhnevartovsk/">Нижневартовск</a>
+    <a href="/remont-holodilnikov/nefteyugansk/">Нефтеюганск</a>
+    <a href="/remont-holodilnikov/hanty-mansiysk/">Ханты-Мансийск</a>
+    
 <span class="group-title">Другие услуги</span>
     <a href="/remont-stiralnyh-mashin/">Ремонт стиральных машин</a>
     <a href="/kompyuternaya-pomosch/">Компьютерная помощь</a>
@@ -297,58 +371,54 @@
   </nav>
 </header>
 
-<!-- ============================ ХЛЕБНЫЕ КРОШКИ ============================
-     На хабе два уровня, третьего нет.
--->
+
 <div class="wrap">
   <nav class="crumbs" aria-label="Хлебные крошки">
     <ol>
       <li><a href="/">Главная</a></li>
-      <li><span aria-current="page">{{SERVICE_NOM}}</span></li>
+      <li><span aria-current="page">Ремонт холодильников</span></li>
     </ol>
   </nav>
 </div>
 
 <main>
 
-  <!-- ============================ ПЕРВЫЙ ЭКРАН ============================
-       В H1 и лиде НЕТ названий городов — иначе хаб начнёт конкурировать
-       с городскими страницами за геозапросы.
-  -->
+  
   <section class="hero">
     <div class="wrap grid">
       <div>
-        <h1>{{SERVICE_NOM}} на дому</h1>
+        <h1>Ремонт холодильников на дому</h1>
         <div class="rating-line">
-          <span class="stars" role="img" aria-label="Рейтинг {{RATING}} из 5">★★★★★</span>
-          <span>{{RATING}} на основе {{REVIEWS_COUNT}} отзывов</span>
-          <!-- ЗАГЛУШКА: ссылка на карточку в Яндекс.Картах / 2ГИС -->
+          <span class="stars" role="img" aria-label="Рейтинг 4.9 из 5">★★★★★</span>
+          <span>4.9 на основе 134 отзывов</span>
+          
           <a href="#" rel="nofollow noopener" target="_blank">смотреть отзывы</a>
         </div>
-        <p class="lede">{{HERO_LEDE}}</p>
+        <p class="lede">Мастер приезжает к вам, находит причину на месте и чинит за один визит. Заправка фреоном, компрессор, No Frost, электроника.</p>
         <div class="trust-row">
-<!-- BUILD:hero-badges -->
-          <span class="trust-badge">{{CITIES_COUNT}} города {{REGION_SHORT}}</span>
-          <span class="trust-badge">Гарантия до {{WARRANTY_MAX}} месяцев</span>
+
+          <span class="trust-badge">4 города ХМАО</span>
           <span class="trust-badge">Ремонт без вывоза техники</span>
-        <!-- /BUILD:hero-badges -->
+          <span class="trust-badge">Гарантия до 24 месяцев</span>
+          <span class="trust-badge">Цена известна до начала работ</span>
+        
 </div>
         <div class="hero-actions">
           <a href="#cities" class="btn btn-lg">Выбрать город</a>
-          <a href="tel:{{PHONE_E164}}" class="btn btn-lg btn-outline-accent" data-goal="call">{{PHONE_DISPLAY}}</a>
+          <a href="tel:+70000000000" class="btn btn-lg btn-outline-accent" data-goal="call">+7 (000) 000-00-00</a>
         </div>
-        <p class="hero-note">Работа мастера — от {{PRICE_FROM}} ₽. Выезд и диагностика бесплатны при заказе ремонта.</p>
+        <p class="hero-note">Работа мастера — от 600 ₽. Выезд и диагностика бесплатны при заказе ремонта.</p>
       </div>
 
-      <!-- ФОРМА 1 из 4. Ключевое отличие от городской: город выбирается в форме -->
+      
       <div class="lead-card" id="lead-form">
         <h2>Оставить заявку</h2>
         <p class="sub">Перезвоним в течение 15 минут и согласуем время выезда мастера.</p>
         <form class="js-form" action="/send.php" method="POST">
-          <input type="hidden" name="_next" value="{{SITE_URL}}/spasibo/">
-          <input type="hidden" name="service" value="{{SERVICE_NOM}}">
+          <input type="hidden" name="_next" value="https://example.ru/spasibo/">
+          <input type="hidden" name="service" value="Ремонт холодильников">
           <input type="hidden" name="form_place" value="hub-hero">
-          <input type="hidden" name="page" value="/{{SERVICE_SLUG}}/">
+          <input type="hidden" name="page" value="/remont-holodilnikov/">
           <input type="hidden" name="utm" value="" class="js-utm">
           <div class="hp" aria-hidden="true"><label>Не заполняйте<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
 
@@ -382,55 +452,46 @@
     </div>
   </section>
 
-  <!-- =============================== ГОРОДА ===============================
-       ГЛАВНЫЙ БЛОК ХАБА. Стоит сразу под первым экраном, а не в подвале:
-       задача хаба — увести человека на страницу его города.
-       ЗАГЛУШКА: цифры «от N ₽» и «выезд за N ч» — под каждый город свои.
-  -->
+  
   <section class="section section--pt0" id="cities">
     <div class="wrap">
       <div class="cities">
         <h2>Выберите город</h2>
         <p class="section-lede">На странице города — цены, районы выезда и отзывы именно по нему.</p>
         <div class="city-grid">
-<!-- BUILD:city-cards -->
-          <a class="city-card" href="/{{SERVICE_SLUG}}/surgut/">
+
+          <a class="city-card" href="/remont-holodilnikov/surgut/">
             <span class="name">Сургут</span>
             <span class="meta">от 600 ₽ · выезд в день обращения</span>
             <span class="go">Смотреть цены →</span>
           </a>
-          <a class="city-card" href="/{{SERVICE_SLUG}}/nizhnevartovsk/">
+          <a class="city-card" href="/remont-holodilnikov/nizhnevartovsk/">
             <span class="name">Нижневартовск</span>
             <span class="meta">от 600 ₽ · выезд в день обращения</span>
             <span class="go">Смотреть цены →</span>
           </a>
-          <a class="city-card" href="/{{SERVICE_SLUG}}/nefteyugansk/">
+          <a class="city-card" href="/remont-holodilnikov/nefteyugansk/">
             <span class="name">Нефтеюганск</span>
             <span class="meta">от 600 ₽ · выезд в день обращения</span>
             <span class="go">Смотреть цены →</span>
           </a>
-          <a class="city-card" href="/{{SERVICE_SLUG}}/hanty-mansiysk/">
+          <a class="city-card" href="/remont-holodilnikov/hanty-mansiysk/">
             <span class="name">Ханты-Мансийск</span>
             <span class="meta">от 600 ₽ · выезд в день обращения</span>
             <span class="go">Смотреть цены →</span>
           </a>
-        <!-- /BUILD:city-cards -->
+        
 </div>
-        <p class="cities-note">Вашего города нет в списке? Позвоните по номеру <a href="tel:{{PHONE_E164}}" data-goal="call">{{PHONE_DISPLAY}}</a> — часто выезжаем и в прилегающие районы.</p>
+        <p class="cities-note">Вашего города нет в списке? Позвоните по номеру <a href="tel:+70000000000" data-goal="call">+7 (000) 000-00-00</a> — часто выезжаем и в прилегающие районы.</p>
       </div>
     </div>
   </section>
 
-  <!-- ====================== СИМПТОМ → ПРИЧИНА → ЦЕНА ======================
-       Хаб-специфичный блок. Отвечает на бесгеошные запросы вида
-       «холодильник не морозит что делать», «сколько стоит заправить фреоном».
-       Каждая строка ведёт в блог — это и есть связка с симптомными статьями.
-       ЗАГЛУШКИ: URL статей.
-  -->
+  
   <section class="section" id="diagnostics">
     <div class="wrap">
       <h2>Симптом, причина и порядок цен</h2>
-      <p class="section-lede">{{DIAG_LEDE}}</p>
+      <p class="section-lede">Таблица не заменяет диагностику, но даёт понять, о каких суммах идёт речь, ещё до звонка мастеру.</p>
       <div class="table-wrap">
         <div class="table-scroll">
           <table class="diag-table">
@@ -443,7 +504,7 @@
               </tr>
             </thead>
             <tbody>
-<!-- BUILD:diag-rows -->
+
               <tr>
                 <td class="sym"><a href="#">Не морозит совсем</a></td>
                 <td>Утечка фреона, реже — отказ компрессора</td>
@@ -457,10 +518,10 @@
                 <td class="price">от 1 200 ₽</td>
               </tr>
               <tr>
-                <td class="sym"><a href="#">Вода под {{DEVICE_GEN}}</a></td>
+                <td class="sym"><a href="#">Вода под холодильником</a></td>
                 <td>Забился дренаж или порвалась трубка</td>
                 <td>Прочистка дренажной системы, замена трубки</td>
-                <td class="price">от {{PRICE_FROM}} ₽</td>
+                <td class="price">от 600 ₽</td>
               </tr>
               <tr>
                 <td class="sym"><a href="#">«Шуба» в морозилке</a></td>
@@ -480,7 +541,7 @@
                 <td>Прозвонка цепей, ремонт или замена платы</td>
                 <td class="price">от 2 500 ₽</td>
               </tr>
-            <!-- /BUILD:diag-rows -->
+            
 </tbody>
           </table>
         </div>
@@ -489,17 +550,12 @@
     </div>
   </section>
 
-  <!-- ============================== ПОЛОМКИ ==============================
-       На хабе разбор глубже, чем на городских страницах: там 3 поломки,
-       здесь 6. Это и есть «энциклопедичность», за счёт которой хаб ранжируется
-       по информационным запросам без гео.
-       ЗАГЛУШКА: при желании добавьте ещё 2–4 поломки.
-  -->
+  
   <section class="section" id="faults">
     <div class="wrap">
-      <h2>Разбор частых поломок {{DEVICE_PL_GEN}}</h2>
+      <h2>Разбор частых поломок холодильников</h2>
       <p class="section-lede">Что именно ломается, как это проявляется, сколько занимает ремонт и какая на него гарантия.</p>
-<!-- BUILD:faults -->
+
 
       <div class="fault">
         <h3>Утечка фреона</h3>
@@ -556,7 +612,7 @@
         <div class="fault-meta">
           <span>Срок: <strong>2–3 часа</strong></span>
           <span>Работа: <strong>от 4 000 ₽</strong></span>
-          <span>Гарантия: <strong>{{WARRANTY_MAX}} месяца</strong></span>
+          <span>Гарантия: <strong>24 месяца</strong></span>
         </div>
       </div>
 
@@ -592,7 +648,7 @@
 
       <div class="fault">
         <h3>Засор дренажной системы</h3>
-        <p class="fault-desc">Самая дешёвая и самая частая «страшная» поломка: лужа под {{DEVICE_GEN}} обычно означает не пробитый контур, а забитое дренажное отверстие.</p>
+        <p class="fault-desc">Самая дешёвая и самая частая «страшная» поломка: лужа под холодильником обычно означает не пробитый контур, а забитое дренажное отверстие.</p>
         <div class="fault-cols">
           <div>
             <h4>Признаки</h4>
@@ -613,8 +669,8 @@
         </div>
         <div class="fault-meta">
           <span>Срок: <strong>40–60 минут</strong></span>
-          <span>Работа: <strong>от {{PRICE_FROM}} ₽</strong></span>
-          <span>Гарантия: <strong>{{WARRANTY_MIN}} месяцев</strong></span>
+          <span>Работа: <strong>от 600 ₽</strong></span>
+          <span>Гарантия: <strong>6 месяцев</strong></span>
         </div>
       </div>
 
@@ -673,11 +729,11 @@
           <span>Гарантия: <strong>12 месяцев</strong></span>
         </div>
       </div>
-<!-- /BUILD:faults -->
+
     </div>
   </section>
 
-  <!-- ФОРМА 2 из 4 -->
+  
   <section class="section section--pt0">
     <div class="wrap">
       <div class="cta-strip">
@@ -686,10 +742,10 @@
           <p>Опишите симптом — мастер определит вероятную причину по телефону и назовёт порядок цен.</p>
         </div>
         <form class="js-form" action="/send.php" method="POST">
-          <input type="hidden" name="_next" value="{{SITE_URL}}/spasibo/">
-          <input type="hidden" name="service" value="{{SERVICE_NOM}}">
+          <input type="hidden" name="_next" value="https://example.ru/spasibo/">
+          <input type="hidden" name="service" value="Ремонт холодильников">
           <input type="hidden" name="form_place" value="hub-consult">
-          <input type="hidden" name="page" value="/{{SERVICE_SLUG}}/">
+          <input type="hidden" name="page" value="/remont-holodilnikov/">
           <input type="hidden" name="utm" value="" class="js-utm">
           <div class="hp" aria-hidden="true"><label>Не заполняйте<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
           <label class="visually-hidden" for="consult-city">Город</label>
@@ -714,17 +770,13 @@
     </div>
   </section>
 
-  <!-- ======================== РЕМОНТ ИЛИ ЗАМЕНА ========================
-       Хаб-специфичный экспертный блок. Закрывает запрос «стоит ли чинить
-       холодильник» и заметно повышает доверие: вы честно говорите, когда
-       чинить не надо.
-  -->
+  
   <section class="section" id="repair-or-replace">
     <div class="wrap">
       <h2>Чинить или менять</h2>
-      <p class="section-lede">{{DECIDE_LEDE}}</p>
+      <p class="section-lede">Универсальный ориентир: если ремонт с запчастями дороже 40–50% стоимости аналогичной новой модели — выгоднее покупать новую. Мастер скажет об этом прямо, даже если это значит, что заказа не будет.</p>
       <div class="decide">
-<!-- BUILD:decide -->
+
         <div class="decide-card ok">
           <span class="tag">Однозначно чинить</span>
           <h3>Технике до 10 лет</h3>
@@ -738,21 +790,18 @@
         <div class="decide-card no">
           <span class="tag">Скорее менять</span>
           <h3>Технике больше 15 лет</h3>
-          <p>Повреждён испаритель в корпусе, проржавел контур, нет запчастей на снятую с производства модель. Такой ремонт не даёт предсказуемого результата — мы за него не беремся.</p>
+          <p>Повреждён испаритель в корпусе, проржавел контур, нет запчастей на снятую с производства модель. Такой ремонт не даёт предсказуемого результата — мы за него не берёмся.</p>
         </div>
-      <!-- /BUILD:decide -->
+      
 </div>
     </div>
   </section>
 
-  <!-- =========================== ГАРАНТИЯ ===========================
-       Хаб-специфичный блок. Честно перечисляем, что в гарантию НЕ входит —
-       это снимает конфликты и хорошо читается людьми и алгоритмами.
-  -->
+  
   <section class="section" id="warranty">
     <div class="wrap">
       <h2>Что входит в гарантию</h2>
-      <p class="section-lede">Срок — от {{WARRANTY_MIN}} до {{WARRANTY_MAX}} месяцев в зависимости от работ, указывается в квитанции.</p>
+      <p class="section-lede">Срок — от 6 до 24 месяцев в зависимости от работ, указывается в квитанции.</p>
       <div class="warranty">
         <div class="yes">
           <h3>Гарантия действует</h3>
@@ -772,12 +821,12 @@
             <li>На запчасть, которую предоставил клиент</li>
           </ul>
         </div>
-        <p class="warranty-note">Квитанция с перечнем работ, ценой и сроком гарантии остаётся у вас. По ней же обращаетесь, если что-то пошло не так — достаточно позвонить по <a href="tel:{{PHONE_E164}}" data-goal="call">{{PHONE_DISPLAY}}</a>.</p>
+        <p class="warranty-note">Квитанция с перечнем работ, ценой и сроком гарантии остаётся у вас. По ней же обращаетесь, если что-то пошло не так — достаточно позвонить по <a href="tel:+70000000000" data-goal="call">+7 (000) 000-00-00</a>.</p>
       </div>
     </div>
   </section>
 
-  <!-- =============================== ПРОЦЕСС =============================== -->
+  
   <section class="section">
     <div class="wrap">
       <h2>Как проходит ремонт</h2>
@@ -803,12 +852,12 @@
     </div>
   </section>
 
-  <!-- ============================ ПРЕИМУЩЕСТВА ============================ -->
+  
   <section class="section">
     <div class="wrap">
       <h2>Почему обращаются к нам</h2>
       <div class="trust-grid">
-<!-- BUILD:trust -->
+
         <div class="trust-point">
           <h3>Мастер, а не диспетчер</h3>
           <p>Вы говорите сразу с тем, кто приедет. Без call-центра и передачи заявки подрядчику.</p>
@@ -818,7 +867,7 @@
           <p>Мастер возит ходовые компрессоры, термостаты, ТЭНы и датчики — редко приходится ждать заказ.</p>
         </div>
         <div class="trust-point">
-          <h3>Ремонт без демонтажа</h3>
+          <h3>Работаем на месте</h3>
           <p>Работаем у вас дома. Технику не нужно везти в сервис и оставлять там на неделю.</p>
         </div>
         <div class="trust-point">
@@ -826,93 +875,90 @@
           <p>После ремонта остаётся документ с перечнем работ, ценой и сроком гарантии.</p>
         </div>
         <div class="trust-point">
-          <h3>{{YEARS}} лет и встраиваемая техника</h3>
-          <p>С {{FOUNDED_YEAR}} года. Работаем в том числе со встройкой и электронным управлением.</p>
+          <h3>9 лет практики</h3>
+          <p>С 2017 года. Постоянная команда профильных мастеров по каждому направлению.</p>
         </div>
         <div class="trust-point">
           <h3>Скажем, если чинить не стоит</h3>
           <p>Если ремонт дороже новой техники — назовём это прямо, а не «накрутим» смету.</p>
         </div>
-      <!-- /BUILD:trust -->
+      
 </div>
     </div>
   </section>
 
-  <!-- ================================ БРЕНДЫ ================================ -->
+  
   <section class="section">
     <div class="wrap">
-      <h2>{{BRANDS_TITLE}}</h2>
-      <p class="section-lede">{{BRANDS_LEDE}}</p>
+      <h2>С какими марками работаем</h2>
+      <p class="section-lede">Список открытый: если вашей марки нет в перечне — позвоните, скорее всего берёмся.</p>
       <div class="brands-row">
-<!-- BUILD:brands-main -->
+
         <span>Samsung</span><span>LG</span><span>Bosch</span><span>Indesit</span>
         <span>Atlant</span><span>Stinol</span><span>Beko</span><span>Haier</span>
-      <!-- /BUILD:brands-main -->
+      
 </div>
       <div class="brands-row" id="brands-extra" hidden style="margin-top:14px;">
-<!-- BUILD:brands-extra -->
+
         <span>Electrolux</span><span>Liebherr</span><span>Gorenje</span><span>Whirlpool</span>
         <span>Sharp</span><span>Siemens</span><span>Candy</span><span>Hotpoint-Ariston</span>
-        <span>Vestfrost</span><span>Zanussi</span><span>Biryusa</span><span>Pozis</span>
-        <span>Nord</span><span>Snaige</span><span>Hisense</span><span>Midea</span>
-      <!-- /BUILD:brands-extra -->
+        <span>Vestfrost</span><span>Zanussi</span><span>Бирюса</span><span>Позис</span>
+        <span>Норд</span><span>Snaige</span><span>Hisense</span><span>Midea</span>
+      
 </div>
       <button type="button" class="toggle-btn" data-toggle="brands-extra"
               data-label-open="Скрыть марки" aria-expanded="false" aria-controls="brands-extra">Показать все марки</button>
     </div>
   </section>
 
-  <!-- ================================ ПРОМО ================================ -->
+  
   <section class="section section--pb0">
     <div class="wrap">
       <div class="promo">
         <div>
           <h2>Скидка 10% при заявке с сайта</h2>
           <p>Оставьте заявку через форму или закажите обратный звонок — скидка применяется к стоимости работ.</p>
-          <!-- ЗАГЛУШКА: условия обязательны -->
-          <p class="promo-terms">Скидка распространяется на стоимость работ и не суммируется с другими предложениями. Действует до 31.12.{{YEAR}} во всех городах. Подробности по телефону.</p>
+          
+          <p class="promo-terms">Скидка распространяется на стоимость работ и не суммируется с другими предложениями. Действует до 31.12.2026 во всех городах. Подробности по телефону.</p>
         </div>
         <a href="#lead-form" class="btn btn-lg">Оставить заявку</a>
       </div>
     </div>
   </section>
 
-  <!-- ================================ ПРАЙС ================================
-       ВАЖНО: на хабе прайс ОРИЕНТИРОВОЧНЫЙ, с явной отсылкой к городам.
-       Если продублировать сюда точный городской прайс — страницы станут дублями.
-  -->
+  
   <section class="section" id="prices">
     <div class="wrap">
-      <h2>Сколько стоит {{SERVICE_GEN}}</h2>
-      <p class="section-lede">{{PRICES_LEDE}} В каждом городе цены немного отличаются — точный прайс на странице города.</p>
+      <h2>Сколько стоит ремонта холодильников</h2>
+      <p class="section-lede">Указана цена работы мастера. Запчасти оплачиваются отдельно, их стоимость мастер согласовывает до установки. В каждом городе цены немного отличаются — точный прайс на странице города.</p>
 
       <div class="table-wrap">
         <div class="table-scroll">
           <table class="price-table">
-            <caption class="visually-hidden">Ориентировочные цены на {{SERVICE_GEN}}</caption>
+            <caption class="visually-hidden">Ориентировочные цены на ремонта холодильников</caption>
             <thead>
               <tr><th scope="col">Вид работ</th><th scope="col">Цена работы</th></tr>
             </thead>
             <tbody>
-<!-- BUILD:price-main -->
+
               <tr><td>Выезд и диагностика при заказе ремонта</td><td>бесплатно</td></tr>
-              <tr><td>Выезд с диагностикой при отказе от ремонта</td><td>от {{VISIT_PRICE}} ₽</td></tr>
+              <tr><td>Выезд с диагностикой при отказе от ремонта</td><td>от 500 ₽</td></tr>
               <tr><td>Заправка фреоном</td><td>от 2 500 ₽</td></tr>
               <tr><td>Замена компрессора</td><td>от 4 000 ₽</td></tr>
               <tr><td>Устранение течи</td><td>от 1 500 ₽</td></tr>
               <tr><td>Ремонт системы No Frost</td><td>от 1 500 ₽</td></tr>
               <tr><td>Замена термостата или датчика</td><td>от 1 200 ₽</td></tr>
-            <!-- /BUILD:price-main -->
+            
 </tbody>
             <tbody id="price-extra" hidden>
-<!-- BUILD:price-extra -->
+
               <tr><td>Чистка конденсатора</td><td>от 1 200 ₽</td></tr>
-              <tr><td>Прочистка дренажа, замена трубки</td><td>от {{PRICE_FROM}} ₽</td></tr>
+              <tr><td>Прочистка дренажа, замена трубки</td><td>от 600 ₽</td></tr>
               <tr><td>Замена уплотнительной резинки</td><td>от 1 400 ₽</td></tr>
               <tr><td>Ремонт платы управления</td><td>от 2 500 ₽</td></tr>
               <tr><td>Перенавес дверей</td><td>от 1 800 ₽</td></tr>
-              <tr><td>Демонтаж/монтаж встроенного {{DEVICE_GEN}}</td><td>от 2 000 ₽</td></tr>
-            <!-- /BUILD:price-extra -->
+              <tr><td>Демонтаж/монтаж встроенного холодильника</td><td>от 2 000 ₽</td></tr>
+            
 </tbody>
           </table>
         </div>
@@ -923,84 +969,80 @@
       </div>
 
       <p class="price-note">Точную сумму мастер называет после диагностики, <strong>до начала работ</strong>. Если она вас не устраивает — платите только за выезд и ничего больше. Цены и условия выезда по городам: 
-<!-- BUILD:price-city-links --><a href="/{{SERVICE_SLUG}}/surgut/">Сургут</a>, <a href="/{{SERVICE_SLUG}}/nizhnevartovsk/">Нижневартовск</a>, <a href="/{{SERVICE_SLUG}}/nefteyugansk/">Нефтеюганск</a>, <a href="/{{SERVICE_SLUG}}/hanty-mansiysk/">Ханты-Мансийск</a><!-- /BUILD:price-city-links -->
+<a href="/remont-holodilnikov/surgut/">Сургут</a>, <a href="/remont-holodilnikov/nizhnevartovsk/">Нижневартовск</a>, <a href="/remont-holodilnikov/nefteyugansk/">Нефтеюганск</a>, <a href="/remont-holodilnikov/hanty-mansiysk/">Ханты-Мансийск</a>
 .</p>
     </div>
   </section>
 
-  <!-- =============================== ОТЗЫВЫ ===============================
-       Отличие от городской страницы: отзывы СМЕШАННЫЕ по городам, и у каждого
-       подписан город со ссылкой на его страницу — ещё один канал перелинковки.
-       ЗАГЛУШКА: заменить на реальные отзывы.
-  -->
+  
   <section class="section" id="reviews">
     <div class="wrap">
       <h2>Отзывы клиентов</h2>
-      <p class="section-lede">{{RATING}} из 5 на основе {{REVIEWS_COUNT}} отзывов из всех городов, где мы работаем.</p>
+      <p class="section-lede">4.9 из 5 на основе 134 отзывов из всех городов, где мы работаем.</p>
       <div class="review-grid">
-<!-- BUILD:reviews -->
+
         <div class="review-card">
-          <div class="review-head"><span class="review-name">Юрий К.</span><span class="review-date">02.09.{{YEAR}}</span></div>
+          <div class="review-head"><span class="review-name">Юрий К.</span><span class="review-date">02.09.2026</span></div>
           <div class="review-stars" role="img" aria-label="5 из 5">★★★★★</div>
           <span class="review-tag">Утечка фреона</span>
           <p class="review-text">Заявку оставил утром, мастер приехал в тот же день. Нашёл утечку, запаял, заправил. Морозит как новый.</p>
-          <span class="review-city"><a href="/{{SERVICE_SLUG}}/surgut/">Сургут</a></span>
+          <span class="review-city"><a href="/remont-holodilnikov/surgut/">Сургут</a></span>
         </div>
         <div class="review-card">
-          <div class="review-head"><span class="review-name">Валерия Л.</span><span class="review-date">27.08.{{YEAR}}</span></div>
+          <div class="review-head"><span class="review-name">Валерия Л.</span><span class="review-date">27.08.2026</span></div>
           <div class="review-stars" role="img" aria-label="5 из 5">★★★★★</div>
           <span class="review-tag">Компрессор</span>
           <p class="review-text">Думала, технике конец — оказалось, компрессор. Заменили за пару часов, цену назвали сразу и не меняли.</p>
-          <span class="review-city"><a href="/{{SERVICE_SLUG}}/nizhnevartovsk/">Нижневартовск</a></span>
+          <span class="review-city"><a href="/remont-holodilnikov/nizhnevartovsk/">Нижневартовск</a></span>
         </div>
         <div class="review-card">
-          <div class="review-head"><span class="review-name">Денис Ш.</span><span class="review-date">19.08.{{YEAR}}</span></div>
+          <div class="review-head"><span class="review-name">Денис Ш.</span><span class="review-date">19.08.2026</span></div>
           <div class="review-stars" role="img" aria-label="4 из 5">★★★★☆</div>
           <span class="review-tag">Термостат</span>
           <p class="review-text">LG перестал морозить, оказался термостат. Поменяли за час. Снял звезду за то, что приехали позже оговорённого.</p>
-          <span class="review-city"><a href="/{{SERVICE_SLUG}}/nefteyugansk/">Нефтеюганск</a></span>
+          <span class="review-city"><a href="/remont-holodilnikov/nefteyugansk/">Нефтеюганск</a></span>
         </div>
         <div class="review-card">
-          <div class="review-head"><span class="review-name">Алевтина С.</span><span class="review-date">11.08.{{YEAR}}</span></div>
+          <div class="review-head"><span class="review-name">Алевтина С.</span><span class="review-date">11.08.2026</span></div>
           <div class="review-stars" role="img" aria-label="5 из 5">★★★★★</div>
           <span class="review-tag">Дренаж</span>
-          <p class="review-text">Вода под {{DEVICE_GEN}} — забился дренаж. Почистили быстро, показали, как самой промывать раз в полгода.</p>
-          <span class="review-city"><a href="/{{SERVICE_SLUG}}/hanty-mansiysk/">Ханты-Мансийск</a></span>
+          <p class="review-text">Вода под холодильником — забился дренаж. Почистили быстро, показали, как самой промывать раз в полгода.</p>
+          <span class="review-city"><a href="/remont-holodilnikov/hanty-mansiysk/">Ханты-Мансийск</a></span>
         </div>
         <div class="review-card">
-          <div class="review-head"><span class="review-name">Владимир А.</span><span class="review-date">30.07.{{YEAR}}</span></div>
+          <div class="review-head"><span class="review-name">Владимир А.</span><span class="review-date">30.07.2026</span></div>
           <div class="review-stars" role="img" aria-label="5 из 5">★★★★★</div>
           <span class="review-tag">Электроника</span>
           <p class="review-text">Samsung то работал, то нет. Поменяли плату, дали талон на год. Через месяц всё в порядке.</p>
-          <span class="review-city"><a href="/{{SERVICE_SLUG}}/surgut/">Сургут</a></span>
+          <span class="review-city"><a href="/remont-holodilnikov/surgut/">Сургут</a></span>
         </div>
         <div class="review-card">
-          <div class="review-head"><span class="review-name">Галина Ф.</span><span class="review-date">21.07.{{YEAR}}</span></div>
+          <div class="review-head"><span class="review-name">Галина Ф.</span><span class="review-date">21.07.2026</span></div>
           <div class="review-stars" role="img" aria-label="5 из 5">★★★★★</div>
           <span class="review-tag">Честная оценка</span>
           <p class="review-text">Мастер посмотрел и честно сказал, что чинить невыгодно, проще купить новый. Заплатила только за выезд. Уважаю такой подход.</p>
-          <span class="review-city"><a href="/{{SERVICE_SLUG}}/nizhnevartovsk/">Нижневартовск</a></span>
+          <span class="review-city"><a href="/remont-holodilnikov/nizhnevartovsk/">Нижневартовск</a></span>
         </div>
-      <!-- /BUILD:reviews -->
+      
 </div>
-      <!-- ЗАГЛУШКА: ссылка на независимую площадку -->
+      
       <p class="reviews-source"><a href="#" rel="nofollow noopener" target="_blank">Все отзывы на Яндекс.Картах →</a></p>
     </div>
   </section>
 
-  <!-- ФОРМА 3 из 4 -->
+  
   <section class="section section--pt0">
     <div class="wrap">
       <div class="cta-strip">
         <div>
           <h2>Вызвать мастера</h2>
-          <p>Работаем {{WORK_HOURS}} без выходных во всех {{CITIES_COUNT}} городах. Согласуем выезд за один звонок.</p>
+          <p>Работаем с 9:00 до 21:00 без выходных во всех 4 городах. Согласуем выезд за один звонок.</p>
         </div>
         <form class="js-form" action="/send.php" method="POST">
-          <input type="hidden" name="_next" value="{{SITE_URL}}/spasibo/">
-          <input type="hidden" name="service" value="{{SERVICE_NOM}}">
+          <input type="hidden" name="_next" value="https://example.ru/spasibo/">
+          <input type="hidden" name="service" value="Ремонт холодильников">
           <input type="hidden" name="form_place" value="hub-master">
-          <input type="hidden" name="page" value="/{{SERVICE_SLUG}}/">
+          <input type="hidden" name="page" value="/remont-holodilnikov/">
           <input type="hidden" name="utm" value="" class="js-utm">
           <div class="hp" aria-hidden="true"><label>Не заполняйте<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
           <label class="visually-hidden" for="master-city">Город</label>
@@ -1025,51 +1067,45 @@
     </div>
   </section>
 
-  <!-- ====================== ПЕРЕЛИНКОВКА: ДРУГИЕ ХАБЫ ======================
-       Хаб ↔ хаб. Городских ссылок здесь нет — они уже есть в блоке #cities.
-  -->
+  
   <section class="section">
     <div class="wrap">
       <h2>Другие услуги</h2>
       <div class="link-cards">
-<!-- BUILD:other-services -->
+
         <a class="link-card" href="/remont-stiralnyh-mashin/">
           <strong>Ремонт стиральных машин</strong>
           <span>Не сливает, не отжимает, течёт, шумит при отжиме</span>
         </a>
         <a class="link-card" href="/kompyuternaya-pomosch/">
           <strong>Компьютерная помощь</strong>
-          <span>Не включается, тормозит, переустановка системы, чистка</span>
+          <span>Не включается, тормозит, перегревается, вирусы</span>
         </a>
         <a class="link-card" href="/">
           <strong>Все услуги и города</strong>
           <span>Полный список того, с чем мы работаем</span>
         </a>
-      <!-- /BUILD:other-services -->
+      
 </div>
     </div>
   </section>
 
-  <!-- ================================ СТАТЬИ ================================
-       На хабе статей больше, чем на городской (там 3): хаб собирает
-       информационный трафик. Только по теме этой услуги.
-       ЗАГЛУШКИ: URL и даты.
-  -->
+  
   <section class="section section--pt0" id="articles">
     <div class="wrap">
       <h2>Статьи и советы мастера</h2>
-      <p class="section-lede">Разбираем поломки {{DEVICE_PL_GEN}} и рассказываем, что можно проверить самому до вызова мастера.</p>
+      <p class="section-lede">Разбираем поломки холодильников и рассказываем, что можно проверить самому до вызова мастера.</p>
       <div class="article-grid">
-<!-- BUILD:articles -->
+
         <a href="#" class="article-card">
           <span class="article-date">ЗАГЛУШКА: дата</span>
-          <h3>{{DEVICE_NOM}} не морозит: 6 причин</h3>
+          <h3>Холодильник не морозит: 6 причин</h3>
           <p>От банально приоткрытой двери до утечки фреона — разбираем по порядку.</p>
           <span class="article-more">Читать</span>
         </a>
         <a href="#" class="article-card">
           <span class="article-date">ЗАГЛУШКА: дата</span>
-          <h3>{{DEVICE_NOM}} шумит: когда это норма</h3>
+          <h3>Холодильник шумит: когда это норма</h3>
           <p>Какие звуки штатные, а какие говорят о поломке компрессора или вентилятора.</p>
           <span class="article-more">Читать</span>
         </a>
@@ -1081,86 +1117,82 @@
         </a>
         <a href="#" class="article-card">
           <span class="article-date">ЗАГЛУШКА: дата</span>
-          <h3>Вода под {{DEVICE_GEN}}: что проверить</h3>
+          <h3>Вода под холодильником: что проверить</h3>
           <p>Три места, где чаще всего забивается дренаж, и как промыть его самому.</p>
           <span class="article-more">Читать</span>
         </a>
         <a href="#" class="article-card">
           <span class="article-date">ЗАГЛУШКА: дата</span>
-          <h3>Сколько служит {{DEVICE_NOM}}</h3>
+          <h3>Сколько служит холодильник</h3>
           <p>Реальные сроки по типам компрессоров и что сокращает их вдвое.</p>
           <span class="article-more">Читать</span>
         </a>
         <a href="#" class="article-card">
           <span class="article-date">ЗАГЛУШКА: дата</span>
-          <h3>Как перевозить {{DEVICE_NOM}}</h3>
+          <h3>Как перевозить холодильник</h3>
           <p>Почему нельзя включать сразу после перевозки и сколько ждать на самом деле.</p>
           <span class="article-more">Читать</span>
         </a>
-      <!-- /BUILD:articles -->
+      
 </div>
       <p class="articles-all"><a href="/blog/">Все статьи и советы →</a></p>
     </div>
   </section>
 
-  <!-- ================================= FAQ =================================
-       Отличие от городской страницы: здесь НЕТ городских вопросов
-       («выезжаете в Белый Яр?»). Только общие по услуге.
-       Тексты продублированы в JSON-LD FAQPage — правьте вместе.
-  -->
+  
   <section class="section" id="faq">
     <div class="wrap">
       <h2>Частые вопросы</h2>
       <div>
-<!-- BUILD:faq -->
+
         <details class="faq-item">
-          <summary>Сколько стоит ремонт {{DEVICE_GEN}}?</summary>
-          <p>Работа мастера — от {{PRICE_FROM}} ₽ за простую замену детали до 4 000 ₽ и выше за замену компрессора. Запчасти оплачиваются отдельно. Точную сумму мастер называет после диагностики, до начала работ. Цены по конкретному городу смотрите на странице этого города.</p>
-        </details>
-        <details class="faq-item">
-          <summary>В каких городах вы работаете?</summary>
-          <p>{{SERVICE_NOM}} выполняем в {{CITIES_COUNT}} городах {{REGION_SHORT}}: Сургут, Нижневартовск, Нефтеюганск, Ханты-Мансийск. Также выезжаем в прилегающие районы — уточняйте при оформлении заявки.</p>
-        </details>
-        <details class="faq-item">
-          <summary>Что входит в гарантию на ремонт?</summary>
-          <p>Гарантия от {{WARRANTY_MIN}} до {{WARRANTY_MAX}} месяцев распространяется на выполненную работу и установленную нами запчасть. Если в течение срока та же неисправность повторилась — приезжаем и устраняем бесплатно. Срок фиксируется в квитанции.</p>
-        </details>
-        <details class="faq-item">
-          <summary>Когда ремонт дешевле замены техники?</summary>
-          <p>Ориентир простой: если стоимость ремонта с запчастями превышает 40–50% цены аналогичной новой модели, выгоднее покупать новую. Мастер честно скажет, если чинить нет смысла — за такую консультацию вы платите только стоимость выезда.</p>
+          <summary>Сколько стоит ремонт холодильника?</summary>
+          <p>Работа мастера — от 600 ₽ за простую замену детали до 4 000 ₽ и выше за замену компрессора. Запчасти оплачиваются отдельно. Точную сумму мастер называет после диагностики, до начала работ. Цены по конкретному городу смотрите на странице этого города.</p>
         </details>
         <details class="faq-item">
           <summary>Нужно ли везти технику в сервис?</summary>
           <p>Нет. Более 90% неисправностей устраняются на дому — мастер приезжает с инструментом и ходовыми запчастями. В сервис технику забирают только при сложном ремонте платы управления, и это согласовывается отдельно.</p>
         </details>
         <details class="faq-item">
+          <summary>Что входит в гарантию на ремонт?</summary>
+          <p>Гарантия от 6 до 24 месяцев распространяется на выполненную работу и установленную нами запчасть. Если в течение срока та же неисправность повторилась — приезжаем и устраняем бесплатно. Срок фиксируется в квитанции.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Когда ремонт дешевле замены техники?</summary>
+          <p>Ориентир простой: если стоимость ремонта с запчастями превышает 40–50% цены аналогичной новой модели, выгоднее покупать новую. Мастер честно скажет, если чинить нет смысла — за такую консультацию вы платите только стоимость выезда.</p>
+        </details>
+        <details class="faq-item">
+          <summary>Ремонтируете встраиваемую технику?</summary>
+          <p>Да, работаем со встраиваемой техникой всех основных производителей. Демонтаж и обратный монтаж из ниши выполняем сами, это отдельная строка в прайсе.</p>
+        </details>
+        <details class="faq-item">
           <summary>Работаете с юридическими лицами?</summary>
           <p>Да, обслуживаем кафе, магазины и офисы: работаем по договору и безналичному расчёту, выдаём закрывающие документы. ЗАГЛУШКА: укажите, есть ли обслуживание по абонементу.</p>
         </details>
-      <!-- /BUILD:faq -->
+      
 </div>
     </div>
   </section>
 
-  <!-- =============================== КОНТАКТЫ =============================== -->
+  
   <section class="section" id="contacts">
     <div class="wrap">
       <h2>Контакты</h2>
-      <p class="section-lede">Принимаем заявки {{WORK_HOURS}} без выходных. Один номер для всех городов.</p>
+      <p class="section-lede">Принимаем заявки с 9:00 до 21:00 без выходных. Один номер для всех городов.</p>
       <div class="contacts-grid">
         <div class="contact-item">
           <h3>Телефон</h3>
-          <p class="value"><a href="tel:{{PHONE_E164}}" data-goal="call">{{PHONE_DISPLAY}}</a></p>
+          <p class="value"><a href="tel:+70000000000" data-goal="call">+7 (000) 000-00-00</a></p>
           <p class="note">Звоните или напишите в мессенджер</p>
         </div>
         <div class="contact-item">
           <h3>Почта</h3>
-          <p class="value"><a href="mailto:{{EMAIL}}">{{EMAIL}}</a></p>
+          <p class="value"><a href="mailto:info@example.ru">info@example.ru</a></p>
           <p class="note">Отвечаем в течение рабочего дня</p>
         </div>
         <div class="contact-item">
           <h3>География работы</h3>
-          <p class="value">{{CITIES_COUNT}} города {{REGION_SHORT}}</p>
+          <p class="value">4 города ХМАО</p>
           <p class="note"><a href="#cities">Выбрать свой город →</a></p>
         </div>
       </div>
@@ -1169,10 +1201,7 @@
 
 </main>
 
-<!-- ============================= ФИНАЛЬНАЯ CTA =============================
-     На хабе финальный призыв ведёт к выбору города, а не «вызвать сегодня»:
-     мы ещё не знаем, откуда человек.
--->
+
 <div class="cta-band">
   <div class="wrap">
     <div>
@@ -1181,15 +1210,12 @@
     </div>
     <div class="actions">
       <a href="#cities" class="btn btn-lg">Выбрать город</a>
-      <a href="tel:{{PHONE_E164}}" class="btn btn-lg btn-ghost" data-goal="call">{{PHONE_DISPLAY}}</a>
+      <a href="tel:+70000000000" class="btn btn-lg btn-ghost" data-goal="call">+7 (000) 000-00-00</a>
     </div>
   </div>
 </div>
 
-<!-- ================================= ПОДВАЛ =================================
-     Матрица одинакова на всех страницах сайта.
-     ВНИМАНИЕ: у стиральных машин Нягань вместо Ханты-Мансийска.
--->
+
 <footer>
   <div class="wrap">
     <div class="footer-cols">
@@ -1226,38 +1252,36 @@
           <li><a href="/blog/">Блог</a></li>
           <li><a href="#contacts">Контакты</a></li>
           <li><a href="/politika/">Политика конфиденциальности</a></li>
-          <li><a href="tel:{{PHONE_E164}}" data-goal="call">{{PHONE_DISPLAY}}</a></li>
-          <li><a href="mailto:{{EMAIL}}">{{EMAIL}}</a></li>
+          <li><a href="tel:+70000000000" data-goal="call">+7 (000) 000-00-00</a></li>
+          <li><a href="mailto:info@example.ru">info@example.ru</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-legal">
-      <!-- ЗАГЛУШКА: реквизиты обязательны -->
-      <span class="req">© {{YEAR}} {{BRAND}}. {{LEGAL_NAME}}, ИНН {{INN}}, ОГРНИП {{OGRN}}. Информация на сайте не является публичной офертой.</span>
+      
+      <span class="req">© 2026 РемонтДом. ЗАГЛУШКА: ИП Иванов Иван Иванович, ИНН ЗАГЛУШКА: 860000000000, ОГРНИП ЗАГЛУШКА: 300000000000000. Информация на сайте не является публичной офертой.</span>
       <span><a href="/politika/">Политика конфиденциальности</a></span>
     </div>
   </div>
 </footer>
 
-<!-- ========================= МОБИЛЬНАЯ ПАНЕЛЬ =========================
-     На хабе вторая кнопка ведёт к выбору города, а не к форме.
--->
+
 <div class="mobile-callbar">
-  <a href="tel:{{PHONE_E164}}" class="btn btn-outline" data-goal="call">Позвонить</a>
+  <a href="tel:+70000000000" class="btn btn-outline" data-goal="call">Позвонить</a>
   <a href="#cities" class="btn">Выбрать город</a>
 </div>
 
-<!-- ФОРМА 4 из 4 — модалка -->
+
 <dialog id="callback-modal" aria-labelledby="callback-title">
   <div class="modal-inner">
     <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
     <h2 id="callback-title">Закажите обратный звонок</h2>
-    <p class="sub">Перезвоним в течение 15 минут, {{WORK_HOURS}}.</p>
+    <p class="sub">Перезвоним в течение 15 минут, с 9:00 до 21:00.</p>
     <form class="js-form" action="/send.php" method="POST">
-      <input type="hidden" name="_next" value="{{SITE_URL}}/spasibo/">
-      <input type="hidden" name="service" value="{{SERVICE_NOM}}">
+      <input type="hidden" name="_next" value="https://example.ru/spasibo/">
+      <input type="hidden" name="service" value="Ремонт холодильников">
       <input type="hidden" name="form_place" value="hub-callback-modal">
-      <input type="hidden" name="page" value="/{{SERVICE_SLUG}}/">
+      <input type="hidden" name="page" value="/remont-holodilnikov/">
       <input type="hidden" name="utm" value="" class="js-utm">
       <div class="hp" aria-hidden="true"><label>Не заполняйте<input type="text" name="_gotcha" tabindex="-1" autocomplete="off"></label></div>
       <div class="field">
@@ -1285,7 +1309,7 @@
   </div>
 </dialog>
 
-<!-- ЗАГЛУШКА: код счётчика Яндекс.Метрики -->
+
 
 </body>
 </html>
