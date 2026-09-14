@@ -336,9 +336,8 @@
       <div class="lead-card" id="lead-form">
         <h2>Оставить заявку</h2>
         <p class="sub">Перезвоним в течение 15 минут и согласуем время выезда мастера.</p>
-        <form class="js-form" action="https://formspree.io/f/{{FORMSPREE_ID}}" method="POST">
+        <form class="js-form" action="/send.php" method="POST">
           <input type="hidden" name="_next" value="{{SITE_URL}}/spasibo/">
-          <input type="hidden" name="_subject" value="Заявка: {{SERVICE_NOM}} / ХАБ / hero">
           <input type="hidden" name="service" value="{{SERVICE_NOM}}">
           <input type="hidden" name="form_place" value="hub-hero">
           <input type="hidden" name="page" value="/{{SERVICE_SLUG}}/">
@@ -672,9 +671,8 @@
           <h2>Не нашли свою поломку?</h2>
           <p>Опишите симптом — мастер определит вероятную причину по телефону и назовёт порядок цен.</p>
         </div>
-        <form class="js-form" action="https://formspree.io/f/{{FORMSPREE_ID}}" method="POST">
+        <form class="js-form" action="/send.php" method="POST">
           <input type="hidden" name="_next" value="{{SITE_URL}}/spasibo/">
-          <input type="hidden" name="_subject" value="Заявка: {{SERVICE_NOM}} / ХАБ / консультация">
           <input type="hidden" name="service" value="{{SERVICE_NOM}}">
           <input type="hidden" name="form_place" value="hub-consult">
           <input type="hidden" name="page" value="/{{SERVICE_SLUG}}/">
@@ -968,9 +966,8 @@
           <h2>Вызвать мастера</h2>
           <p>Работаем {{WORK_HOURS}} без выходных во всех {{CITIES_COUNT}} городах. Согласуем выезд за один звонок.</p>
         </div>
-        <form class="js-form" action="https://formspree.io/f/{{FORMSPREE_ID}}" method="POST">
+        <form class="js-form" action="/send.php" method="POST">
           <input type="hidden" name="_next" value="{{SITE_URL}}/spasibo/">
-          <input type="hidden" name="_subject" value="Заявка: {{SERVICE_NOM}} / ХАБ / вызов мастера">
           <input type="hidden" name="service" value="{{SERVICE_NOM}}">
           <input type="hidden" name="form_place" value="hub-master">
           <input type="hidden" name="page" value="/{{SERVICE_SLUG}}/">
@@ -1220,9 +1217,8 @@
     <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
     <h2 id="callback-title">Закажите обратный звонок</h2>
     <p class="sub">Перезвоним в течение 15 минут, {{WORK_HOURS}}.</p>
-    <form class="js-form" action="https://formspree.io/f/{{FORMSPREE_ID}}" method="POST">
+    <form class="js-form" action="/send.php" method="POST">
       <input type="hidden" name="_next" value="{{SITE_URL}}/spasibo/">
-      <input type="hidden" name="_subject" value="Заявка: {{SERVICE_NOM}} / ХАБ / обратный звонок">
       <input type="hidden" name="service" value="{{SERVICE_NOM}}">
       <input type="hidden" name="form_place" value="hub-callback-modal">
       <input type="hidden" name="page" value="/{{SERVICE_SLUG}}/">

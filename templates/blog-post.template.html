@@ -540,9 +540,8 @@
     <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
     <h2 id="callback-title">Закажите обратный звонок</h2>
     <p class="sub">Перезвоним в течение 15 минут, {{WORK_HOURS}}.</p>
-    <form class="js-form" action="https://formspree.io/f/{{FORMSPREE_ID}}" method="POST">
+    <form class="js-form" action="/send.php" method="POST">
       <input type="hidden" name="_next" value="{{SITE_URL}}/spasibo/">
-      <input type="hidden" name="_subject" value="Заявка: БЛОГ / {{POST_SLUG}}">
       <input type="hidden" name="service" value="{{SERVICE_NOM}}">
       <input type="hidden" name="form_place" value="blog-callback-modal">
       <input type="hidden" name="page" value="/blog/{{POST_SLUG}}/">

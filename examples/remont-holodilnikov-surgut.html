@@ -25,7 +25,6 @@
   300000000000000              300000000000000
   info@example.ru             info@example.ru
   с 9:00 до 21:00        с 9:00 до 21:00
-  xxxxxxx      xxxxxxx                   (ID формы в Formspree)
   00000000        00000000                  (номер счётчика Яндекс.Метрики)
   2026              2026
   2017      2017
@@ -345,9 +344,8 @@
       <div class="lead-card" id="lead-form">
         <h2>Оставить заявку на ремонт</h2>
         <p class="sub">Перезвоним в течение 15 минут и согласуем время выезда мастера.</p>
-        <form class="js-form" action="https://formspree.io/f/xxxxxxx" method="POST">
+        <form class="js-form" action="/send.php" method="POST">
           <input type="hidden" name="_next" value="https://example.ru/spasibo/">
-          <input type="hidden" name="_subject" value="Заявка: Ремонт холодильников / Сургут / hero">
           <input type="hidden" name="city" value="Сургут">
           <input type="hidden" name="service" value="Ремонт холодильников">
           <input type="hidden" name="form_place" value="hero">
@@ -497,9 +495,8 @@
           <h2>Не нашли свою поломку?</h2>
           <p>Опишите, что происходит с техникой — мастер определит причину по телефону и назовёт предварительную стоимость.</p>
         </div>
-        <form class="js-form" action="https://formspree.io/f/xxxxxxx" method="POST">
+        <form class="js-form" action="/send.php" method="POST">
           <input type="hidden" name="_next" value="https://example.ru/spasibo/">
-          <input type="hidden" name="_subject" value="Заявка: Ремонт холодильников / Сургут / консультация">
           <input type="hidden" name="city" value="Сургут">
           <input type="hidden" name="service" value="Ремонт холодильников">
           <input type="hidden" name="form_place" value="consult">
@@ -826,9 +823,8 @@
           <h2>Вызвать мастера в Сургуте</h2>
           <p>Работаем с 9:00 до 21:00 без выходных. Согласуем время выезда за один звонок.</p>
         </div>
-        <form class="js-form" action="https://formspree.io/f/xxxxxxx" method="POST">
+        <form class="js-form" action="/send.php" method="POST">
           <input type="hidden" name="_next" value="https://example.ru/spasibo/">
-          <input type="hidden" name="_subject" value="Заявка: Ремонт холодильников / Сургут / вызов мастера">
           <input type="hidden" name="city" value="Сургут">
           <input type="hidden" name="service" value="Ремонт холодильников">
           <input type="hidden" name="form_place" value="master">
@@ -1072,9 +1068,8 @@
     <button type="button" class="modal-close" data-modal-close aria-label="Закрыть">×</button>
     <h2 id="callback-title">Закажите обратный звонок</h2>
     <p class="sub">Перезвоним в течение 15 минут, с 9:00 до 21:00.</p>
-    <form class="js-form" action="https://formspree.io/f/xxxxxxx" method="POST">
+    <form class="js-form" action="/send.php" method="POST">
       <input type="hidden" name="_next" value="https://example.ru/spasibo/">
-      <input type="hidden" name="_subject" value="Заявка: Ремонт холодильников / Сургут / обратный звонок">
       <input type="hidden" name="city" value="Сургут">
       <input type="hidden" name="service" value="Ремонт холодильников">
       <input type="hidden" name="form_place" value="callback-modal">

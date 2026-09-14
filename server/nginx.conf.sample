@@ -1,0 +1,22 @@
+# ============================================================================
+#  То же самое для nginx — .htaccess он не читает.
+#  Вставляется в блок server { } вашего сайта.
+#
+#  ⚠️ location-блоки должны идти ДО общего location / — иначе не сработают.
+#
+#  ПРОВЕРЬТЕ ПОСЛЕ ПРИМЕНЕНИЯ (обе команды → 403 или 404):
+#      curl -I https://ваш-сайт.ru/config.php
+#      curl -I https://ваш-сайт.ru/logs/leads.csv
+# ============================================================================
+
+# Настройки с токеном бота
+location = /config.php        { deny all; }
+location = /config.sample.php { deny all; }
+
+# Логи и выгрузки заявок
+location ^~ /logs/            { deny all; }
+location ~* \.(csv|log)$      { deny all; }
+
+# Страница 404 — см. templates/404.template.html
+error_page 404 /404.html;
+location = /404.html { internal; }

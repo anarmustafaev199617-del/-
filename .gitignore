@@ -1,0 +1,9 @@
+# Боевые настройки обработчика форм: внутри токен Telegram-бота
+server/config.php
+config.php
+
+# Заявки и ошибки — персональные данные, в репозитории им не место
+server/logs/
+logs/
+*.csv
+!examples/*.csv
