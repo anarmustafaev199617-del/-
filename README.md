@@ -6,16 +6,20 @@
 templates/home.template.html                  главная         /
 templates/service-hub.template.html           хаб услуги      /услуга/
 templates/service-city.template.html          город           /услуга/город/
+templates/blog-index.template.html            список статей   /blog/
 templates/blog-post.template.html             статья блога    /blog/слаг/
 templates/spasibo.template.html               благодарность   /spasibo/
+templates/politika.template.html              политика        /politika/
 examples/home.html                            пример: главная
 examples/remont-holodilnikov-hub.html         пример: хаб холодильников
 examples/remont-holodilnikov-surgut.html      пример: холодильники × Сургут
+examples/blog.html                            пример: /blog/
 examples/blog-holodilnik-ne-morozit.html      пример: статья
 examples/spasibo.html                         пример: /spasibo/
+examples/politika.html                        пример: /politika/
 ```
 
-Ещё не собрано: `/blog/` (список статей) и `/politika/`.
+Все семь типов страниц собраны.
 
 ## Разделение уровней
 
@@ -96,6 +100,25 @@ examples/spasibo.html                         пример: /spasibo/
 2. **Не** закрывать страницу в `robots.txt`. Иначе робот не прочитает
    `noindex` и страница всё равно попадёт в выдачу, только без описания.
 3. Исключить из `sitemap.xml`. Формы на страницу не ставить.
+
+## ⚠️ Formspree и 152-ФЗ
+
+Все формы сейчас отправляют персональные данные в Formspree — сервис с
+серверами в США. Это создаёт три расхождения с российским законом:
+
+1. **Локализация баз данных** (ч. 5 ст. 18 152-ФЗ) — запись и хранение ПДн
+   россиян должны производиться на серверах в РФ.
+2. **Трансграничная передача** (ст. 12) — требует отдельного уведомления
+   Роскомнадзора до начала передачи.
+3. **Уведомление РКН об обработке ПДн** — подаётся всеми, кто собирает ПДн
+   через формы.
+
+Пока обработчик не сменён, раздел 8 политики честно описывает трансграничную
+передачу (вариант А). После перехода на российский обработчик — замените его
+на вариант Б из комментария в файле.
+
+Варианты замены: свой `send.php` на хостинге в РФ, Яндекс Формы, Битрикс24,
+amoCRM. Подробности — в комментарии в начале `politika.template.html`.
 
 ## Общий CSS и JS
 

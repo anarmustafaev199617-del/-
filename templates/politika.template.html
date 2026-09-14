@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#1C2321">
+
+<!--
+================================================================================
+  ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ  /politika/
+================================================================================
+
+  ⚠️ ЭТО ШАБЛОН, А НЕ ЮРИДИЧЕСКАЯ КОНСУЛЬТАЦИЯ.
+  Текст составлен по структуре, которую обычно требует 152-ФЗ, но перед
+  публикацией его должен посмотреть юрист и привести в соответствие с тем,
+  как вы реально обрабатываете данные. Написать в политике то, чего вы
+  не делаете, — хуже, чем не написать ничего.
+
+  --------------------------------------------------------------------------
+  ⚠️ ВАЖНО: ПРОБЛЕМА С FORMSPREE
+
+  Сейчас все 16 форм сайта отправляют данные в Formspree — это сервис
+  с серверами в США. Для персональных данных граждан РФ это создаёт
+  минимум три вопроса:
+
+  1. ЛОКАЛИЗАЦИЯ БАЗ ДАННЫХ (ч. 5 ст. 18 152-ФЗ)
+     Запись, систематизация, накопление, хранение и извлечение персональных
+     данных россиян должны производиться с использованием баз данных,
+     находящихся НА ТЕРРИТОРИИ РФ. Formspree первично записывает данные
+     за рубежом — это прямое расхождение с требованием.
+
+  2. ТРАНСГРАНИЧНАЯ ПЕРЕДАЧА (ст. 12 152-ФЗ)
+     Требует отдельного уведомления Роскомнадзора ДО начала передачи,
+     а по ряду стран — и решения РКН о допустимости.
+
+  3. УВЕДОМЛЕНИЕ РКН ОБ ОБРАБОТКЕ ПДн
+     С сентября 2022 подаётся практически всеми, кто собирает ПДн через
+     формы на сайте. Без него — штраф; с 2025 года штрафы за нарушения
+     в области ПДн заметно выросли.
+
+  ЧТО С ЭТИМ ДЕЛАТЬ (по возрастанию усилий):
+    • простой обработчик на своём хостинге в РФ (send.php → почта/Telegram)
+    • российский сервис форм или CRM: Яндекс Формы, Битрикс24, amoCRM
+    • любой вариант, где данные первично пишутся на сервере в РФ
+
+  Пока формы ведут в Formspree, в разделе 8 этой политики нужно честно
+  указывать трансграничную передачу — что и сделано ниже. Но правильнее
+  сменить обработчик, а не описывать проблему в политике.
+
+  --------------------------------------------------------------------------
+  ИНДЕКСАЦИЯ
+  Страницу оставляем открытой для индексации: наличие политики —
+  положительный сигнал доверия и для Яндекса, и для пользователей.
+  noindex здесь НЕ нужен (в отличие от /spasibo/).
+
+  --------------------------------------------------------------------------
+  ТОКЕНЫ. Общие — в легенде service-city.template.html. Новые:
+  {{SITE_DOMAIN}}     example.ru               (домен без протокола)
+  {{LEGAL_ADDRESS}}   628400, ХМАО-Югра, г. Сургут, ул. …   ЗАГЛУШКА
+  {{POLICY_DATE}}     14 сентября 2026         дата редакции
+  {{POLICY_DATE_ISO}} 2026-09-14
+
+  ВСЕ РЕКВИЗИТЫ ({{LEGAL_NAME}}, {{INN}}, {{OGRN}}, {{LEGAL_ADDRESS}})
+  обязательны: политика без указания оператора юридически бессмысленна.
+================================================================================
+-->
+
+<title>Политика конфиденциальности — {{BRAND}}</title>
+<meta name="description" content="Политика обработки персональных данных {{LEGAL_NAME}}: какие данные мы собираем через сайт {{SITE_DOMAIN}}, зачем, как храним и как отозвать согласие.">
+<link rel="canonical" href="{{SITE_URL}}/politika/">
+<meta name="robots" content="index, follow">
+
+<!-- ЗАГЛУШКА: фавиконки -->
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- ЗАГЛУШКА: заменить на самохостинг woff2 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "@id": "{{SITE_URL}}/politika/#breadcrumb",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Главная", "item": "{{SITE_URL}}/" },
+        { "@type": "ListItem", "position": 2, "name": "Политика конфиденциальности" }
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "{{SITE_URL}}/politika/#webpage",
+      "url": "{{SITE_URL}}/politika/",
+      "name": "Политика конфиденциальности",
+      "inLanguage": "ru-RU",
+      "dateModified": "{{POLICY_DATE_ISO}}"
+    }
+  ]
+}
+</script>
+
+<style>
+  :root{
+    --ink:#1C2321;
+    --ink-soft:#4B534F;
+    --bg:#F7F7F4;
+    --panel:#FFFFFF;
+    --line:#E1DED4;
+    --accent:#B75B12;
+    --accent-dark:#8A430D;
+    --accent-text:#8A430D;
+    --trust:#1F4B43;
+    --trust-bg:#EAF1EE;
+    --radius:6px;
+    --header-h:74px;
+  }
+
+  /*
+    ЗАГЛУШКА — самохостинг шрифтов, раскомментировать после загрузки woff2 в /fonts/
+    @font-face{font-family:'Manrope';src:url('/fonts/manrope-700.woff2') format('woff2');font-weight:700;font-display:swap;}
+    @font-face{font-family:'Manrope';src:url('/fonts/manrope-800.woff2') format('woff2');font-weight:800;font-display:swap;}
+    @font-face{font-family:'IBM Plex Sans';src:url('/fonts/ibmplexsans-400.woff2') format('woff2');font-weight:400;font-display:swap;}
+    @font-face{font-family:'IBM Plex Sans';src:url('/fonts/ibmplexsans-600.woff2') format('woff2');font-weight:600;font-display:swap;}
+  */
+
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;scroll-padding-top:calc(var(--header-h) + 20px);}
+  body{
+    font-family:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;
+    color:var(--ink);background:var(--bg);line-height:1.6;font-size:16px;-webkit-text-size-adjust:100%;
+  }
+  h1,h2,h3{font-family:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;font-weight:800;line-height:1.25;color:var(--ink);}
+  a{color:inherit;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+  a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--accent-dark);outline-offset:2px;border-radius:4px;}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto;}*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;}}
+
+  /* Шапка — упрощённая: юридический документ не нуждается в полном меню */
+  header.simple{background:var(--panel);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50;}
+  header.simple .wrap{display:flex;justify-content:space-between;align-items:center;height:var(--header-h);gap:16px;flex-wrap:wrap;}
+  .brand{font-family:'Manrope',sans-serif;font-weight:800;font-size:20px;text-decoration:none;color:var(--ink);white-space:nowrap;}
+  .head-links{display:flex;gap:18px;align-items:center;font-size:15px;flex-wrap:wrap;}
+  .head-links a{text-decoration:none;color:var(--ink);white-space:nowrap;}
+  .head-links a:hover{color:var(--accent-text);}
+  .head-links .phone{font-weight:600;}
+
+  /* Крошки */
+  .crumbs{padding:14px 0 0;font-size:13.5px;color:var(--ink-soft);}
+  .crumbs ol{list-style:none;display:flex;flex-wrap:wrap;gap:6px 8px;}
+  .crumbs li{display:flex;align-items:center;gap:8px;}
+  .crumbs li+li::before{content:"/";color:var(--line);}
+  .crumbs a{color:var(--ink-soft);text-decoration:underline;text-underline-offset:2px;}
+  .crumbs a:hover{color:var(--accent-text);}
+  .crumbs [aria-current]{color:var(--ink);font-weight:600;}
+
+  /* Документ */
+  .doc{max-width:760px;margin:0 auto;padding:30px 0 64px;}
+  .doc h1{font-size:clamp(25px,4vw,32px);margin-bottom:10px;}
+  .doc .updated{font-size:14px;color:var(--ink-soft);margin-bottom:28px;}
+
+  .doc-toc{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 24px;margin-bottom:36px;}
+  .doc-toc h2{font-size:13px;text-transform:uppercase;letter-spacing:.6px;color:var(--ink-soft);margin-bottom:12px;}
+  .doc-toc ol{list-style:none;counter-reset:t;display:flex;flex-direction:column;gap:7px;font-size:15px;}
+  .doc-toc li{counter-increment:t;padding-left:28px;position:relative;}
+  .doc-toc li::before{content:counter(t) ".";position:absolute;left:0;color:var(--accent-text);font-weight:600;font-size:14px;}
+  .doc-toc a{color:var(--ink);text-decoration:none;}
+  .doc-toc a:hover{color:var(--accent-text);text-decoration:underline;text-underline-offset:2px;}
+
+  .doc section{margin-bottom:34px;scroll-margin-top:calc(var(--header-h) + 20px);}
+  .doc h2{font-size:20px;margin-bottom:12px;}
+  .doc h3{font-size:16.5px;margin:20px 0 8px;}
+  .doc p{color:#333A37;margin-bottom:12px;font-size:16px;line-height:1.7;}
+  .doc p:last-child{margin-bottom:0;}
+  .doc ul,.doc ol.num{padding-left:24px;margin-bottom:12px;color:#333A37;}
+  .doc li{margin-bottom:7px;line-height:1.65;}
+  .doc li::marker{color:var(--accent);}
+  .doc a{color:var(--accent-text);text-underline-offset:3px;}
+  .doc strong{color:var(--ink);}
+
+  .req-box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:20px 24px;margin-bottom:12px;}
+  .req-box dl{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;font-size:15px;}
+  .req-box dt{color:var(--ink-soft);}
+  .req-box dd{color:var(--ink);font-weight:600;}
+
+  .note{
+    border-left:3px solid var(--trust);background:var(--trust-bg);
+    border-radius:0 10px 10px 0;padding:16px 20px;font-size:15px;color:#2A3A36;margin-bottom:12px;
+  }
+  .note strong{color:var(--trust);}
+
+  /* Подвал */
+  footer{padding:36px 0 32px;border-top:1px solid var(--line);font-size:13.5px;color:var(--ink-soft);background:var(--panel);}
+  footer .wrap{display:flex;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;}
+  footer a{text-decoration:none;color:var(--ink-soft);}
+  footer a:hover{color:var(--accent-text);text-decoration:underline;}
+  footer .req{max-width:60ch;}
+
+  @media (max-width:600px){
+    .wrap{padding:0 16px;}
+    header.simple .wrap{height:auto;padding-top:12px;padding-bottom:12px;}
+    .head-links{gap:14px;font-size:14px;}
+    .req-box dl{grid-template-columns:1fr;gap:2px;}
+    .req-box dt{margin-top:8px;}
+    .doc{padding:22px 0 48px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="simple">
+  <div class="wrap">
+    <a href="/" class="brand">{{BRAND}}</a>
+    <div class="head-links">
+      <a href="/">На главную</a>
+      <a href="/blog/">Блог</a>
+      <a href="tel:{{PHONE_E164}}" class="phone" data-goal="call">{{PHONE_DISPLAY}}</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="crumbs" aria-label="Хлебные крошки">
+    <ol>
+      <li><a href="/">Главная</a></li>
+      <li><span aria-current="page">Политика конфиденциальности</span></li>
+    </ol>
+  </nav>
+</div>
+
+<main>
+  <div class="wrap">
+    <article class="doc">
+
+      <h1>Политика в отношении обработки персональных данных</h1>
+      <p class="updated">Редакция от <time datetime="{{POLICY_DATE_ISO}}">{{POLICY_DATE}}</time></p>
+
+      <nav class="doc-toc" aria-label="Содержание документа">
+        <h2>Содержание</h2>
+        <ol>
+          <li><a href="#s1">Общие положения</a></li>
+          <li><a href="#s2">Оператор персональных данных</a></li>
+          <li><a href="#s3">Основные понятия</a></li>
+          <li><a href="#s4">Какие данные мы обрабатываем</a></li>
+          <li><a href="#s5">Цели обработки</a></li>
+          <li><a href="#s6">Правовые основания</a></li>
+          <li><a href="#s7">Файлы cookie и системы аналитики</a></li>
+          <li><a href="#s8">Передача данных третьим лицам</a></li>
+          <li><a href="#s9">Сроки обработки и хранения</a></li>
+          <li><a href="#s10">Права субъекта персональных данных</a></li>
+          <li><a href="#s11">Как отозвать согласие</a></li>
+          <li><a href="#s12">Меры защиты данных</a></li>
+          <li><a href="#s13">Изменения политики</a></li>
+          <li><a href="#s14">Контакты</a></li>
+        </ol>
+      </nav>
+
+      <section id="s1">
+        <h2>1. Общие положения</h2>
+        <p>Настоящая Политика определяет порядок обработки персональных данных и меры по обеспечению их безопасности, предпринимаемые {{LEGAL_NAME}} (далее — Оператор) в отношении пользователей сайта <a href="{{SITE_URL}}/">{{SITE_DOMAIN}}</a> (далее — Сайт).</p>
+        <p>Политика разработана в соответствии с Федеральным законом от 27.07.2006 № 152-ФЗ «О персональных данных» и применяется ко всей информации, которую Оператор может получить о пользователе во время использования Сайта.</p>
+        <p>Использование Сайта означает согласие пользователя с настоящей Политикой. В случае несогласия с её условиями пользователю следует воздержаться от использования Сайта и от отправки форм на нём.</p>
+      </section>
+
+      <section id="s2">
+        <h2>2. Оператор персональных данных</h2>
+        <!-- ЗАГЛУШКА: все поля ниже обязательны к заполнению -->
+        <div class="req-box">
+          <dl>
+            <dt>Наименование</dt><dd>{{LEGAL_NAME}}</dd>
+            <dt>ИНН</dt><dd>{{INN}}</dd>
+            <dt>ОГРНИП / ОГРН</dt><dd>{{OGRN}}</dd>
+            <dt>Адрес</dt><dd>{{LEGAL_ADDRESS}}</dd>
+            <dt>Электронная почта</dt><dd><a href="mailto:{{EMAIL}}">{{EMAIL}}</a></dd>
+            <dt>Телефон</dt><dd><a href="tel:{{PHONE_E164}}">{{PHONE_DISPLAY}}</a></dd>
+          </dl>
+        </div>
+        <p>Ответственным за организацию обработки персональных данных является руководитель Оператора. Обращения по вопросам обработки персональных данных направляются на адрес электронной почты, указанный выше.</p>
+      </section>
+
+      <section id="s3">
+        <h2>3. Основные понятия</h2>
+        <ul>
+          <li><strong>Персональные данные</strong> — любая информация, относящаяся к прямо или косвенно определённому физическому лицу.</li>
+          <li><strong>Обработка персональных данных</strong> — любое действие с персональными данными: сбор, запись, систематизация, хранение, уточнение, использование, передача, удаление, уничтожение.</li>
+          <li><strong>Оператор</strong> — лицо, организующее и осуществляющее обработку персональных данных, а также определяющее цели и состав обрабатываемых данных.</li>
+          <li><strong>Пользователь</strong> — посетитель Сайта.</li>
+          <li><strong>Обезличивание</strong> — действия, в результате которых невозможно определить принадлежность данных конкретному пользователю.</li>
+        </ul>
+      </section>
+
+      <section id="s4">
+        <h2>4. Какие данные мы обрабатываем</h2>
+        <p>Оператор обрабатывает только те данные, которые пользователь предоставляет добровольно, заполняя формы на Сайте:</p>
+        <ul>
+          <li>имя (или то, как пользователь представился);</li>
+          <li>номер телефона;</li>
+          <li>адрес электронной почты — если пользователь указал его при обращении;</li>
+          <li>город и вид услуги, выбранные в форме;</li>
+          <li>описание неисправности, которое пользователь ввёл самостоятельно;</li>
+          <li>адрес выезда мастера — сообщается устно при согласовании заявки и используется только для оказания услуги.</li>
+        </ul>
+        <p>Кроме того, автоматически собираются обезличенные технические данные: IP-адрес, тип и версия браузера, операционная система, источник перехода, просмотренные страницы, время визита. Эти данные собираются средствами систем аналитики (см. раздел 7) и не позволяют идентифицировать пользователя.</p>
+        <div class="note">
+          <strong>Оператор не обрабатывает</strong> специальные категории персональных данных (раса, национальность, политические и религиозные убеждения, состояние здоровья, интимная жизнь) и биометрические персональные данные.
+        </div>
+        <p>Сайт не предназначен для лиц младше 18 лет. Оператор не собирает осознанно данные несовершеннолетних.</p>
+      </section>
+
+      <section id="s5">
+        <h2>5. Цели обработки</h2>
+        <p>Персональные данные обрабатываются исключительно для:</p>
+        <ul>
+          <li>обратной связи по оставленной заявке — уточнения деталей, согласования времени и адреса выезда мастера;</li>
+          <li>оказания услуг по ремонту и обслуживанию техники;</li>
+          <li>оформления документов по выполненным работам, включая гарантийные обязательства;</li>
+          <li>рассмотрения обращений, претензий и гарантийных случаев;</li>
+          <li>улучшения работы Сайта на основании обезличенной статистики.</li>
+        </ul>
+        <div class="note">
+          Оператор <strong>не использует</strong> контактные данные для рассылок рекламного характера и <strong>не передаёт</strong> их третьим лицам в маркетинговых целях.
+          <!-- ЗАГЛУШКА: если вы планируете рассылки — этот абзац нужно убрать
+               и добавить отдельное согласие на рекламную рассылку (ст. 18 ФЗ
+               «О рекламе» требует именно отдельного согласия, галочка
+               «согласен с политикой» его не заменяет). -->
+        </div>
+      </section>
+
+      <section id="s6">
+        <h2>6. Правовые основания обработки</h2>
+        <p>Оператор обрабатывает персональные данные на следующих основаниях:</p>
+        <ul>
+          <li>согласие пользователя на обработку персональных данных, выраженное проставлением отметки в соответствующем поле формы на Сайте;</li>
+          <li>исполнение договора, стороной которого является пользователь (оказание услуг по ремонту);</li>
+          <li>исполнение обязанностей, возложенных на Оператора законодательством Российской Федерации.</li>
+        </ul>
+      </section>
+
+      <section id="s7">
+        <h2>7. Файлы cookie и системы аналитики</h2>
+        <p>Сайт использует файлы cookie — небольшие текстовые файлы, сохраняемые браузером. Они нужны для корректной работы страниц и для сбора обезличенной статистики посещаемости.</p>
+        <p>Для анализа посещаемости используется сервис Яндекс.Метрика (ООО «ЯНДЕКС»). Сервис собирает обезличенные данные о поведении пользователей на Сайте. Условия обработки данных описаны в документах сервиса; отказаться от сбора можно, установив <a href="https://yandex.ru/support/metrica/general/opt-out.html" target="_blank" rel="nofollow noopener">блокировщик Яндекс.Метрики</a>.</p>
+        <!-- ЗАГЛУШКА: если добавите Google Analytics, Top.Mail.Ru, чат-виджет,
+             коллтрекинг или пиксели рекламных систем — каждый из них должен
+             быть перечислен здесь поимённо. -->
+        <p>Пользователь может запретить сохранение cookie в настройках браузера. Это не помешает просмотру Сайта, но часть функций может работать некорректно.</p>
+      </section>
+
+      <section id="s8">
+        <h2>8. Передача данных третьим лицам</h2>
+        <p>Оператор не продаёт и не передаёт персональные данные третьим лицам, за исключением случаев, прямо описанных ниже:</p>
+        <ul>
+          <li>передача мастеру, выезжающему по заявке, — в объёме, необходимом для оказания услуги;</li>
+          <li>передача по требованию уполномоченных государственных органов в порядке, установленном законодательством РФ.</li>
+        </ul>
+
+        <h3>Обработка заявок с форм Сайта</h3>
+        <!--
+          ⚠️ ЗАГЛУШКА-РАЗВИЛКА. Оставьте ОДИН из двух абзацев ниже.
+
+          ВАРИАНТ А (текущий, если формы по-прежнему в Formspree) — оставлен
+          в разметке. Он честно описывает трансграничную передачу, но сама
+          передача требует уведомления РКН и расходится с требованием
+          локализации баз данных (ч. 5 ст. 18 152-ФЗ). См. большое
+          предупреждение в начале файла.
+
+          ВАРИАНТ Б (после перехода на российский обработчик) — раскомментируйте
+          и удалите вариант А:
+
+          <p>Заявки, отправленные через формы Сайта, поступают на сервер
+          Оператора, расположенный на территории Российской Федерации, и далее
+          на корпоративную электронную почту. Трансграничная передача
+          персональных данных не осуществляется.</p>
+        -->
+        <p>Заявки, отправленные через формы Сайта, обрабатываются с использованием стороннего сервиса приёма форм, серверы которого расположены за пределами Российской Федерации. Таким образом, при отправке формы осуществляется трансграничная передача персональных данных. Отправляя форму, пользователь подтверждает, что уведомлён об этом и согласен с такой передачей. <strong>ЗАГЛУШКА:</strong> укажите здесь наименование сервиса и страну его расположения.</p>
+
+        <div class="note">
+          <strong>Перед публикацией:</strong> убедитесь, что трансграничная передача заявлена в уведомлении, поданном в Роскомнадзор. Если вы переходите на обработчик с серверами в РФ — замените абзац выше на вариант Б из комментария в исходном коде.
+        </div>
+      </section>
+
+      <section id="s9">
+        <h2>9. Сроки обработки и хранения</h2>
+        <p>Персональные данные обрабатываются до достижения целей обработки, но не дольше, чем это необходимо:</p>
+        <ul>
+          <li>данные из необработанных заявок хранятся <strong>ЗАГЛУШКА: укажите срок, например 6 месяцев</strong> с момента обращения;</li>
+          <li>данные клиентов, которым оказаны услуги, хранятся в течение срока гарантии и <strong>ЗАГЛУШКА: укажите срок</strong> после его истечения — для рассмотрения возможных претензий;</li>
+          <li>документы, подлежащие обязательному хранению по законодательству РФ, хранятся в течение установленных им сроков.</li>
+        </ul>
+        <p>По достижении целей обработки либо при отзыве согласия персональные данные подлежат уничтожению или обезличиванию в срок, не превышающий 30 дней, если иное не предусмотрено законодательством.</p>
+      </section>
+
+      <section id="s10">
+        <h2>10. Права субъекта персональных данных</h2>
+        <p>Пользователь вправе:</p>
+        <ul>
+          <li>получать сведения о том, обрабатываются ли его персональные данные, и о целях такой обработки;</li>
+          <li>требовать уточнения, блокирования или уничтожения данных, если они неполны, устарели, неточны либо получены незаконно;</li>
+          <li>отозвать согласие на обработку персональных данных;</li>
+          <li>обжаловать действия или бездействие Оператора в Роскомнадзор или в судебном порядке.</li>
+        </ul>
+        <p>Запрос направляется на адрес <a href="mailto:{{EMAIL}}">{{EMAIL}}</a>. Ответ предоставляется в срок, не превышающий 30 дней с даты получения запроса.</p>
+      </section>
+
+      <section id="s11">
+        <h2>11. Как отозвать согласие</h2>
+        <p>Отозвать согласие на обработку персональных данных можно в любой момент. Для этого достаточно направить письмо на <a href="mailto:{{EMAIL}}">{{EMAIL}}</a> с указанием имени и номера телефона, который был оставлен в форме.</p>
+        <p>После получения отзыва Оператор прекращает обработку и уничтожает данные в срок не более 30 дней, за исключением данных, хранение которых обязательно в силу закона.</p>
+      </section>
+
+      <section id="s12">
+        <h2>12. Меры защиты данных</h2>
+        <p>Оператор принимает необходимые организационные и технические меры для защиты персональных данных от неправомерного доступа, уничтожения, изменения, копирования и распространения:</p>
+        <ul>
+          <li>передача данных между браузером пользователя и Сайтом защищена протоколом HTTPS;</li>
+          <li>доступ к заявкам имеет ограниченный круг сотрудников, которым он необходим для работы;</li>
+          <li>назначено лицо, ответственное за организацию обработки персональных данных;</li>
+          <li>ведётся контроль за принимаемыми мерами защиты.</li>
+        </ul>
+        <div class="note">
+          В случае утечки персональных данных Оператор уведомляет Роскомнадзор в сроки, установленные законодательством. <strong>ЗАГЛУШКА:</strong> убедитесь, что у вас есть внутренний регламент на этот случай — это отдельное требование к оператору.
+        </div>
+      </section>
+
+      <section id="s13">
+        <h2>13. Изменения политики</h2>
+        <p>Оператор вправе вносить изменения в настоящую Политику. Новая редакция вступает в силу с момента публикации на этой странице, если иное не предусмотрено её текстом. Дата действующей редакции указана в начале документа.</p>
+        <p>Предыдущие редакции предоставляются по запросу на адрес электронной почты Оператора.</p>
+      </section>
+
+      <section id="s14">
+        <h2>14. Контакты</h2>
+        <p>По любым вопросам, связанным с обработкой персональных данных, обращайтесь:</p>
+        <ul>
+          <li>электронная почта: <a href="mailto:{{EMAIL}}">{{EMAIL}}</a></li>
+          <li>телефон: <a href="tel:{{PHONE_E164}}" data-goal="call">{{PHONE_DISPLAY}}</a>, {{WORK_HOURS}}</li>
+          <li>почтовый адрес: {{LEGAL_ADDRESS}}</li>
+        </ul>
+      </section>
+
+    </article>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <!-- ЗАГЛУШКА: реквизиты -->
+    <span class="req">© {{YEAR}} {{BRAND}}. {{LEGAL_NAME}}, ИНН {{INN}}, ОГРНИП {{OGRN}}.</span>
+    <span><a href="/">На главную</a> · <a href="/blog/">Блог</a> · <a href="/#contacts">Контакты</a></span>
+  </div>
+</footer>
+
+<!-- ЗАГЛУШКА: код счётчика Яндекс.Метрики -->
+
+</body>
+</html>
